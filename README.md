@@ -32,6 +32,23 @@ mv catalog.jsonl data/catalog.jsonl
 
 Verify the downloaded file using the published `SHA256SUMS` file.
 
+## Profile and Audit the Catalog
+
+Generate the reproducible catalog profile and the 50-product manual business-audit sample:
+
+```bash
+python3 -m scripts.catalog_analysis
+```
+
+The command writes:
+
+- `docs/catalog_analysis.md`: team-facing data-quality summary;
+- `docs/catalog_profile.json`: machine-readable measurements;
+- `docs/catalog_manual_audit_sample.csv`: category-balanced review sheet.
+
+Normalization and hard/soft constraint decisions are documented in
+`docs/catalog_business_rules.md`. The script reads but never modifies the frozen catalog.
+
 ## Run the Starter
 
 Python 3.10 or later is recommended. The starter uses only the Python standard library.

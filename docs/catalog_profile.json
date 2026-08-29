@@ -1,0 +1,385 @@
+{
+  "source": "data/catalog.jsonl",
+  "row_count": 50000,
+  "unique_parent_asin_count": 50000,
+  "duplicate_parent_asin_count": 0,
+  "field_stats": {
+    "title": {
+      "present": 49998,
+      "missing_or_empty": 2,
+      "missing_rate": 4e-05,
+      "type_counts": {
+        "string": 50000
+      }
+    },
+    "features": {
+      "present": 44781,
+      "missing_or_empty": 5219,
+      "missing_rate": 0.10438,
+      "type_counts": {
+        "array": 50000
+      }
+    },
+    "description": {
+      "present": 26113,
+      "missing_or_empty": 23887,
+      "missing_rate": 0.47774,
+      "type_counts": {
+        "array": 50000
+      }
+    },
+    "price": {
+      "present": 10527,
+      "missing_or_empty": 39473,
+      "missing_rate": 0.78946,
+      "type_counts": {
+        "null": 39473,
+        "number": 10410,
+        "string": 117
+      }
+    },
+    "categories": {
+      "present": 50000,
+      "missing_or_empty": 0,
+      "missing_rate": 0.0,
+      "type_counts": {
+        "array": 50000
+      }
+    },
+    "details": {
+      "present": 48330,
+      "missing_or_empty": 1670,
+      "missing_rate": 0.0334,
+      "type_counts": {
+        "object": 50000
+      }
+    },
+    "average_rating": {
+      "present": 50000,
+      "missing_or_empty": 0,
+      "missing_rate": 0.0,
+      "type_counts": {
+        "number": 50000
+      }
+    },
+    "rating_number": {
+      "present": 50000,
+      "missing_or_empty": 0,
+      "missing_rate": 0.0,
+      "type_counts": {
+        "number": 50000
+      }
+    },
+    "store": {
+      "present": 49686,
+      "missing_or_empty": 314,
+      "missing_rate": 0.00628,
+      "type_counts": {
+        "null": 314,
+        "string": 49686
+      }
+    }
+  },
+  "price_stats": {
+    "numeric_count": 10410,
+    "text_count": 117,
+    "text_examples": [
+      {
+        "value": "—",
+        "count": 112
+      },
+      {
+        "value": "from 12.99",
+        "count": 1
+      },
+      {
+        "value": "from 12.46",
+        "count": 1
+      },
+      {
+        "value": "from 21.30",
+        "count": 1
+      },
+      {
+        "value": "from 8.98",
+        "count": 1
+      },
+      {
+        "value": "from 5.99",
+        "count": 1
+      }
+    ],
+    "minimum": 0.0,
+    "median": 22.88,
+    "mean": 45.15996,
+    "maximum": 4119.0
+  },
+  "top_leaf_categories": [
+    {
+      "value": "T-Shirts",
+      "count": 2807
+    },
+    {
+      "value": "Shoes",
+      "count": 1299
+    },
+    {
+      "value": "Westlake",
+      "count": 1136
+    },
+    {
+      "value": "Casual",
+      "count": 1099
+    },
+    {
+      "value": "Wrist Watches",
+      "count": 1034
+    },
+    {
+      "value": "Fashion Sneakers",
+      "count": 1017
+    },
+    {
+      "value": "Flats",
+      "count": 927
+    },
+    {
+      "value": "Blouses & Button-Down Shirts",
+      "count": 691
+    },
+    {
+      "value": "Loafers & Slip-Ons",
+      "count": 665
+    },
+    {
+      "value": "Dresses",
+      "count": 656
+    },
+    {
+      "value": "Pumps",
+      "count": 630
+    },
+    {
+      "value": "Sets",
+      "count": 610
+    },
+    {
+      "value": "Sandals",
+      "count": 586
+    },
+    {
+      "value": "Platforms & Wedges",
+      "count": 545
+    },
+    {
+      "value": "Sunglasses",
+      "count": 540
+    },
+    {
+      "value": "Slippers",
+      "count": 538
+    },
+    {
+      "value": "Pendant Necklaces",
+      "count": 531
+    },
+    {
+      "value": "Road Running",
+      "count": 522
+    },
+    {
+      "value": "Tunics",
+      "count": 521
+    },
+    {
+      "value": "Drop & Dangle",
+      "count": 503
+    }
+  ],
+  "top_detail_keys": [
+    {
+      "value": "Date First Available",
+      "count": 46886
+    },
+    {
+      "value": "Department",
+      "count": 43582
+    },
+    {
+      "value": "Item model number",
+      "count": 27729
+    },
+    {
+      "value": "Package Dimensions",
+      "count": 27061
+    },
+    {
+      "value": "Manufacturer",
+      "count": 23512
+    },
+    {
+      "value": "Is Discontinued By Manufacturer",
+      "count": 13070
+    },
+    {
+      "value": "Product Dimensions",
+      "count": 10210
+    },
+    {
+      "value": "Item Weight",
+      "count": 3243
+    },
+    {
+      "value": "Color",
+      "count": 2439
+    },
+    {
+      "value": "Brand",
+      "count": 2328
+    },
+    {
+      "value": "Material",
+      "count": 2069
+    },
+    {
+      "value": "Style",
+      "count": 1752
+    },
+    {
+      "value": "Best Sellers Rank",
+      "count": 1127
+    },
+    {
+      "value": "Age Range (Description)",
+      "count": 1104
+    },
+    {
+      "value": "Size",
+      "count": 925
+    },
+    {
+      "value": "Country of Origin",
+      "count": 705
+    },
+    {
+      "value": "Brand Name",
+      "count": 610
+    },
+    {
+      "value": "Part Number",
+      "count": 576
+    },
+    {
+      "value": "Suggested Users",
+      "count": 535
+    },
+    {
+      "value": "Package Weight",
+      "count": 532
+    }
+  ],
+  "top_stores": [
+    {
+      "value": "Nike",
+      "count": 564
+    },
+    {
+      "value": "adidas",
+      "count": 438
+    },
+    {
+      "value": "Skechers",
+      "count": 375
+    },
+    {
+      "value": "PUMA",
+      "count": 265
+    },
+    {
+      "value": "Amazon Collection",
+      "count": 245
+    },
+    {
+      "value": "Clarks",
+      "count": 239
+    },
+    {
+      "value": "Calvin Klein",
+      "count": 224
+    },
+    {
+      "value": "ASICS",
+      "count": 221
+    },
+    {
+      "value": "NINE WEST",
+      "count": 216
+    },
+    {
+      "value": "Columbia",
+      "count": 202
+    },
+    {
+      "value": "Under Armour",
+      "count": 199
+    },
+    {
+      "value": "Generic",
+      "count": 197
+    },
+    {
+      "value": "Disney",
+      "count": 175
+    },
+    {
+      "value": "Reebok",
+      "count": 149
+    },
+    {
+      "value": "Levi's",
+      "count": 137
+    },
+    {
+      "value": "Amazon Essentials",
+      "count": 136
+    },
+    {
+      "value": "Crocs",
+      "count": 131
+    },
+    {
+      "value": "New Balance",
+      "count": 121
+    },
+    {
+      "value": "UGG",
+      "count": 119
+    },
+    {
+      "value": "Tommy Hilfiger",
+      "count": 114
+    }
+  ],
+  "lexicon_coverage": {
+    "category": {
+      "matched_products": 30815,
+      "coverage_rate": 0.6163
+    },
+    "color": {
+      "matched_products": 23546,
+      "coverage_rate": 0.47092
+    },
+    "material": {
+      "matched_products": 35302,
+      "coverage_rate": 0.70604
+    },
+    "use_case": {
+      "matched_products": 19595,
+      "coverage_rate": 0.3919
+    },
+    "feature": {
+      "matched_products": 23465,
+      "coverage_rate": 0.4693
+    }
+  }
+}
