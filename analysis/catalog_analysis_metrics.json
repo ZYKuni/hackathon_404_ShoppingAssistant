@@ -1,0 +1,2857 @@
+{
+  "catalog": {
+    "row_count": 50000,
+    "column_count": 10,
+    "fields": {
+      "average_rating": {
+        "missing_count": 0,
+        "missing_rate": 0.0,
+        "types": {
+          "number": 50000
+        }
+      },
+      "categories": {
+        "missing_count": 0,
+        "missing_rate": 0.0,
+        "types": {
+          "list": 50000
+        }
+      },
+      "description": {
+        "missing_count": 23887,
+        "missing_rate": 0.47774,
+        "types": {
+          "list": 50000
+        }
+      },
+      "details": {
+        "missing_count": 1670,
+        "missing_rate": 0.0334,
+        "types": {
+          "object": 50000
+        }
+      },
+      "features": {
+        "missing_count": 5219,
+        "missing_rate": 0.10438,
+        "types": {
+          "list": 50000
+        }
+      },
+      "parent_asin": {
+        "missing_count": 0,
+        "missing_rate": 0.0,
+        "types": {
+          "string": 50000
+        }
+      },
+      "price": {
+        "missing_count": 39473,
+        "missing_rate": 0.78946,
+        "types": {
+          "null": 39473,
+          "number": 10410,
+          "string": 117
+        }
+      },
+      "rating_number": {
+        "missing_count": 0,
+        "missing_rate": 0.0,
+        "types": {
+          "number": 50000
+        }
+      },
+      "store": {
+        "missing_count": 314,
+        "missing_rate": 0.00628,
+        "types": {
+          "string": 49686,
+          "null": 314
+        }
+      },
+      "title": {
+        "missing_count": 2,
+        "missing_rate": 4e-05,
+        "types": {
+          "string": 50000
+        }
+      }
+    },
+    "primary_key": {
+      "unique_count": 50000,
+      "duplicate_key_count": 0,
+      "duplicate_row_count": 0,
+      "invalid_format_count": 0,
+      "duplicate_examples": [],
+      "invalid_examples": []
+    },
+    "titles": {
+      "normalized_distinct_count": 49247,
+      "repeated_normalized_title_rows": 1444,
+      "repeated_normalized_title_rate": 0.02888
+    },
+    "price": {
+      "count": 10410,
+      "min": 0.0,
+      "p25": 14.99,
+      "median": 22.88,
+      "p75": 39.99,
+      "p95": 138.92399999999995,
+      "max": 4119.0,
+      "numeric_coverage_rate": 0.2082,
+      "string_count": 117,
+      "parseable_string_count": 5,
+      "invalid_string_count": 112,
+      "invalid_string_examples": [
+        "—",
+        "from 12.99",
+        "from 12.46",
+        "from 21.30",
+        "from 8.98",
+        "from 5.99"
+      ],
+      "non_positive_count": 1,
+      "above_1000_count": 22
+    },
+    "ratings": {
+      "invalid_average_rating_count": 0,
+      "invalid_rating_number_count": 0,
+      "zero_rating_number_count": 0
+    },
+    "categories": {
+      "distinct_count": 863,
+      "leaf_distinct_count": 800,
+      "depth": {
+        "count": 50000,
+        "min": 2.0,
+        "p25": 4.0,
+        "median": 5.0,
+        "p75": 5.0,
+        "p95": 7.0,
+        "max": 8.0
+      },
+      "top_all": [
+        [
+          "Clothing, Shoes & Jewelry",
+          49990
+        ],
+        [
+          "Women",
+          29435
+        ],
+        [
+          "Clothing",
+          20523
+        ],
+        [
+          "Men",
+          12420
+        ],
+        [
+          "Shoes",
+          11810
+        ],
+        [
+          "Jewelry",
+          5127
+        ],
+        [
+          "Accessories",
+          4117
+        ],
+        [
+          "Novelty & More",
+          3376
+        ],
+        [
+          "Novelty",
+          3208
+        ],
+        [
+          "T-Shirts",
+          2807
+        ],
+        [
+          "Tops, Tees & Blouses",
+          2461
+        ],
+        [
+          "Athletic",
+          2323
+        ],
+        [
+          "Active",
+          2214
+        ],
+        [
+          "Sandals",
+          2213
+        ],
+        [
+          "Dresses",
+          2133
+        ]
+      ],
+      "top_leaf": [
+        [
+          "T-Shirts",
+          2807
+        ],
+        [
+          "Shoes",
+          1299
+        ],
+        [
+          "Westlake",
+          1136
+        ],
+        [
+          "Casual",
+          1099
+        ],
+        [
+          "Wrist Watches",
+          1034
+        ],
+        [
+          "Fashion Sneakers",
+          1017
+        ],
+        [
+          "Flats",
+          927
+        ],
+        [
+          "Blouses & Button-Down Shirts",
+          691
+        ],
+        [
+          "Loafers & Slip-Ons",
+          665
+        ],
+        [
+          "Dresses",
+          656
+        ],
+        [
+          "Pumps",
+          630
+        ],
+        [
+          "Sets",
+          610
+        ],
+        [
+          "Sandals",
+          586
+        ],
+        [
+          "Platforms & Wedges",
+          545
+        ],
+        [
+          "Sunglasses",
+          540
+        ]
+      ]
+    },
+    "details": {
+      "distinct_key_count": 287,
+      "top_keys": [
+        [
+          "Date First Available",
+          46886
+        ],
+        [
+          "Department",
+          43582
+        ],
+        [
+          "Item model number",
+          27729
+        ],
+        [
+          "Package Dimensions",
+          27061
+        ],
+        [
+          "Manufacturer",
+          23512
+        ],
+        [
+          "Is Discontinued By Manufacturer",
+          13070
+        ],
+        [
+          "Product Dimensions",
+          10210
+        ],
+        [
+          "Item Weight",
+          3243
+        ],
+        [
+          "Color",
+          2439
+        ],
+        [
+          "Brand",
+          2328
+        ],
+        [
+          "Material",
+          2069
+        ],
+        [
+          "Style",
+          1752
+        ],
+        [
+          "Best Sellers Rank",
+          1127
+        ],
+        [
+          "Age Range (Description)",
+          1104
+        ],
+        [
+          "Size",
+          925
+        ],
+        [
+          "Country of Origin",
+          705
+        ],
+        [
+          "Brand Name",
+          610
+        ],
+        [
+          "Part Number",
+          576
+        ],
+        [
+          "Suggested Users",
+          535
+        ],
+        [
+          "Package Weight",
+          532
+        ]
+      ]
+    },
+    "search_coverage": {
+      "fields": {
+        "title": {
+          "populated_count": 49998,
+          "coverage_rate": 0.99996
+        },
+        "categories": {
+          "populated_count": 50000,
+          "coverage_rate": 1.0
+        },
+        "features": {
+          "populated_count": 44781,
+          "coverage_rate": 0.89562
+        },
+        "details": {
+          "populated_count": 48330,
+          "coverage_rate": 0.9666
+        },
+        "store": {
+          "populated_count": 49686,
+          "coverage_rate": 0.99372
+        },
+        "description": {
+          "populated_count": 26113,
+          "coverage_rate": 0.52226
+        }
+      },
+      "any_search_text_count": 50000,
+      "any_search_text_rate": 1.0
+    }
+  },
+  "sessions": {
+    "row_count": 200,
+    "scenario_counts": {
+      "buying": 80,
+      "browsing": 80,
+      "intent_override": 30,
+      "boundary": 10
+    },
+    "difficulty_counts": {
+      "medium": 90,
+      "easy": 80,
+      "hard": 30
+    },
+    "scenario_difficulty_counts": [
+      {
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "count": 80
+      },
+      {
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "count": 80
+      },
+      {
+        "scenario_type": "intent_override",
+        "difficulty_bucket": "hard",
+        "count": 30
+      },
+      {
+        "scenario_type": "boundary",
+        "difficulty_bucket": "medium",
+        "count": 10
+      }
+    ],
+    "distinct_target_count": 200,
+    "missing_target_count": 0,
+    "missing_target_examples": []
+  },
+  "target_coverage": {
+    "definition": "non-empty value; null, empty string, empty list, and empty object are absent",
+    "catalog_coverage": {
+      "title": 0.99996,
+      "features": 0.89562,
+      "description": 0.52226,
+      "price": 0.21054,
+      "categories": 1.0,
+      "details": 0.9666,
+      "store": 0.99372
+    },
+    "overall_targets": [
+      {
+        "field": "title",
+        "sample_count": 200,
+        "populated_count": 200,
+        "coverage_rate": 1.0,
+        "catalog_coverage_rate": 0.99996,
+        "difference_percentage_points": 0.004000000000004,
+        "coverage_multiple": 1.0000400016000641
+      },
+      {
+        "field": "features",
+        "sample_count": 200,
+        "populated_count": 200,
+        "coverage_rate": 1.0,
+        "catalog_coverage_rate": 0.89562,
+        "difference_percentage_points": 10.438000000000002,
+        "coverage_multiple": 1.1165449632656708
+      },
+      {
+        "field": "description",
+        "sample_count": 200,
+        "populated_count": 89,
+        "coverage_rate": 0.445,
+        "catalog_coverage_rate": 0.52226,
+        "difference_percentage_points": -7.725999999999994,
+        "coverage_multiple": 0.8520660207559454
+      },
+      {
+        "field": "price",
+        "sample_count": 200,
+        "populated_count": 178,
+        "coverage_rate": 0.89,
+        "catalog_coverage_rate": 0.21054,
+        "difference_percentage_points": 67.946,
+        "coverage_multiple": 4.227225230360027
+      },
+      {
+        "field": "categories",
+        "sample_count": 200,
+        "populated_count": 200,
+        "coverage_rate": 1.0,
+        "catalog_coverage_rate": 1.0,
+        "difference_percentage_points": 0.0,
+        "coverage_multiple": 1.0
+      },
+      {
+        "field": "details",
+        "sample_count": 200,
+        "populated_count": 200,
+        "coverage_rate": 1.0,
+        "catalog_coverage_rate": 0.9666,
+        "difference_percentage_points": 3.3399999999999985,
+        "coverage_multiple": 1.0345541071798054
+      },
+      {
+        "field": "store",
+        "sample_count": 200,
+        "populated_count": 200,
+        "coverage_rate": 1.0,
+        "catalog_coverage_rate": 0.99372,
+        "difference_percentage_points": 0.6279999999999952,
+        "coverage_multiple": 1.0063196876383689
+      }
+    ],
+    "by_scenario": {
+      "buying": [
+        {
+          "field": "title",
+          "sample_count": 80,
+          "populated_count": 80,
+          "coverage_rate": 1.0,
+          "catalog_coverage_rate": 0.99996,
+          "difference_percentage_points": 0.004000000000004,
+          "coverage_multiple": 1.0000400016000641
+        },
+        {
+          "field": "features",
+          "sample_count": 80,
+          "populated_count": 80,
+          "coverage_rate": 1.0,
+          "catalog_coverage_rate": 0.89562,
+          "difference_percentage_points": 10.438000000000002,
+          "coverage_multiple": 1.1165449632656708
+        },
+        {
+          "field": "description",
+          "sample_count": 80,
+          "populated_count": 39,
+          "coverage_rate": 0.4875,
+          "catalog_coverage_rate": 0.52226,
+          "difference_percentage_points": -3.4759999999999955,
+          "coverage_multiple": 0.9334431126258952
+        },
+        {
+          "field": "price",
+          "sample_count": 80,
+          "populated_count": 76,
+          "coverage_rate": 0.95,
+          "catalog_coverage_rate": 0.21054,
+          "difference_percentage_points": 73.946,
+          "coverage_multiple": 4.512206706564073
+        },
+        {
+          "field": "categories",
+          "sample_count": 80,
+          "populated_count": 80,
+          "coverage_rate": 1.0,
+          "catalog_coverage_rate": 1.0,
+          "difference_percentage_points": 0.0,
+          "coverage_multiple": 1.0
+        },
+        {
+          "field": "details",
+          "sample_count": 80,
+          "populated_count": 80,
+          "coverage_rate": 1.0,
+          "catalog_coverage_rate": 0.9666,
+          "difference_percentage_points": 3.3399999999999985,
+          "coverage_multiple": 1.0345541071798054
+        },
+        {
+          "field": "store",
+          "sample_count": 80,
+          "populated_count": 80,
+          "coverage_rate": 1.0,
+          "catalog_coverage_rate": 0.99372,
+          "difference_percentage_points": 0.6279999999999952,
+          "coverage_multiple": 1.0063196876383689
+        }
+      ],
+      "browsing": [
+        {
+          "field": "title",
+          "sample_count": 80,
+          "populated_count": 80,
+          "coverage_rate": 1.0,
+          "catalog_coverage_rate": 0.99996,
+          "difference_percentage_points": 0.004000000000004,
+          "coverage_multiple": 1.0000400016000641
+        },
+        {
+          "field": "features",
+          "sample_count": 80,
+          "populated_count": 80,
+          "coverage_rate": 1.0,
+          "catalog_coverage_rate": 0.89562,
+          "difference_percentage_points": 10.438000000000002,
+          "coverage_multiple": 1.1165449632656708
+        },
+        {
+          "field": "description",
+          "sample_count": 80,
+          "populated_count": 35,
+          "coverage_rate": 0.4375,
+          "catalog_coverage_rate": 0.52226,
+          "difference_percentage_points": -8.475999999999996,
+          "coverage_multiple": 0.8377053574847778
+        },
+        {
+          "field": "price",
+          "sample_count": 80,
+          "populated_count": 70,
+          "coverage_rate": 0.875,
+          "catalog_coverage_rate": 0.21054,
+          "difference_percentage_points": 66.446,
+          "coverage_multiple": 4.155979861309015
+        },
+        {
+          "field": "categories",
+          "sample_count": 80,
+          "populated_count": 80,
+          "coverage_rate": 1.0,
+          "catalog_coverage_rate": 1.0,
+          "difference_percentage_points": 0.0,
+          "coverage_multiple": 1.0
+        },
+        {
+          "field": "details",
+          "sample_count": 80,
+          "populated_count": 80,
+          "coverage_rate": 1.0,
+          "catalog_coverage_rate": 0.9666,
+          "difference_percentage_points": 3.3399999999999985,
+          "coverage_multiple": 1.0345541071798054
+        },
+        {
+          "field": "store",
+          "sample_count": 80,
+          "populated_count": 80,
+          "coverage_rate": 1.0,
+          "catalog_coverage_rate": 0.99372,
+          "difference_percentage_points": 0.6279999999999952,
+          "coverage_multiple": 1.0063196876383689
+        }
+      ],
+      "intent_override": [
+        {
+          "field": "title",
+          "sample_count": 30,
+          "populated_count": 30,
+          "coverage_rate": 1.0,
+          "catalog_coverage_rate": 0.99996,
+          "difference_percentage_points": 0.004000000000004,
+          "coverage_multiple": 1.0000400016000641
+        },
+        {
+          "field": "features",
+          "sample_count": 30,
+          "populated_count": 30,
+          "coverage_rate": 1.0,
+          "catalog_coverage_rate": 0.89562,
+          "difference_percentage_points": 10.438000000000002,
+          "coverage_multiple": 1.1165449632656708
+        },
+        {
+          "field": "description",
+          "sample_count": 30,
+          "populated_count": 10,
+          "coverage_rate": 0.3333333333333333,
+          "catalog_coverage_rate": 0.52226,
+          "difference_percentage_points": -18.892666666666663,
+          "coverage_multiple": 0.638251700940783
+        },
+        {
+          "field": "price",
+          "sample_count": 30,
+          "populated_count": 23,
+          "coverage_rate": 0.7666666666666667,
+          "catalog_coverage_rate": 0.21054,
+          "difference_percentage_points": 55.61266666666667,
+          "coverage_multiple": 3.6414299737183753
+        },
+        {
+          "field": "categories",
+          "sample_count": 30,
+          "populated_count": 30,
+          "coverage_rate": 1.0,
+          "catalog_coverage_rate": 1.0,
+          "difference_percentage_points": 0.0,
+          "coverage_multiple": 1.0
+        },
+        {
+          "field": "details",
+          "sample_count": 30,
+          "populated_count": 30,
+          "coverage_rate": 1.0,
+          "catalog_coverage_rate": 0.9666,
+          "difference_percentage_points": 3.3399999999999985,
+          "coverage_multiple": 1.0345541071798054
+        },
+        {
+          "field": "store",
+          "sample_count": 30,
+          "populated_count": 30,
+          "coverage_rate": 1.0,
+          "catalog_coverage_rate": 0.99372,
+          "difference_percentage_points": 0.6279999999999952,
+          "coverage_multiple": 1.0063196876383689
+        }
+      ],
+      "boundary": [
+        {
+          "field": "title",
+          "sample_count": 10,
+          "populated_count": 10,
+          "coverage_rate": 1.0,
+          "catalog_coverage_rate": 0.99996,
+          "difference_percentage_points": 0.004000000000004,
+          "coverage_multiple": 1.0000400016000641
+        },
+        {
+          "field": "features",
+          "sample_count": 10,
+          "populated_count": 10,
+          "coverage_rate": 1.0,
+          "catalog_coverage_rate": 0.89562,
+          "difference_percentage_points": 10.438000000000002,
+          "coverage_multiple": 1.1165449632656708
+        },
+        {
+          "field": "description",
+          "sample_count": 10,
+          "populated_count": 5,
+          "coverage_rate": 0.5,
+          "catalog_coverage_rate": 0.52226,
+          "difference_percentage_points": -2.2259999999999946,
+          "coverage_multiple": 0.9573775514111746
+        },
+        {
+          "field": "price",
+          "sample_count": 10,
+          "populated_count": 9,
+          "coverage_rate": 0.9,
+          "catalog_coverage_rate": 0.21054,
+          "difference_percentage_points": 68.946,
+          "coverage_multiple": 4.274722143060701
+        },
+        {
+          "field": "categories",
+          "sample_count": 10,
+          "populated_count": 10,
+          "coverage_rate": 1.0,
+          "catalog_coverage_rate": 1.0,
+          "difference_percentage_points": 0.0,
+          "coverage_multiple": 1.0
+        },
+        {
+          "field": "details",
+          "sample_count": 10,
+          "populated_count": 10,
+          "coverage_rate": 1.0,
+          "catalog_coverage_rate": 0.9666,
+          "difference_percentage_points": 3.3399999999999985,
+          "coverage_multiple": 1.0345541071798054
+        },
+        {
+          "field": "store",
+          "sample_count": 10,
+          "populated_count": 10,
+          "coverage_rate": 1.0,
+          "catalog_coverage_rate": 0.99372,
+          "difference_percentage_points": 0.6279999999999952,
+          "coverage_multiple": 1.0063196876383689
+        }
+      ]
+    },
+    "by_difficulty": {
+      "easy": [
+        {
+          "field": "title",
+          "sample_count": 80,
+          "populated_count": 80,
+          "coverage_rate": 1.0,
+          "catalog_coverage_rate": 0.99996,
+          "difference_percentage_points": 0.004000000000004,
+          "coverage_multiple": 1.0000400016000641
+        },
+        {
+          "field": "features",
+          "sample_count": 80,
+          "populated_count": 80,
+          "coverage_rate": 1.0,
+          "catalog_coverage_rate": 0.89562,
+          "difference_percentage_points": 10.438000000000002,
+          "coverage_multiple": 1.1165449632656708
+        },
+        {
+          "field": "description",
+          "sample_count": 80,
+          "populated_count": 39,
+          "coverage_rate": 0.4875,
+          "catalog_coverage_rate": 0.52226,
+          "difference_percentage_points": -3.4759999999999955,
+          "coverage_multiple": 0.9334431126258952
+        },
+        {
+          "field": "price",
+          "sample_count": 80,
+          "populated_count": 76,
+          "coverage_rate": 0.95,
+          "catalog_coverage_rate": 0.21054,
+          "difference_percentage_points": 73.946,
+          "coverage_multiple": 4.512206706564073
+        },
+        {
+          "field": "categories",
+          "sample_count": 80,
+          "populated_count": 80,
+          "coverage_rate": 1.0,
+          "catalog_coverage_rate": 1.0,
+          "difference_percentage_points": 0.0,
+          "coverage_multiple": 1.0
+        },
+        {
+          "field": "details",
+          "sample_count": 80,
+          "populated_count": 80,
+          "coverage_rate": 1.0,
+          "catalog_coverage_rate": 0.9666,
+          "difference_percentage_points": 3.3399999999999985,
+          "coverage_multiple": 1.0345541071798054
+        },
+        {
+          "field": "store",
+          "sample_count": 80,
+          "populated_count": 80,
+          "coverage_rate": 1.0,
+          "catalog_coverage_rate": 0.99372,
+          "difference_percentage_points": 0.6279999999999952,
+          "coverage_multiple": 1.0063196876383689
+        }
+      ],
+      "medium": [
+        {
+          "field": "title",
+          "sample_count": 90,
+          "populated_count": 90,
+          "coverage_rate": 1.0,
+          "catalog_coverage_rate": 0.99996,
+          "difference_percentage_points": 0.004000000000004,
+          "coverage_multiple": 1.0000400016000641
+        },
+        {
+          "field": "features",
+          "sample_count": 90,
+          "populated_count": 90,
+          "coverage_rate": 1.0,
+          "catalog_coverage_rate": 0.89562,
+          "difference_percentage_points": 10.438000000000002,
+          "coverage_multiple": 1.1165449632656708
+        },
+        {
+          "field": "description",
+          "sample_count": 90,
+          "populated_count": 40,
+          "coverage_rate": 0.4444444444444444,
+          "catalog_coverage_rate": 0.52226,
+          "difference_percentage_points": -7.781555555555553,
+          "coverage_multiple": 0.851002267921044
+        },
+        {
+          "field": "price",
+          "sample_count": 90,
+          "populated_count": 79,
+          "coverage_rate": 0.8777777777777778,
+          "catalog_coverage_rate": 0.21054,
+          "difference_percentage_points": 66.72377777777778,
+          "coverage_multiple": 4.169173448170313
+        },
+        {
+          "field": "categories",
+          "sample_count": 90,
+          "populated_count": 90,
+          "coverage_rate": 1.0,
+          "catalog_coverage_rate": 1.0,
+          "difference_percentage_points": 0.0,
+          "coverage_multiple": 1.0
+        },
+        {
+          "field": "details",
+          "sample_count": 90,
+          "populated_count": 90,
+          "coverage_rate": 1.0,
+          "catalog_coverage_rate": 0.9666,
+          "difference_percentage_points": 3.3399999999999985,
+          "coverage_multiple": 1.0345541071798054
+        },
+        {
+          "field": "store",
+          "sample_count": 90,
+          "populated_count": 90,
+          "coverage_rate": 1.0,
+          "catalog_coverage_rate": 0.99372,
+          "difference_percentage_points": 0.6279999999999952,
+          "coverage_multiple": 1.0063196876383689
+        }
+      ],
+      "hard": [
+        {
+          "field": "title",
+          "sample_count": 30,
+          "populated_count": 30,
+          "coverage_rate": 1.0,
+          "catalog_coverage_rate": 0.99996,
+          "difference_percentage_points": 0.004000000000004,
+          "coverage_multiple": 1.0000400016000641
+        },
+        {
+          "field": "features",
+          "sample_count": 30,
+          "populated_count": 30,
+          "coverage_rate": 1.0,
+          "catalog_coverage_rate": 0.89562,
+          "difference_percentage_points": 10.438000000000002,
+          "coverage_multiple": 1.1165449632656708
+        },
+        {
+          "field": "description",
+          "sample_count": 30,
+          "populated_count": 10,
+          "coverage_rate": 0.3333333333333333,
+          "catalog_coverage_rate": 0.52226,
+          "difference_percentage_points": -18.892666666666663,
+          "coverage_multiple": 0.638251700940783
+        },
+        {
+          "field": "price",
+          "sample_count": 30,
+          "populated_count": 23,
+          "coverage_rate": 0.7666666666666667,
+          "catalog_coverage_rate": 0.21054,
+          "difference_percentage_points": 55.61266666666667,
+          "coverage_multiple": 3.6414299737183753
+        },
+        {
+          "field": "categories",
+          "sample_count": 30,
+          "populated_count": 30,
+          "coverage_rate": 1.0,
+          "catalog_coverage_rate": 1.0,
+          "difference_percentage_points": 0.0,
+          "coverage_multiple": 1.0
+        },
+        {
+          "field": "details",
+          "sample_count": 30,
+          "populated_count": 30,
+          "coverage_rate": 1.0,
+          "catalog_coverage_rate": 0.9666,
+          "difference_percentage_points": 3.3399999999999985,
+          "coverage_multiple": 1.0345541071798054
+        },
+        {
+          "field": "store",
+          "sample_count": 30,
+          "populated_count": 30,
+          "coverage_rate": 1.0,
+          "catalog_coverage_rate": 0.99372,
+          "difference_percentage_points": 0.6279999999999952,
+          "coverage_multiple": 1.0063196876383689
+        }
+      ]
+    }
+  },
+  "hidden_constraints": {
+    "constraint_count": 800,
+    "evaluator_reproduction_mismatch_count": 0,
+    "type_counts": {
+      "feature": 404,
+      "material": 302,
+      "color": 60,
+      "style": 19,
+      "size": 11,
+      "use_case": 4
+    },
+    "source_counts": {
+      "features": 602,
+      "material_regex:features": 114,
+      "material_regex:title": 36,
+      "color_regex:features": 17,
+      "color_regex:title": 14,
+      "color_regex:details": 7,
+      "details": 5,
+      "material_regex:description": 3,
+      "color_regex:description": 2
+    },
+    "role_counts": {
+      "hard": 400,
+      "soft": 400
+    },
+    "source_type_counts": [
+      {
+        "source": "features",
+        "constraint_type": "feature",
+        "count": 401
+      },
+      {
+        "source": "features",
+        "constraint_type": "material",
+        "count": 149
+      },
+      {
+        "source": "material_regex:features",
+        "constraint_type": "material",
+        "count": 114
+      },
+      {
+        "source": "material_regex:title",
+        "constraint_type": "material",
+        "count": 36
+      },
+      {
+        "source": "features",
+        "constraint_type": "color",
+        "count": 20
+      },
+      {
+        "source": "features",
+        "constraint_type": "style",
+        "count": 17
+      },
+      {
+        "source": "color_regex:features",
+        "constraint_type": "color",
+        "count": 17
+      },
+      {
+        "source": "color_regex:title",
+        "constraint_type": "color",
+        "count": 14
+      },
+      {
+        "source": "features",
+        "constraint_type": "size",
+        "count": 11
+      },
+      {
+        "source": "color_regex:details",
+        "constraint_type": "color",
+        "count": 7
+      },
+      {
+        "source": "features",
+        "constraint_type": "use_case",
+        "count": 4
+      },
+      {
+        "source": "material_regex:description",
+        "constraint_type": "material",
+        "count": 3
+      },
+      {
+        "source": "details",
+        "constraint_type": "feature",
+        "count": 3
+      },
+      {
+        "source": "details",
+        "constraint_type": "style",
+        "count": 2
+      },
+      {
+        "source": "color_regex:description",
+        "constraint_type": "color",
+        "count": 2
+      }
+    ],
+    "by_scenario": {
+      "buying": {
+        "feature": 153,
+        "material": 129,
+        "color": 27,
+        "style": 7,
+        "size": 3,
+        "use_case": 1
+      },
+      "browsing": {
+        "feature": 169,
+        "material": 117,
+        "color": 22,
+        "style": 8,
+        "size": 3,
+        "use_case": 1
+      },
+      "intent_override": {
+        "feature": 62,
+        "material": 39,
+        "color": 9,
+        "size": 5,
+        "style": 4,
+        "use_case": 1
+      },
+      "boundary": {
+        "feature": 20,
+        "material": 17,
+        "color": 2,
+        "use_case": 1
+      }
+    },
+    "by_difficulty": {
+      "easy": {
+        "feature": 153,
+        "material": 129,
+        "color": 27,
+        "style": 7,
+        "size": 3,
+        "use_case": 1
+      },
+      "medium": {
+        "feature": 189,
+        "material": 134,
+        "color": 24,
+        "style": 8,
+        "size": 3,
+        "use_case": 2
+      },
+      "hard": {
+        "feature": 62,
+        "material": 39,
+        "color": 9,
+        "size": 5,
+        "style": 4,
+        "use_case": 1
+      }
+    }
+  },
+  "bm25": {
+    "query_definitions": {
+      "initial": "exact evaluator first message for each public session",
+      "oracle": "coarse category plus all hidden hard and soft constraints",
+      "rank_limit": "all target ranks and ablations are observed to Top 100"
+    },
+    "initial_all_fields": {
+      "overall": {
+        "sample_count": 200,
+        "evaluated_to_rank": 100,
+        "top_10_rate": 0.185,
+        "top_50_rate": 0.38,
+        "top_100_rate": 0.525,
+        "top_1000_rate": 0.525,
+        "mrr_at_limit": 0.12624638335758764,
+        "median_found_rank": 22.0,
+        "not_found_within_limit": 95
+      },
+      "by_scenario": {
+        "buying": {
+          "sample_count": 80,
+          "evaluated_to_rank": 100,
+          "top_10_rate": 0.2375,
+          "top_50_rate": 0.475,
+          "top_100_rate": 0.5875,
+          "top_1000_rate": 0.5875,
+          "mrr_at_limit": 0.1376363079438356,
+          "median_found_rank": 22.0,
+          "not_found_within_limit": 33
+        },
+        "browsing": {
+          "sample_count": 80,
+          "evaluated_to_rank": 100,
+          "top_10_rate": 0.025,
+          "top_50_rate": 0.1875,
+          "top_100_rate": 0.3625,
+          "top_1000_rate": 0.3625,
+          "mrr_at_limit": 0.015230058005626098,
+          "median_found_rank": 50.0,
+          "not_found_within_limit": 51
+        },
+        "intent_override": {
+          "sample_count": 30,
+          "evaluated_to_rank": 100,
+          "top_10_rate": 0.5333333333333333,
+          "top_50_rate": 0.6666666666666666,
+          "top_100_rate": 0.8333333333333334,
+          "top_1000_rate": 0.8333333333333334,
+          "mrr_at_limit": 0.42808708905137477,
+          "median_found_rank": 3.0,
+          "not_found_within_limit": 5
+        },
+        "boundary": {
+          "sample_count": 10,
+          "evaluated_to_rank": 100,
+          "top_10_rate": 0.0,
+          "top_50_rate": 0.3,
+          "top_100_rate": 0.4,
+          "top_1000_rate": 0.4,
+          "mrr_at_limit": 0.017735472401935067,
+          "median_found_rank": 21.5,
+          "not_found_within_limit": 6
+        }
+      },
+      "by_difficulty": {
+        "easy": {
+          "sample_count": 80,
+          "evaluated_to_rank": 100,
+          "top_10_rate": 0.2375,
+          "top_50_rate": 0.475,
+          "top_100_rate": 0.5875,
+          "top_1000_rate": 0.5875,
+          "mrr_at_limit": 0.1376363079438356,
+          "median_found_rank": 22.0,
+          "not_found_within_limit": 33
+        },
+        "medium": {
+          "sample_count": 90,
+          "evaluated_to_rank": 100,
+          "top_10_rate": 0.022222222222222223,
+          "top_50_rate": 0.2,
+          "top_100_rate": 0.36666666666666664,
+          "top_1000_rate": 0.36666666666666664,
+          "mrr_at_limit": 0.015508437382993762,
+          "median_found_rank": 47.0,
+          "not_found_within_limit": 57
+        },
+        "hard": {
+          "sample_count": 30,
+          "evaluated_to_rank": 100,
+          "top_10_rate": 0.5333333333333333,
+          "top_50_rate": 0.6666666666666666,
+          "top_100_rate": 0.8333333333333334,
+          "top_1000_rate": 0.8333333333333334,
+          "mrr_at_limit": 0.42808708905137477,
+          "median_found_rank": 3.0,
+          "not_found_within_limit": 5
+        }
+      }
+    },
+    "oracle_all_fields": {
+      "overall": {
+        "sample_count": 200,
+        "evaluated_to_rank": 100,
+        "top_10_rate": 0.87,
+        "top_50_rate": 0.97,
+        "top_100_rate": 0.995,
+        "top_1000_rate": 0.995,
+        "mrr_at_limit": 0.7256903376048262,
+        "median_found_rank": 1.0,
+        "not_found_within_limit": 1
+      },
+      "by_scenario": {
+        "buying": {
+          "sample_count": 80,
+          "evaluated_to_rank": 100,
+          "top_10_rate": 0.8625,
+          "top_50_rate": 0.95,
+          "top_100_rate": 0.9875,
+          "top_1000_rate": 0.9875,
+          "mrr_at_limit": 0.713244842133321,
+          "median_found_rank": 1.0,
+          "not_found_within_limit": 1
+        },
+        "browsing": {
+          "sample_count": 80,
+          "evaluated_to_rank": 100,
+          "top_10_rate": 0.875,
+          "top_50_rate": 0.9875,
+          "top_100_rate": 1.0,
+          "top_1000_rate": 1.0,
+          "mrr_at_limit": 0.7051505585953148,
+          "median_found_rank": 1.0,
+          "not_found_within_limit": 0
+        },
+        "intent_override": {
+          "sample_count": 30,
+          "evaluated_to_rank": 100,
+          "top_10_rate": 0.8666666666666667,
+          "top_50_rate": 0.9666666666666667,
+          "top_100_rate": 1.0,
+          "top_1000_rate": 1.0,
+          "mrr_at_limit": 0.7527700709780346,
+          "median_found_rank": 1.0,
+          "not_found_within_limit": 0
+        },
+        "boundary": {
+          "sample_count": 10,
+          "evaluated_to_rank": 100,
+          "top_10_rate": 0.9,
+          "top_50_rate": 1.0,
+          "top_100_rate": 1.0,
+          "top_1000_rate": 1.0,
+          "mrr_at_limit": 0.9083333333333332,
+          "median_found_rank": 1.0,
+          "not_found_within_limit": 0
+        }
+      },
+      "by_difficulty": {
+        "easy": {
+          "sample_count": 80,
+          "evaluated_to_rank": 100,
+          "top_10_rate": 0.8625,
+          "top_50_rate": 0.95,
+          "top_100_rate": 0.9875,
+          "top_1000_rate": 0.9875,
+          "mrr_at_limit": 0.713244842133321,
+          "median_found_rank": 1.0,
+          "not_found_within_limit": 1
+        },
+        "medium": {
+          "sample_count": 90,
+          "evaluated_to_rank": 100,
+          "top_10_rate": 0.8777777777777778,
+          "top_50_rate": 0.9888888888888889,
+          "top_100_rate": 1.0,
+          "top_1000_rate": 1.0,
+          "mrr_at_limit": 0.7277264224550948,
+          "median_found_rank": 1.0,
+          "not_found_within_limit": 0
+        },
+        "hard": {
+          "sample_count": 30,
+          "evaluated_to_rank": 100,
+          "top_10_rate": 0.8666666666666667,
+          "top_50_rate": 0.9666666666666667,
+          "top_100_rate": 1.0,
+          "top_1000_rate": 1.0,
+          "mrr_at_limit": 0.7527700709780346,
+          "median_found_rank": 1.0,
+          "not_found_within_limit": 0
+        }
+      }
+    },
+    "oracle_field_ablation": {
+      "all_fields": {
+        "included_fields": [
+          "title",
+          "categories",
+          "features",
+          "details",
+          "store",
+          "description"
+        ],
+        "sample_count": 200,
+        "evaluated_to_rank": 100,
+        "top_10_rate": 0.87,
+        "top_50_rate": 0.97,
+        "top_100_rate": 0.995,
+        "top_1000_rate": 0.995,
+        "mrr_at_limit": 0.7256903376048262,
+        "median_found_rank": 1.0,
+        "not_found_within_limit": 1
+      },
+      "only_title": {
+        "included_fields": [
+          "title"
+        ],
+        "sample_count": 200,
+        "evaluated_to_rank": 100,
+        "top_10_rate": 0.125,
+        "top_50_rate": 0.29,
+        "top_100_rate": 0.325,
+        "top_1000_rate": 0.325,
+        "mrr_at_limit": 0.07458453831965527,
+        "median_found_rank": 21.0,
+        "not_found_within_limit": 135
+      },
+      "only_categories": {
+        "included_fields": [
+          "categories"
+        ],
+        "sample_count": 200,
+        "evaluated_to_rank": 100,
+        "top_10_rate": 0.015,
+        "top_50_rate": 0.23,
+        "top_100_rate": 0.365,
+        "top_1000_rate": 0.365,
+        "mrr_at_limit": 0.01404242070475924,
+        "median_found_rank": 36.0,
+        "not_found_within_limit": 127
+      },
+      "only_features": {
+        "included_fields": [
+          "features"
+        ],
+        "sample_count": 200,
+        "evaluated_to_rank": 100,
+        "top_10_rate": 0.68,
+        "top_50_rate": 0.81,
+        "top_100_rate": 0.84,
+        "top_1000_rate": 0.84,
+        "mrr_at_limit": 0.579761473947031,
+        "median_found_rank": 1.0,
+        "not_found_within_limit": 32
+      },
+      "only_details": {
+        "included_fields": [
+          "details"
+        ],
+        "sample_count": 200,
+        "evaluated_to_rank": 100,
+        "top_10_rate": 0.045,
+        "top_50_rate": 0.06,
+        "top_100_rate": 0.07,
+        "top_1000_rate": 0.07,
+        "mrr_at_limit": 0.016379221412116153,
+        "median_found_rank": 5.0,
+        "not_found_within_limit": 186
+      },
+      "without_title": {
+        "included_fields": [
+          "categories",
+          "features",
+          "details",
+          "store",
+          "description"
+        ],
+        "sample_count": 200,
+        "evaluated_to_rank": 100,
+        "top_10_rate": 0.865,
+        "top_50_rate": 0.97,
+        "top_100_rate": 0.995,
+        "top_1000_rate": 0.995,
+        "mrr_at_limit": 0.7369599170604882,
+        "median_found_rank": 1.0,
+        "not_found_within_limit": 1
+      },
+      "without_categories": {
+        "included_fields": [
+          "title",
+          "features",
+          "details",
+          "store",
+          "description"
+        ],
+        "sample_count": 200,
+        "evaluated_to_rank": 100,
+        "top_10_rate": 0.71,
+        "top_50_rate": 0.835,
+        "top_100_rate": 0.885,
+        "top_1000_rate": 0.885,
+        "mrr_at_limit": 0.5919096456876929,
+        "median_found_rank": 1.0,
+        "not_found_within_limit": 23
+      },
+      "without_features": {
+        "included_fields": [
+          "title",
+          "categories",
+          "details",
+          "store",
+          "description"
+        ],
+        "sample_count": 200,
+        "evaluated_to_rank": 100,
+        "top_10_rate": 0.21,
+        "top_50_rate": 0.425,
+        "top_100_rate": 0.525,
+        "top_1000_rate": 0.525,
+        "mrr_at_limit": 0.12358294047753272,
+        "median_found_rank": 17.0,
+        "not_found_within_limit": 95
+      },
+      "without_details": {
+        "included_fields": [
+          "title",
+          "categories",
+          "features",
+          "store",
+          "description"
+        ],
+        "sample_count": 200,
+        "evaluated_to_rank": 100,
+        "top_10_rate": 0.86,
+        "top_50_rate": 0.95,
+        "top_100_rate": 0.985,
+        "top_1000_rate": 0.985,
+        "mrr_at_limit": 0.7211764973038289,
+        "median_found_rank": 1.0,
+        "not_found_within_limit": 3
+      }
+    },
+    "session_ranks": [
+      {
+        "sample_id": "public_0001",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": null,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0002",
+        "scenario_type": "intent_override",
+        "difficulty_bucket": "hard",
+        "initial_rank": null,
+        "oracle_rank": 48
+      },
+      {
+        "sample_id": "public_0003",
+        "scenario_type": "intent_override",
+        "difficulty_bucket": "hard",
+        "initial_rank": null,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0004",
+        "scenario_type": "intent_override",
+        "difficulty_bucket": "hard",
+        "initial_rank": 1,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0005",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": 25,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0006",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": 92,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0007",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0008",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": null,
+        "oracle_rank": 2
+      },
+      {
+        "sample_id": "public_0009",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": null,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0010",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": 8,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0011",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": 31,
+        "oracle_rank": 15
+      },
+      {
+        "sample_id": "public_0012",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 6
+      },
+      {
+        "sample_id": "public_0013",
+        "scenario_type": "intent_override",
+        "difficulty_bucket": "hard",
+        "initial_rank": 1,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0014",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": 73,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0015",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 6
+      },
+      {
+        "sample_id": "public_0016",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 27
+      },
+      {
+        "sample_id": "public_0017",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": null,
+        "oracle_rank": 16
+      },
+      {
+        "sample_id": "public_0018",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": 98,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0019",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": 58,
+        "oracle_rank": 2
+      },
+      {
+        "sample_id": "public_0020",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": null,
+        "oracle_rank": null
+      },
+      {
+        "sample_id": "public_0021",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 4
+      },
+      {
+        "sample_id": "public_0022",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": null,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0023",
+        "scenario_type": "intent_override",
+        "difficulty_bucket": "hard",
+        "initial_rank": 1,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0024",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": null,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0025",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0026",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": 40,
+        "oracle_rank": 3
+      },
+      {
+        "sample_id": "public_0027",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": null,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0028",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": null,
+        "oracle_rank": 77
+      },
+      {
+        "sample_id": "public_0029",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": null,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0030",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": null,
+        "oracle_rank": 2
+      },
+      {
+        "sample_id": "public_0031",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": null,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0032",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": 53,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0033",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0034",
+        "scenario_type": "intent_override",
+        "difficulty_bucket": "hard",
+        "initial_rank": 1,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0035",
+        "scenario_type": "boundary",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 12
+      },
+      {
+        "sample_id": "public_0036",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0037",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": 83,
+        "oracle_rank": 6
+      },
+      {
+        "sample_id": "public_0038",
+        "scenario_type": "intent_override",
+        "difficulty_bucket": "hard",
+        "initial_rank": 3,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0039",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": 66,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0040",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 66
+      },
+      {
+        "sample_id": "public_0041",
+        "scenario_type": "boundary",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0042",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": 73,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0043",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 3
+      },
+      {
+        "sample_id": "public_0044",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": 1,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0045",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": null,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0046",
+        "scenario_type": "intent_override",
+        "difficulty_bucket": "hard",
+        "initial_rank": 16,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0047",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": 47,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0048",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": 83,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0049",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": 74,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0050",
+        "scenario_type": "boundary",
+        "difficulty_bucket": "medium",
+        "initial_rank": 19,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0051",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0052",
+        "scenario_type": "intent_override",
+        "difficulty_bucket": "hard",
+        "initial_rank": 90,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0053",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": 11,
+        "oracle_rank": 2
+      },
+      {
+        "sample_id": "public_0054",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": 19,
+        "oracle_rank": 2
+      },
+      {
+        "sample_id": "public_0055",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 2
+      },
+      {
+        "sample_id": "public_0056",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0057",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0058",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": 29,
+        "oracle_rank": 21
+      },
+      {
+        "sample_id": "public_0059",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": 14,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0060",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 6
+      },
+      {
+        "sample_id": "public_0061",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": 2,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0062",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0063",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0064",
+        "scenario_type": "intent_override",
+        "difficulty_bucket": "hard",
+        "initial_rank": 37,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0065",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": 15,
+        "oracle_rank": 7
+      },
+      {
+        "sample_id": "public_0066",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": 81,
+        "oracle_rank": 2
+      },
+      {
+        "sample_id": "public_0067",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": 4,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0068",
+        "scenario_type": "intent_override",
+        "difficulty_bucket": "hard",
+        "initial_rank": 1,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0069",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0070",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": 41,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0071",
+        "scenario_type": "intent_override",
+        "difficulty_bucket": "hard",
+        "initial_rank": 90,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0072",
+        "scenario_type": "intent_override",
+        "difficulty_bucket": "hard",
+        "initial_rank": 1,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0073",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0074",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0075",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0076",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 17
+      },
+      {
+        "sample_id": "public_0077",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": 85,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0078",
+        "scenario_type": "intent_override",
+        "difficulty_bucket": "hard",
+        "initial_rank": 21,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0079",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": 25,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0080",
+        "scenario_type": "intent_override",
+        "difficulty_bucket": "hard",
+        "initial_rank": 52,
+        "oracle_rank": 3
+      },
+      {
+        "sample_id": "public_0081",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": 9,
+        "oracle_rank": 3
+      },
+      {
+        "sample_id": "public_0082",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": 1,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0083",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": null,
+        "oracle_rank": 66
+      },
+      {
+        "sample_id": "public_0084",
+        "scenario_type": "intent_override",
+        "difficulty_bucket": "hard",
+        "initial_rank": 42,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0085",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": 50,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0086",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0087",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 48
+      },
+      {
+        "sample_id": "public_0088",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": 7,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0089",
+        "scenario_type": "intent_override",
+        "difficulty_bucket": "hard",
+        "initial_rank": 3,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0090",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": 1,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0091",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0092",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 21
+      },
+      {
+        "sample_id": "public_0093",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": 75,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0094",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": null,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0095",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": null,
+        "oracle_rank": 8
+      },
+      {
+        "sample_id": "public_0096",
+        "scenario_type": "intent_override",
+        "difficulty_bucket": "hard",
+        "initial_rank": null,
+        "oracle_rank": 27
+      },
+      {
+        "sample_id": "public_0097",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": null,
+        "oracle_rank": 2
+      },
+      {
+        "sample_id": "public_0098",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 3
+      },
+      {
+        "sample_id": "public_0099",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 3
+      },
+      {
+        "sample_id": "public_0100",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 7
+      },
+      {
+        "sample_id": "public_0101",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": 24,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0102",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": 40,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0103",
+        "scenario_type": "intent_override",
+        "difficulty_bucket": "hard",
+        "initial_rank": 4,
+        "oracle_rank": 3
+      },
+      {
+        "sample_id": "public_0104",
+        "scenario_type": "boundary",
+        "difficulty_bucket": "medium",
+        "initial_rank": 24,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0105",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0106",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": 87,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0107",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": 10,
+        "oracle_rank": 3
+      },
+      {
+        "sample_id": "public_0108",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": 48,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0109",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": null,
+        "oracle_rank": 2
+      },
+      {
+        "sample_id": "public_0110",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0111",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": null,
+        "oracle_rank": 2
+      },
+      {
+        "sample_id": "public_0112",
+        "scenario_type": "boundary",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0113",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0114",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": null,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0115",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 17
+      },
+      {
+        "sample_id": "public_0116",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": 56,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0117",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": 31,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0118",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": 26,
+        "oracle_rank": 2
+      },
+      {
+        "sample_id": "public_0119",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": 1,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0120",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 17
+      },
+      {
+        "sample_id": "public_0121",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0122",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0123",
+        "scenario_type": "intent_override",
+        "difficulty_bucket": "hard",
+        "initial_rank": 5,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0124",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": null,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0125",
+        "scenario_type": "intent_override",
+        "difficulty_bucket": "hard",
+        "initial_rank": 1,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0126",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 40
+      },
+      {
+        "sample_id": "public_0127",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": 86,
+        "oracle_rank": 10
+      },
+      {
+        "sample_id": "public_0128",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0129",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": 3,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0130",
+        "scenario_type": "intent_override",
+        "difficulty_bucket": "hard",
+        "initial_rank": 2,
+        "oracle_rank": 2
+      },
+      {
+        "sample_id": "public_0131",
+        "scenario_type": "boundary",
+        "difficulty_bucket": "medium",
+        "initial_rank": 14,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0132",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": null,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0133",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": null,
+        "oracle_rank": 18
+      },
+      {
+        "sample_id": "public_0134",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": 4,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0135",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": 54,
+        "oracle_rank": 2
+      },
+      {
+        "sample_id": "public_0136",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": 35,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0137",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 19
+      },
+      {
+        "sample_id": "public_0138",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0139",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0140",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": 53,
+        "oracle_rank": 6
+      },
+      {
+        "sample_id": "public_0141",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": 13,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0142",
+        "scenario_type": "intent_override",
+        "difficulty_bucket": "hard",
+        "initial_rank": 1,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0143",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": 9,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0144",
+        "scenario_type": "intent_override",
+        "difficulty_bucket": "hard",
+        "initial_rank": 98,
+        "oracle_rank": 97
+      },
+      {
+        "sample_id": "public_0145",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": null,
+        "oracle_rank": 48
+      },
+      {
+        "sample_id": "public_0146",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": null,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0147",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0148",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": 8,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0149",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": null,
+        "oracle_rank": 3
+      },
+      {
+        "sample_id": "public_0150",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": 12,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0151",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": 87,
+        "oracle_rank": 9
+      },
+      {
+        "sample_id": "public_0152",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": null,
+        "oracle_rank": 6
+      },
+      {
+        "sample_id": "public_0153",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0154",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": 22,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0155",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": 10,
+        "oracle_rank": 3
+      },
+      {
+        "sample_id": "public_0156",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": 1,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0157",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": 16,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0158",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": 15,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0159",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": null,
+        "oracle_rank": 13
+      },
+      {
+        "sample_id": "public_0160",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": 3,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0161",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": null,
+        "oracle_rank": 25
+      },
+      {
+        "sample_id": "public_0162",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 2
+      },
+      {
+        "sample_id": "public_0163",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": 38,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0164",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": 18,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0165",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": 26,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0166",
+        "scenario_type": "intent_override",
+        "difficulty_bucket": "hard",
+        "initial_rank": 1,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0167",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": 66,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0168",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": 1,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0169",
+        "scenario_type": "boundary",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0170",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": 90,
+        "oracle_rank": 2
+      },
+      {
+        "sample_id": "public_0171",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": 41,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0172",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 2
+      },
+      {
+        "sample_id": "public_0173",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0174",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": null,
+        "oracle_rank": 89
+      },
+      {
+        "sample_id": "public_0175",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 5
+      },
+      {
+        "sample_id": "public_0176",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": 12,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0177",
+        "scenario_type": "intent_override",
+        "difficulty_bucket": "hard",
+        "initial_rank": null,
+        "oracle_rank": 5
+      },
+      {
+        "sample_id": "public_0178",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": null,
+        "oracle_rank": 3
+      },
+      {
+        "sample_id": "public_0179",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": 68,
+        "oracle_rank": 4
+      },
+      {
+        "sample_id": "public_0180",
+        "scenario_type": "boundary",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0181",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": 63,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0182",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": 15,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0183",
+        "scenario_type": "intent_override",
+        "difficulty_bucket": "hard",
+        "initial_rank": 75,
+        "oracle_rank": 8
+      },
+      {
+        "sample_id": "public_0184",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 2
+      },
+      {
+        "sample_id": "public_0185",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": 2,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0186",
+        "scenario_type": "intent_override",
+        "difficulty_bucket": "hard",
+        "initial_rank": 1,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0187",
+        "scenario_type": "boundary",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0188",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": 40,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0189",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": 39,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0190",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": 1,
+        "oracle_rank": 3
+      },
+      {
+        "sample_id": "public_0191",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0192",
+        "scenario_type": "boundary",
+        "difficulty_bucket": "medium",
+        "initial_rank": 86,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0193",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": 2,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0194",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": null,
+        "oracle_rank": 31
+      },
+      {
+        "sample_id": "public_0195",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0196",
+        "scenario_type": "browsing",
+        "difficulty_bucket": "medium",
+        "initial_rank": null,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0197",
+        "scenario_type": "intent_override",
+        "difficulty_bucket": "hard",
+        "initial_rank": 1,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0198",
+        "scenario_type": "intent_override",
+        "difficulty_bucket": "hard",
+        "initial_rank": null,
+        "oracle_rank": 43
+      },
+      {
+        "sample_id": "public_0199",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": 25,
+        "oracle_rank": 1
+      },
+      {
+        "sample_id": "public_0200",
+        "scenario_type": "buying",
+        "difficulty_bucket": "easy",
+        "initial_rank": null,
+        "oracle_rank": 1
+      }
+    ]
+  }
+}

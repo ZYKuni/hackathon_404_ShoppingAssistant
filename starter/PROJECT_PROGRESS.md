@@ -1,18 +1,19 @@
 # Shopping Copilot 当前工作进度
 
-> 更新时间：2026-08-27
+> 更新时间：2026-08-28
 >
-> 当前分支：`feature/ykzhao0826_01`
+> 当前分支：`feature/ykzhao0828`
 > 本文用于帮助团队成员快速理解已完成内容、设计约定和下一步接口。
 
 ## 总览
 
-目前完成了两个基础步骤：
+目前完成了三个基础步骤：
 
 1. **第一步：补全可运行的 `agent.py` 基线**——建立离线、多轮、可评测的 BM25 Agent。
 2. **第二步：冻结结构化对话状态协议**——定义 State、StatePatch、共享词典、合并规则和 30 条黄金案例。
+3. **第三步：实现确定性 Dialogue Parser**——将每轮英文用户消息自动转换为 StatePatch，并通过全部 30 条黄金案例。
 
-第二步当前是独立基础层，**尚未接入 `agent.py` 的线上响应路径**。这是有意的：先验证状态语义，再替换现有简单消息列表，避免破坏第一步已跑通的评测基线。
+第二、三步已经连通为“自然语言 → StatePatch → ConversationState”的独立基础层，**尚未接入 `agent.py` 的线上响应路径**。这是有意的：先验证解析和状态语义，再替换现有简单消息列表，避免破坏第一步已跑通的评测基线。
 
 ---
 
@@ -238,37 +239,144 @@ python3 -m evaluator.local_evaluator
 
 ---
 
-## 当前边界与未完成内容
+## 第三步：确定性 Dialogue Parser
 
-第二步没有完成以下内容：
+### 目标
 
-- 尚无自然语言 → StatePatch 的自动解析器；
+第三步实现：
+
+```text
+user_message + previous ConversationState + turn
+→ StatePatch
+→ apply_patch
+→ new ConversationState
+```
+
+Parser 只描述本轮状态变化，不直接修改 ConversationState。它复用第二步的共享词典和 reducer，因此对话端与后续商品清洗端使用相同的 category、audience、color、material、use_case 和 feature 标准值。
+
+### 新增文件
+
+| 文件 | 作用 |
+|---|---|
+| `starter/constraint_parser.py` | 规则版自然语言解析器，输出确定性 StatePatch |
+| `tests/test_constraint_parser.py` | 30 条黄金消息、否定、确定性和参数校验测试 |
+
+核心接口：
+
+```python
+def parse_message(
+    user_message: str,
+    state: ConversationState,
+    turn: int,
+) -> StatePatch:
+    ...
+```
+
+### 解析顺序
+
+当前解析顺序遵循“控制语义优先于属性词”的原则：
+
+1. 完整 session 重置，例如 `Let's start over`；
+2. 类别与类别覆盖；
+3. no preference；
+4. 预算上下限及预算覆盖；
+5. 人群；
+6. 颜色、材质、功能和使用场景；
+7. 品牌、尺码和 style。
+
+每个属性内部先判断：
+
+```text
+allow again
+→ remove
+→ exclude
+→ hard/soft positive value
+```
+
+因此 `not white`、`no faux leather` 和 `anything but white` 不会被同时写成正向偏好。类别操作先于同轮重申的预算、颜色等约束，保证类别切换清空旧状态后，新约束仍能生效。
+
+### 当前支持能力
+
+- category、audience、price_min、price_max；
+- color、material、feature、use_case；
+- 简单品牌和尺码表达；
+- `must`、`required`、`only` 等硬约束信号；
+- `instead of`、`make that`、`actually` 等覆盖表达；
+- `no longer want` 删除正向值；
+- `is okay now` 撤销排除值；
+- `no preference` 与 Boundary 回复；
+- 类别变化和完整 session reset；
+- 同轮类别覆盖后重申约束；
+- 输入参数校验、确定性输出和不修改 previous state。
+
+### 黄金案例验证
+
+`tests/test_constraint_parser.py` 不要求自动 Patch 与人工 Patch 的内部操作顺序完全相同，而是验证：
+
+```text
+自动 StatePatch
+→ apply_patch
+→ expected ConversationState
+```
+
+当前结果：
+
+```text
+30 / 30 条自然语言黄金案例通过
+17 / 17 个项目单元测试通过
+```
+
+完整 200 会话 evaluator 回归结果仍为：
+
+| 指标 | 第三步后结果 |
+|---|---:|
+| Hit Rate@10 | 0.840000 |
+| MRR | 0.476401 |
+| MTTC | 4.885 |
+| Technical Score | 0.685220 |
+
+结果与第一步基线一致，符合预期：第三步新增 Parser 和测试，但尚未改变 `agent.py` 的线上推荐路径。
+
+额外测试覆盖：
+
+- Parser 对相同输入产生确定性输出；
+- Parser 不修改传入的 previous state；
+- `No leather and definitely not white` 只生成排除条件；
+- 非字符串消息、错误 state 类型和非法 turn 会被拒绝。
+
+### 当前边界
+
+规则 Parser 是英文 MVP，不是通用 NLU：
+
+- category 词典只覆盖高频类别；
+- 开放品牌只支持有限的明确句式；
+- size 仍是开放文本，没有区分鞋、服装和珠宝尺码体系；
+- 不支持复杂代词、相对预算变化或长距离语义依赖；
+- 尚未使用 LLM fallback；
 - `Agent` 仍使用原有 `SessionState.active_messages`，未切换至 ConversationState；
 - 尚未实现商品侧共享字段清洗；
-- 尚未将 hard constraints 接入确定性过滤；
-- 尚未根据候选不确定性动态选择澄清问题；
-- category 词典只覆盖一部分高频类别；
-- size 仍是开放文本，没有按鞋、服装、珠宝分别解释。
+- hard constraints 尚未接入商品三态过滤。
 
 ---
 
-## 建议的第三步
+## 建议的第四步
 
-第三步应并行推进两个模块：
+第四步应并行推进两个模块：
 
-1. **Dialogue Parser**：将每轮 `user_message` 转换成 `StatePatch`，先使用规则实现确定性 MVP，再决定是否加入 LLM fallback。
+1. **Agent Integration**：让 `agent.py` 调用 `parse_message` 和 `apply_patch`，并从结构化状态构建 BM25 查询与追问策略。
 2. **Catalog Normalizer**：商品端导入同一个 `attribute_lexicons.py`，输出 category、audience、price、color、material、brand 等标准值和置信度。
 
-二者完成后再接入 `agent.py`：
+二者完成后接入三态过滤与软偏好重排序：
 
 ```text
 user_message
 → StatePatch
 → ConversationState
+→ structured BM25 query
 → BM25 Top 200
 → hard constraint 三态过滤
 → soft preference 重排序
 → Top 10
 ```
 
-接入时必须做消融评估，确认结构化状态没有降低 Candidate Recall 和现有 Hit Rate@10。
+接入时必须做消融评估，确认结构化状态没有降低 Candidate Recall@200、Hit Rate@10、MRR，并分别检查 Buying、Browsing、Intent Override 和 Boundary 场景。
