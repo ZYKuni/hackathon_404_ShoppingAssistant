@@ -46,6 +46,11 @@ The command writes:
 - `docs/catalog_profile.json`: machine-readable measurements;
 - `docs/catalog_manual_audit_sample.csv`: category-balanced review sheet.
 
+For two-reviewer business validation, open
+`outputs/catalog-audit-20260829/商品数据人工审核工作簿.xlsx`. The workbook provides
+separate first-10 calibration sheets, an automatic disagreement summary, assigned
+rows for the remaining 40 products, live progress counts, and a shared label guide.
+
 Normalization and hard/soft constraint decisions are documented in
 `docs/catalog_business_rules.md`. The script reads but never modifies the frozen catalog.
 
