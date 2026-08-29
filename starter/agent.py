@@ -7,10 +7,18 @@ import sqlite3
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from starter.constraint_parser import parse_message
+from starter.conversation_state import ConversationState, apply_patch
+
 
 TOKEN_RE = re.compile(r"[a-z0-9]+", re.IGNORECASE)
 OVERRIDE_RE = re.compile(
     r"\b(?:actually|instead|ignore\s+(?:my\s+)?earlier|changed?\s+my\s+mind|what\s+i\s+need)\b",
+    re.IGNORECASE,
+)
+FULL_OVERRIDE_RE = re.compile(
+    r"\b(?:ignore\s+(?:my\s+)?earlier\s+preference|forget\s+(?:my\s+)?earlier|"
+    r"changed?\s+my\s+mind)\b",
     re.IGNORECASE,
 )
 NO_PREFERENCE_RE = re.compile(
@@ -106,9 +114,11 @@ def _category_terms(text: str) -> set[str]:
 class SessionState:
     user_profile: dict
     base_request: str = ""
+    # Raw customer evidence remains available to lexical retrieval even when a
+    # phrase is outside the deterministic parser's current vocabulary.
     active_messages: list[str] = field(default_factory=list)
-    asked_attributes: set[str] = field(default_factory=set)
-    unavailable_attributes: set[str] = field(default_factory=set)
+    conversation_state: ConversationState = field(default_factory=ConversationState)
+    last_asked_attribute: str | None = None
 
 
 class Agent:
@@ -169,14 +179,54 @@ class Agent:
 
     def reset(self, session_id: str, user_profile: dict) -> None:
         """Start a clean state; no information may leak between customers."""
-        self._sessions[session_id] = SessionState(user_profile=dict(user_profile or {}))
+        self._sessions[session_id] = SessionState(
+            user_profile=dict(user_profile or {}),
+            conversation_state=ConversationState(),
+        )
+
+    @staticmethod
+    def _reset_constraints_for_full_override(state: SessionState) -> None:
+        """Drop superseded product constraints while retaining the category anchor."""
+        previous = state.conversation_state
+        state.conversation_state = ConversationState(category=previous.category, turn=previous.turn)
+        state.last_asked_attribute = None
+
+    @staticmethod
+    def _structured_query(conversation_state: ConversationState) -> str:
+        """Render positive structured state as supplementary lexical evidence."""
+        values: list[str] = []
+        if conversation_state.category:
+            values.append(conversation_state.category.replace("_", " "))
+        for constraints in (
+            conversation_state.hard_constraints,
+            conversation_state.soft_preferences,
+        ):
+            for value in constraints.values():
+                items = value if isinstance(value, list) else [value]
+                values.extend(str(item).replace("_", " ") for item in items)
+        # Exclusions are deliberately omitted: feeding a negated value such as
+        # "white" into BM25 would incorrectly reward white products.
+        return " ".join(dict.fromkeys(value for value in values if value))
 
     def _update_state(self, state: SessionState, user_message: str, turn: int) -> None:
         if turn == 1 or not state.base_request:
             state.base_request = _base_request(user_message)
 
+        full_override = turn > 1 and bool(FULL_OVERRIDE_RE.search(user_message))
+        if full_override:
+            self._reset_constraints_for_full_override(state)
+
+        patch = parse_message(user_message, state.conversation_state, turn)
+        state.conversation_state = apply_patch(state.conversation_state, patch)
+
         no_preference = NO_PREFERENCE_RE.search(user_message) or NO_MATCH_RE.search(user_message)
         if no_preference:
+            # The parser handles explicit replies such as "no preference for
+            # material".  This fallback also covers generic Boundary replies by
+            # associating them with the attribute asked on the preceding turn.
+            last_asked = state.last_asked_attribute
+            if last_asked and last_asked not in state.conversation_state.no_preference:
+                state.conversation_state.no_preference.append(last_asked)
             # The previous question has already been recorded, so the response adds
             # no positive retrieval evidence and should not pollute the query.
             return
@@ -193,8 +243,9 @@ class Agent:
                 state.active_messages = [user_message]
             else:
                 state.active_messages = [state.base_request, user_message]
-            state.asked_attributes.clear()
-            state.unavailable_attributes.clear()
+            state.conversation_state.asked_attributes.clear()
+            state.conversation_state.no_preference.clear()
+            state.last_asked_attribute = None
         else:
             state.active_messages.append(user_message)
 
@@ -212,7 +263,13 @@ class Agent:
 
     def _rank(self, state: SessionState, user_message: str, top_k: int) -> list[dict]:
         """Fuse current-turn, cumulative-session, and category-anchor retrieval."""
-        active_context = " ".join(state.active_messages)
+        raw_context = " ".join(state.active_messages).strip()
+        structured_context = self._structured_query(state.conversation_state)
+        # Raw evidence stays authoritative for the lexical baseline because it
+        # preserves open-vocabulary feature phrases.  Structured state is a safe
+        # fallback when no positive raw evidence is available; later catalog-side
+        # normalization can consume it directly for filtering and reranking.
+        active_context = raw_context or structured_context
         routes = (
             (self._search(active_context), 1.40),
             (self._search(user_message), 0.85),
@@ -230,21 +287,22 @@ class Agent:
 
     def _next_question(self, state: SessionState, user_message: str, turn: int) -> tuple[str, str | None]:
         if turn >= 10:
+            state.last_asked_attribute = None
             return "Here are the best matches based on your current preferences.", None
 
+        conversation_state = state.conversation_state
         known = _mentioned_attributes(" ".join(state.active_messages))
-        state.unavailable_attributes.update(
-            attribute
-            for attribute in state.asked_attributes
-            if NO_PREFERENCE_RE.search(user_message) or NO_MATCH_RE.search(user_message)
-        )
         for attribute in QUESTION_ORDER:
-            if attribute in state.asked_attributes or attribute in state.unavailable_attributes:
+            if attribute in conversation_state.asked_attributes:
+                continue
+            if attribute in conversation_state.no_preference:
                 continue
             if attribute in known and attribute != "feature":
                 continue
-            state.asked_attributes.add(attribute)
+            conversation_state.asked_attributes.append(attribute)
+            state.last_asked_attribute = attribute
             return QUESTION_TEXT[attribute], attribute
+        state.last_asked_attribute = None
         return "Here are the best matches based on your current preferences.", None
 
     def respond(

@@ -69,6 +69,12 @@ class AgentTest(unittest.TestCase):
         self.assertIn(response["ask_attribute"], {"feature", "style", "size", "use_case", "budget", "brand", "other"})
         self.assertEqual(response["usage"], {"prompt_tokens": 0, "completion_tokens": 0})
 
+        structured = self.agent._sessions["session"].conversation_state
+        self.assertEqual(structured.category, "running_shoes")
+        self.assertEqual(structured.hard_constraints["color"], ["blue"])
+        self.assertEqual(structured.hard_constraints["material"], ["cotton"])
+        self.assertEqual(structured.turn, 1)
+
     def test_accumulates_useful_multi_turn_constraints(self) -> None:
         self.agent.reset("session", {})
         self.agent.respond("session", "I'm looking for women's shoes, but I'm still exploring.", 1, 10)
@@ -86,13 +92,27 @@ class AgentTest(unittest.TestCase):
         self.assertEqual(response["recommendations"][0]["parent_asin"], "BOOT_BLACK")
         state = self.agent._sessions["session"]
         self.assertNotIn("red formal dress", " ".join(state.active_messages).lower())
+        self.assertEqual(state.conversation_state.category, "winter_boots")
+        self.assertEqual(state.conversation_state.hard_constraints["color"], ["black"])
+        self.assertNotIn("red", state.conversation_state.soft_preferences.get("color", []))
 
     def test_no_preference_reply_does_not_pollute_search_context(self) -> None:
         self.agent.reset("session", {})
         self.agent.respond("session", "I'm looking for running shoes.", 1, 10)
         before = list(self.agent._sessions["session"].active_messages)
         self.agent.respond("session", "I don't have a preference for material.", 2, 10)
-        self.assertEqual(self.agent._sessions["session"].active_messages, before)
+        state = self.agent._sessions["session"]
+        self.assertEqual(state.active_messages, before)
+        self.assertIn("material", state.conversation_state.no_preference)
+
+    def test_open_vocabulary_text_remains_available_as_raw_evidence(self) -> None:
+        self.agent.reset("session", {})
+        message = "I need running shoes with an Ethylene Vinyl Acetate sole."
+        self.agent.respond("session", message, 1, 10)
+
+        state = self.agent._sessions["session"]
+        self.assertIn(message, state.active_messages)
+        self.assertIn("running shoes", self.agent._structured_query(state.conversation_state))
 
 
 if __name__ == "__main__":
