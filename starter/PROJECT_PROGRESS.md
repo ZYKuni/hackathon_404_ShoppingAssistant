@@ -1,18 +1,19 @@
 # Shopping Copilot 当前工作进度
 
-> 更新时间：2026-08-27
+> 更新时间：2026-08-29
 >
-> 当前分支：`feature/ykzhao0826_01`
+> 当前分支：`feature/ykzhao0829`
 > 本文用于帮助团队成员快速理解已完成内容、设计约定和下一步接口。
 
 ## 总览
 
-目前完成了两个基础步骤：
+目前完成了三个基础步骤：
 
 1. **第一步：补全可运行的 `agent.py` 基线**——建立离线、多轮、可评测的 BM25 Agent。
 2. **第二步：冻结结构化对话状态协议**——定义 State、StatePatch、共享词典、合并规则和 30 条黄金案例。
+3. **第三步：接入确定性解析与结构化状态**——每轮执行 Parser → StatePatch → reducer，并保留开放词汇 raw evidence。
 
-第二步当前是独立基础层，**尚未接入 `agent.py` 的线上响应路径**。这是有意的：先验证状态语义，再替换现有简单消息列表，避免破坏第一步已跑通的评测基线。
+结构化状态已经接入 `agent.py` 的响应路径。现阶段 raw evidence 仍是 BM25 的权威输入，结构化状态负责约束语义、无偏好、已询问字段和 Intent Override 清理；商品侧标准化完成后再用于确定性过滤与重排。
 
 ---
 
@@ -240,10 +241,8 @@ python3 -m evaluator.local_evaluator
 
 ## 当前边界与未完成内容
 
-第二步没有完成以下内容：
+当前仍未完成以下内容：
 
-- 尚无自然语言 → StatePatch 的自动解析器；
-- `Agent` 仍使用原有 `SessionState.active_messages`，未切换至 ConversationState；
 - 尚未实现商品侧共享字段清洗；
 - 尚未将 hard constraints 接入确定性过滤；
 - 尚未根据候选不确定性动态选择澄清问题；
@@ -252,14 +251,14 @@ python3 -m evaluator.local_evaluator
 
 ---
 
-## 建议的第三步
+## 建议的下一步
 
-第三步应并行推进两个模块：
+下一步应推进商品侧标准化和检索接入：
 
-1. **Dialogue Parser**：将每轮 `user_message` 转换成 `StatePatch`，先使用规则实现确定性 MVP，再决定是否加入 LLM fallback。
-2. **Catalog Normalizer**：商品端导入同一个 `attribute_lexicons.py`，输出 category、audience、price、color、material、brand 等标准值和置信度。
+1. **Catalog Normalizer**：商品端导入同一个 `attribute_lexicons.py`，输出 category、audience、price、color、material、brand 等标准值和置信度。
+2. **Constraint-aware retrieval**：BM25 先召回 Top 200，再执行 hard constraint 三态过滤和 soft preference 重排序。
 
-二者完成后再接入 `agent.py`：
+目标链路：
 
 ```text
 user_message
