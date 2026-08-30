@@ -18,6 +18,10 @@ from starter.orchestrator import (
     update_session_state,
 )
 from starter.state_adapter import build_structured_query, to_state_snapshot
+from starter.constraint_parser import parse_message
+from starter.conversation_state import ConversationState, apply_patch
+from starter.orchestrator import AgentOrchestrator, RuntimeMode
+from starter.pipeline_contracts import RankerProtocol, RetrieverProtocol
 
 
 TOKEN_RE = re.compile(r"[a-z0-9]+", re.IGNORECASE)
@@ -104,7 +108,14 @@ class Agent:
     memory, clarification, and intent-override handling.
     """
 
-    def __init__(self, catalog_path: str | Path = "data/catalog.jsonl") -> None:
+    def __init__(
+        self,
+        catalog_path: str | Path = "data/catalog.jsonl",
+        *,
+        retriever: RetrieverProtocol | None = None,
+        ranker: RankerProtocol | None = None,
+        runtime_mode: RuntimeMode = RuntimeMode.OFFICIAL,
+    ) -> None:
         self.catalog_path = Path(catalog_path)
         if not self.catalog_path.is_file():
             raise FileNotFoundError(
@@ -113,6 +124,14 @@ class Agent:
         self.connection = sqlite3.connect(":memory:")
         self._sessions: dict[str, SessionState] = {}
         self._fallback_ids: list[str] = []
+        self._pipeline_fallbacks: dict[str, tuple[str, ...]] = {}
+        if (retriever is None) != (ranker is None):
+            raise ValueError("retriever and ranker must be supplied together")
+        self._orchestrator = (
+            AgentOrchestrator(retriever, ranker, runtime_mode=runtime_mode)
+            if retriever is not None and ranker is not None
+            else None
+        )
         self._build_index()
         legacy_retriever = LegacyRetrieverAdapter(self._search, self._fallback_ids)
         legacy_ranker = LegacyRankerAdapter()
@@ -129,6 +148,26 @@ class Agent:
         )
         # Kept as a compatibility view for the existing tests and local debugging.
         self._sessions = self.orchestrator.sessions
+
+    @classmethod
+    def with_local_pipeline(
+        cls,
+        catalog_path: str | Path = "data/catalog.jsonl",
+        *,
+        runtime_mode: RuntimeMode = RuntimeMode.OFFICIAL,
+    ) -> "Agent":
+        """Build the formal Aaron retrieval/ranking pipeline behind the public API."""
+        from starter.catalog_normalizer import CatalogNormalizer
+        from starter.ranker import LocalConstraintRanker
+        from starter.retrieval import HybridRetriever
+
+        catalog = CatalogNormalizer.from_jsonl(catalog_path)
+        return cls(
+            catalog_path,
+            retriever=HybridRetriever(catalog_path),
+            ranker=LocalConstraintRanker(catalog=catalog),
+            runtime_mode=runtime_mode,
+        )
 
     def _build_index(self) -> None:
         cursor = self.connection.cursor()
@@ -170,6 +209,15 @@ class Agent:
     def reset(self, session_id: str, user_profile: dict) -> None:
         """Start a clean state; no information may leak between customers."""
         self.orchestrator.reset(session_id, user_profile)
+        self._sessions[session_id] = SessionState(
+            user_profile=dict(user_profile or {}),
+            conversation_state=ConversationState(),
+        )
+        self._pipeline_fallbacks.pop(session_id, None)
+
+    def pipeline_fallbacks(self, session_id: str) -> tuple[str, ...]:
+        """Return machine-readable fallback events from the session's last turn."""
+        return self._pipeline_fallbacks.get(session_id, ())
 
     @staticmethod
     def _reset_constraints_for_full_override(state: SessionState) -> None:
@@ -250,3 +298,40 @@ class Agent:
         top_k: int,
     ) -> dict:
         return self.orchestrator.respond(session_id, user_message, turn, top_k)
+        if session_id not in self._sessions:
+            raise RuntimeError("reset must be called before respond")
+        if not 1 <= turn <= 10:
+            raise ValueError("turn must be between 1 and 10")
+        top_k = max(1, min(int(top_k), 10))
+
+        state = self._sessions[session_id]
+        override_detected = turn > 1 and bool(OVERRIDE_RE.search(user_message))
+        self._update_state(state, user_message, turn)
+        if self._orchestrator is None:
+            recommendations = self._rank(state, user_message, top_k)
+        else:
+            result = self._orchestrator.execute(
+                session_id=session_id,
+                turn=turn,
+                top_k=top_k,
+                current_message=user_message,
+                raw_context=" ".join(state.active_messages).strip(),
+                base_request=state.base_request,
+                state=state.conversation_state,
+                profile=state.user_profile,
+                override_detected=override_detected,
+                legacy_fallback=lambda: self._rank(state, user_message, top_k),
+            )
+            recommendations = [
+                {"parent_asin": asin, "score": score}
+                for asin, score in result.recommendations
+            ]
+            self._pipeline_fallbacks[session_id] = result.fallbacks
+        message, ask_attribute = self._next_question(state, user_message, turn)
+        return {
+            "message": message,
+            "ask_attribute": ask_attribute,
+            "recommendations": recommendations,
+            # No LLM is used in this baseline, so token use and external cost are zero.
+            "usage": {"prompt_tokens": 0, "completion_tokens": 0},
+        }
