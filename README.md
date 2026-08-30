@@ -97,6 +97,10 @@ starter/agent.py                  editable weak starter
 evaluator/local_evaluator.py      public-set simulator and scorer
 ```
 
+The candidate-aware clarification policy, personalized-context boundary, 20-case
+QA set, and ablation commands are documented in
+`docs/SHIERLY_QUESTION_POLICY_CONTEXT.md`.
+
 ## Judging and Submission Policy
 
 - Participant submission requirements: `docs/submission_rules.md`

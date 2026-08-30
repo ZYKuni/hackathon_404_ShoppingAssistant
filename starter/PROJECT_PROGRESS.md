@@ -271,3 +271,21 @@ user_message
 ```
 
 接入时必须做消融评估，确认结构化状态没有降低 Candidate Recall 和现有 Hit Rate@10。
+
+---
+
+## Shierly 分支：Question Policy 与 Personalized Context
+
+分支 `feature/shierly-question-policy-demo` 已补充：
+
+- 候选感知问题价值计算；
+- Buying/Browsing 不同的提问权重；
+- 第 10 轮停止、已问/无偏好不重复、`other` 一次性策略；
+- Override 后问题范围重置；
+- 短期会话状态与低权重长期画像隔离；
+- Buying、Browsing、Intent Override、Boundary 各 5 条黄金案例；
+- fixed/dynamic 与 profile on/off 消融脚本。
+
+当前 `safe` 默认模式保持主线公开集指标不回归。全动态实验对 Intent
+Override 有明显改善，但整体 MRR 与 MTTC 回归，因此尚未默认启用。完整设计、
+指标和风险见 `docs/SHIERLY_QUESTION_POLICY_CONTEXT.md`。

@@ -9,6 +9,19 @@ from pathlib import Path
 
 from starter.constraint_parser import parse_message
 from starter.conversation_state import ConversationState, apply_patch
+from starter.context_distillation import (
+    ProfileContext,
+    constraint_signature,
+    distill_context,
+    distill_profile,
+)
+from starter.question_policy import (
+    QUESTION_TEXT,
+    QuestionDecision,
+    QuestionPolicy,
+    candidate_facets_from_rows,
+    infer_route,
+)
 
 
 TOKEN_RE = re.compile(r"[a-z0-9]+", re.IGNORECASE)
@@ -57,23 +70,9 @@ ATTRIBUTE_PATTERNS: dict[str, re.Pattern[str]] = {
     ),
 }
 
-# These fields reveal useful constraints most often in the supplied simulator.  The
-# final "other" is a safe escape hatch when a useful preference has no known slot.
-QUESTION_ORDER = (
+CONSERVATIVE_QUESTION_ORDER = (
     "material", "feature", "color", "style", "size", "use_case", "budget", "brand", "other"
 )
-QUESTION_TEXT = {
-    "material": "Do you have a preferred material?",
-    "feature": "Which product feature matters most to you?",
-    "color": "Do you have a color preference?",
-    "style": "What style or fit would you prefer?",
-    "size": "Do you have a size or width requirement?",
-    "use_case": "What occasion or use case is this for?",
-    "budget": "What budget range should I use?",
-    "brand": "Do you have a preferred brand?",
-    "other": "Is there one other must-have requirement I should prioritize?",
-}
-
 
 def _text(value: object) -> str:
     """Flatten the heterogeneous catalog fields into searchable text."""
@@ -113,12 +112,17 @@ def _category_terms(text: str) -> set[str]:
 @dataclass
 class SessionState:
     user_profile: dict
+    profile_context: ProfileContext = field(default_factory=ProfileContext)
     base_request: str = ""
     # Raw customer evidence remains available to lexical retrieval even when a
     # phrase is outside the deterministic parser's current vocabulary.
     active_messages: list[str] = field(default_factory=list)
     conversation_state: ConversationState = field(default_factory=ConversationState)
     last_asked_attribute: str | None = None
+    rounds_without_new_constraints: int = 0
+    other_used: bool = False
+    last_override_detected: bool = False
+    last_question_decision: QuestionDecision | None = None
 
 
 class Agent:
@@ -129,15 +133,25 @@ class Agent:
     memory, clarification, and intent-override handling.
     """
 
-    def __init__(self, catalog_path: str | Path = "data/catalog.jsonl") -> None:
+    def __init__(
+        self,
+        catalog_path: str | Path = "data/catalog.jsonl",
+        *,
+        enable_profile_context: bool = True,
+        question_policy_mode: str = "safe",
+    ) -> None:
         self.catalog_path = Path(catalog_path)
         if not self.catalog_path.is_file():
             raise FileNotFoundError(
                 f"Catalog not found at {self.catalog_path}. Follow README.md to download catalog.jsonl.gz."
             )
+        if question_policy_mode not in {"safe", "dynamic", "fixed"}:
+            raise ValueError("question_policy_mode must be safe, dynamic, or fixed")
         self.connection = sqlite3.connect(":memory:")
         self._sessions: dict[str, SessionState] = {}
         self._fallback_ids: list[str] = []
+        self._question_policy_mode = question_policy_mode
+        self._question_policy = QuestionPolicy(enable_profile_hints=enable_profile_context)
         self._build_index()
 
     def _build_index(self) -> None:
@@ -179,8 +193,10 @@ class Agent:
 
     def reset(self, session_id: str, user_profile: dict) -> None:
         """Start a clean state; no information may leak between customers."""
+        profile_payload = dict(user_profile or {})
         self._sessions[session_id] = SessionState(
-            user_profile=dict(user_profile or {}),
+            user_profile=profile_payload,
+            profile_context=distill_profile(profile_payload),
             conversation_state=ConversationState(),
         )
 
@@ -190,6 +206,7 @@ class Agent:
         previous = state.conversation_state
         state.conversation_state = ConversationState(category=previous.category, turn=previous.turn)
         state.last_asked_attribute = None
+        state.other_used = False
 
     @staticmethod
     def _structured_query(conversation_state: ConversationState) -> str:
@@ -209,10 +226,12 @@ class Agent:
         return " ".join(dict.fromkeys(value for value in values if value))
 
     def _update_state(self, state: SessionState, user_message: str, turn: int) -> None:
+        before_signature = constraint_signature(state.conversation_state)
         if turn == 1 or not state.base_request:
             state.base_request = _base_request(user_message)
 
         full_override = turn > 1 and bool(FULL_OVERRIDE_RE.search(user_message))
+        override_detected = turn > 1 and bool(OVERRIDE_RE.search(user_message))
         if full_override:
             self._reset_constraints_for_full_override(state)
 
@@ -229,9 +248,11 @@ class Agent:
                 state.conversation_state.no_preference.append(last_asked)
             # The previous question has already been recorded, so the response adds
             # no positive retrieval evidence and should not pollute the query.
+            state.rounds_without_new_constraints += 1
+            state.last_override_detected = override_detected
             return
 
-        if OVERRIDE_RE.search(user_message) and turn > 1:
+        if override_detected:
             # Retain the category anchor when the customer only changes a constraint.
             # If they explicitly name a different category, the new request replaces
             # the previous category as well.
@@ -246,8 +267,15 @@ class Agent:
             state.conversation_state.asked_attributes.clear()
             state.conversation_state.no_preference.clear()
             state.last_asked_attribute = None
+            state.other_used = False
         else:
             state.active_messages.append(user_message)
+
+        after_signature = constraint_signature(state.conversation_state)
+        state.rounds_without_new_constraints = (
+            0 if after_signature != before_signature else state.rounds_without_new_constraints + 1
+        )
+        state.last_override_detected = override_detected
 
     def _search(self, text: str, limit: int = 120) -> list[str]:
         terms = _terms(text)[:60]
@@ -285,25 +313,101 @@ class Agent:
             ranked.extend(asin for asin in self._fallback_ids if asin not in scores)
         return [{"parent_asin": asin, "score": scores.get(asin, 0.0)} for asin in ranked[:top_k]]
 
-    def _next_question(self, state: SessionState, user_message: str, turn: int) -> tuple[str, str | None]:
-        if turn >= 10:
-            state.last_asked_attribute = None
-            return "Here are the best matches based on your current preferences.", None
+    def _candidate_facets(self, recommendations: list[dict]) -> dict[str, tuple[str | None, ...]]:
+        identifiers = [str(item["parent_asin"]) for item in recommendations]
+        if not identifiers:
+            return {}
+        placeholders = ", ".join("?" for _ in identifiers)
+        rows = self.connection.execute(
+            "SELECT parent_asin, title, categories, features, details, store, description "
+            f"FROM products WHERE parent_asin IN ({placeholders})",
+            identifiers,
+        ).fetchall()
+        by_identifier = {
+            str(row[0]): {
+                "parent_asin": row[0],
+                "title": row[1],
+                "categories": row[2],
+                "features": row[3],
+                "details": row[4],
+                "store": row[5],
+                "description": row[6],
+            }
+            for row in rows
+        }
+        ordered_rows = [by_identifier[identifier] for identifier in identifiers if identifier in by_identifier]
+        return candidate_facets_from_rows(ordered_rows)
 
-        conversation_state = state.conversation_state
-        known = _mentioned_attributes(" ".join(state.active_messages))
-        for attribute in QUESTION_ORDER:
-            if attribute in conversation_state.asked_attributes:
-                continue
-            if attribute in conversation_state.no_preference:
-                continue
-            if attribute in known and attribute != "feature":
-                continue
-            conversation_state.asked_attributes.append(attribute)
-            state.last_asked_attribute = attribute
-            return QUESTION_TEXT[attribute], attribute
-        state.last_asked_attribute = None
-        return "Here are the best matches based on your current preferences.", None
+    def _next_question(
+        self,
+        state: SessionState,
+        user_message: str,
+        recommendations: list[dict],
+    ) -> tuple[str, str | None]:
+        # ``safe`` is the production default: the candidate-aware policy remains
+        # available for deterministic shadow/ablation runs, but public-set MRR and
+        # MTTC must not regress before the dynamic policy is promoted.
+        use_dynamic_policy = self._question_policy_mode == "dynamic"
+        if not use_dynamic_policy:
+            if state.conversation_state.turn >= 10:
+                decision = QuestionDecision(
+                    ask_attribute=None,
+                    message="Here are the best matches based on your current preferences.",
+                    reason="Turn 10 must end without another clarification question.",
+                )
+            else:
+                known = _mentioned_attributes(" ".join(state.active_messages))
+                ask_attribute = next(
+                    (
+                        attribute
+                        for attribute in CONSERVATIVE_QUESTION_ORDER
+                        if attribute not in state.conversation_state.asked_attributes
+                        and attribute not in state.conversation_state.no_preference
+                        and (attribute not in known or attribute == "feature")
+                    ),
+                    None,
+                )
+                decision = QuestionDecision(
+                    ask_attribute=ask_attribute,
+                    message=(
+                        QUESTION_TEXT[ask_attribute]
+                        if ask_attribute is not None
+                        else "Here are the best matches based on your current preferences."
+                    ),
+                    reason="Conservative rollout guard used the validated baseline order.",
+                )
+            state.last_question_decision = decision
+            ask_attribute = decision.ask_attribute
+            if ask_attribute is not None:
+                if ask_attribute not in state.conversation_state.asked_attributes:
+                    state.conversation_state.asked_attributes.append(ask_attribute)
+                if ask_attribute == "other":
+                    state.other_used = True
+            state.last_asked_attribute = ask_attribute
+            return decision.message, ask_attribute
+
+        context = distill_context(
+            state.conversation_state,
+            state.profile_context,
+            override_detected=state.last_override_detected,
+        )
+        route = infer_route(user_message, context)
+        decision = self._question_policy.choose(
+            context,
+            route,
+            self._candidate_facets(recommendations),
+            rounds_without_new_constraints=state.rounds_without_new_constraints,
+            other_used=state.other_used,
+        )
+        state.last_question_decision = decision
+        ask_attribute = decision.ask_attribute
+        if ask_attribute is not None:
+            if ask_attribute not in state.conversation_state.asked_attributes:
+                state.conversation_state.asked_attributes.append(ask_attribute)
+            if ask_attribute == "other":
+                state.other_used = True
+        state.last_asked_attribute = ask_attribute
+        return decision.message, ask_attribute
 
     def respond(
         self,
@@ -321,7 +425,7 @@ class Agent:
         state = self._sessions[session_id]
         self._update_state(state, user_message, turn)
         recommendations = self._rank(state, user_message, top_k)
-        message, ask_attribute = self._next_question(state, user_message, turn)
+        message, ask_attribute = self._next_question(state, user_message, recommendations)
         return {
             "message": message,
             "ask_attribute": ask_attribute,
