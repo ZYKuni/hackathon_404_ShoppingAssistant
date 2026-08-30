@@ -145,6 +145,14 @@ class ConstraintMatcherTests(unittest.TestCase):
         self.assertIs(cross.hard[0].state, MatchState.MISMATCH)
         self.assertTrue(cross.should_filter)
 
+    def test_same_family_long_tail_category_is_unknown(self):
+        product = normalize_product(raw_product(categories=[
+            "Clothing, Shoes & Jewelry", "Women", "Clothing", "Tanks & Camisoles"
+        ]))
+        result = self.matcher.evaluate(state(category="t_shirts"), product)
+        self.assertIs(result.hard[0].state, MatchState.UNKNOWN)
+        self.assertFalse(result.should_filter)
+
     def test_feature_match_is_non_decisive_for_filtering(self):
         result = self.matcher.evaluate(
             state(hard=(ConstraintTerm("feature", ("light weight",)),)), self.product
