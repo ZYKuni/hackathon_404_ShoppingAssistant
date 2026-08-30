@@ -5,7 +5,7 @@ from __future__ import annotations
 import math
 import re
 import time
-from dataclasses import dataclass, fields
+from dataclasses import dataclass, fields, replace
 from pathlib import Path
 from typing import Protocol
 
@@ -42,6 +42,7 @@ class RankerWeights:
     soft_match: float = 0.15
     popularity: float = 0.03
     profile_alignment: float = 0.03
+    semantic_similarity: float = 0.04
     violation_penalty: float = 0.80
 
     def __post_init__(self) -> None:
@@ -55,6 +56,10 @@ class RankerWeights:
 
 class ProductLookup(Protocol):
     def get(self, parent_asin: str) -> NormalizedProduct | None: ...
+
+
+class SemanticScorer(Protocol):
+    def score_many(self, query: str, parent_asins: tuple[str, ...]) -> dict[str, float]: ...
 
 
 def _tokens(text: str) -> tuple[str, ...]:
@@ -122,10 +127,18 @@ class LocalConstraintRanker:
         catalog: ProductLookup | None = None,
         matcher: ConstraintMatcher | None = None,
         weights: RankerWeights | None = None,
+        semantic_scorer: SemanticScorer | None = None,
+        semantic_top_n: int = 30,
     ) -> None:
         self.catalog = catalog or CatalogNormalizer.from_jsonl(catalog_path)
         self.matcher = matcher or ConstraintMatcher()
         self.weights = weights or RankerWeights()
+        if not 1 <= semantic_top_n <= 30:
+            raise ValueError("semantic_top_n must be between 1 and 30")
+        self.semantic_scorer = semantic_scorer
+        self.semantic_top_n = semantic_top_n
+        self.last_semantic_latency_ms = 0.0
+        self.last_semantic_fallback = False
 
     def rank(self, request: SearchRequest, pool: CandidatePool) -> RankingResult:
         if not isinstance(request, SearchRequest):
@@ -179,6 +192,34 @@ class LocalConstraintRanker:
             raise RankingError("ranking feature computation failed") from error
 
         ranked.sort(key=lambda item: (-item.final_score, item.parent_asin))
+        self.last_semantic_latency_ms = 0.0
+        self.last_semantic_fallback = False
+        if self.semantic_scorer is not None and ranked:
+            semantic_started = time.perf_counter()
+            top = ranked[: self.semantic_top_n]
+            try:
+                semantic_scores = self.semantic_scorer.score_many(
+                    request.raw_context.strip()
+                    or request.structured_query.strip()
+                    or request.current_message,
+                    tuple(item.parent_asin for item in top),
+                )
+                updated = []
+                for item in top:
+                    semantic = max(0.0, min(1.0, float(
+                        semantic_scores.get(item.parent_asin, 0.0)
+                    )))
+                    explanation = replace(item.explanation, semantic_similarity=semantic)
+                    updated.append(RankedCandidate(
+                        item.parent_asin, self._score(explanation), explanation
+                    ))
+                updated.sort(key=lambda item: (-item.final_score, item.parent_asin))
+                ranked = [*updated, *ranked[self.semantic_top_n :]]
+            except Exception:
+                self.last_semantic_fallback = True
+            self.last_semantic_latency_ms = (
+                time.perf_counter() - semantic_started
+            ) * 1000.0
         unknown_preserved = sum(
             evaluations[item.parent_asin].unknown_count > 0 for item in survivors
         )
@@ -267,6 +308,7 @@ class LocalConstraintRanker:
             + w.soft_match * value.soft_match
             + w.popularity * value.popularity
             + w.profile_alignment * value.profile_alignment
+            + w.semantic_similarity * value.semantic_similarity
             - w.violation_penalty * value.violation_penalty
         )
 

@@ -71,6 +71,15 @@ class AgentPipelineIntegrationTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             Agent(self.catalog_path, retriever=Retriever(), runtime_mode=RuntimeMode.OFFICIAL)
 
+    def test_semantic_rerank_is_explicitly_opt_in(self):
+        agent = Agent.with_local_pipeline(
+            self.catalog_path, enable_semantic_rerank=True
+        )
+        try:
+            self.assertIsNotNone(agent._orchestrator.ranker.semantic_scorer)
+        finally:
+            agent.connection.close()
+
 
 if __name__ == "__main__":
     unittest.main()

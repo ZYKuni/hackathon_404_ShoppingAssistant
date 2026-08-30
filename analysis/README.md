@@ -38,3 +38,14 @@ python3 analysis/integration_a5_benchmark.py
 ```
 
 The readable conclusions are recorded in `analysis/AARON_INTEGRATION_A5_REPORT.md`.
+
+## Vector retrieval and semantic Top-N ranking
+
+Run the Todo 4.4/4.6 fixed-pool ablation with:
+
+```bash
+python3 analysis/semantic_a6_benchmark.py
+```
+
+Results and the default-on/default-off decision are documented in
+`analysis/AARON_VECTOR_SEMANTIC_A6_REPORT.md`.

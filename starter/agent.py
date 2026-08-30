@@ -163,17 +163,23 @@ class Agent:
         catalog_path: str | Path = "data/catalog.jsonl",
         *,
         runtime_mode: RuntimeMode = RuntimeMode.OFFICIAL,
+        enable_semantic_rerank: bool = False,
     ) -> "Agent":
         """Build the formal Aaron retrieval/ranking pipeline behind the public API."""
         from starter.catalog_normalizer import CatalogNormalizer
         from starter.ranker import LocalConstraintRanker
         from starter.retrieval import HybridRetriever
+        from starter.vector_index import InMemoryTfidfIndex
 
         catalog = CatalogNormalizer.from_jsonl(catalog_path)
+        vector_index = InMemoryTfidfIndex(catalog_path)
         return cls(
             catalog_path,
-            retriever=HybridRetriever(catalog_path),
-            ranker=LocalConstraintRanker(catalog=catalog),
+            retriever=HybridRetriever(catalog_path, vector_backend=vector_index),
+            ranker=LocalConstraintRanker(
+                catalog=catalog,
+                semantic_scorer=vector_index if enable_semantic_rerank else None,
+            ),
             runtime_mode=runtime_mode,
         )
 

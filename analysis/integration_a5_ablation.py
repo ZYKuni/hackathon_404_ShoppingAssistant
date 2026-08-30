@@ -23,6 +23,7 @@ from evaluator.local_evaluator import (  # noqa: E402
     materialize_hidden_fields,
 )
 from starter.agent import Agent  # noqa: E402
+from starter.orchestrator import RuntimeMode  # noqa: E402
 
 
 ALPHAS = (0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0)
@@ -62,7 +63,9 @@ def main() -> None:
     catalog_path = "data/catalog.jsonl"
     samples = load_jsonl("data/public_set.jsonl")
     _, categories, products = catalog_index(catalog_path)
-    agent = Agent.with_local_pipeline(catalog_path)
+    # Development mode exposes the raw formal ranking. Official mode already
+    # applies guarded reranking and would otherwise blend the guard twice.
+    agent = Agent.with_local_pipeline(catalog_path, runtime_mode=RuntimeMode.DEVELOPMENT)
     rows_by_policy: dict[str, list[dict]] = {
         **{f"legacy_set_alpha_{alpha:.1f}": [] for alpha in ALPHAS},
         "formal": [],

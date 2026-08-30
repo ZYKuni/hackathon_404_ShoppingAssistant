@@ -18,6 +18,7 @@ from starter.retrieval import (
     POPULARITY_ROUTE,
     STRUCTURED_CONSTRAINT_ROUTE,
     USE_CASE_ROUTE,
+    VECTOR_SIMILARITY_ROUTE,
     HybridRetriever,
     RetrievalRouteError,
     SearchHit,
@@ -48,6 +49,29 @@ class FakeBackend:
 
     def popularity(self, limit):
         return self._popularity[:limit]
+
+    def category_key(self, parent_asin):
+        return "same" if parent_asin in {"P1", "P2"} else "other"
+
+
+class FakeVectorBackend:
+    def __init__(self, hits=(), error=None, categories=None):
+        self.hits = tuple(hits)
+        self.error = error
+        self.categories = categories or {}
+        self.calls = []
+
+    def search(self, query, limit):
+        self.calls.append(query)
+        if self.error:
+            raise self.error
+        return self.hits[:limit]
+
+    def score_many(self, query, parent_asins):
+        return {}
+
+    def category_key(self, parent_asin):
+        return self.categories.get(parent_asin, "unknown")
 
 
 def request(route=IntentRoute.BUYING, *, candidate_limit=200, empty=False):
@@ -84,8 +108,52 @@ class HybridRetrieverTests(unittest.TestCase):
         )
         self.assertEqual(
             {item.name for item in browsing},
-            {ACTIVE_CONTEXT_ROUTE, CURRENT_TURN_ROUTE, CATEGORY_ANCHOR_ROUTE, USE_CASE_ROUTE},
+            {
+                ACTIVE_CONTEXT_ROUTE, CURRENT_TURN_ROUTE, CATEGORY_ANCHOR_ROUTE,
+                USE_CASE_ROUTE, VECTOR_SIMILARITY_ROUTE,
+            },
         )
+
+    def test_browsing_uses_vector_route_and_buying_does_not(self):
+        vector = FakeVectorBackend((SearchHit("P3", 0.9),))
+        backend = FakeBackend({"lightweight running shoes": (SearchHit("P1"),)})
+        backend._valid_asins = frozenset({"P1", "P3"})
+        browsing = HybridRetriever(backend=backend, vector_backend=vector).retrieve(
+            request(IntentRoute.BROWSING)
+        )
+        p3 = next(item for item in browsing.candidates if item.parent_asin == "P3")
+        self.assertIn(VECTOR_SIMILARITY_ROUTE, {item.route_name for item in p3.evidence})
+        before = len(vector.calls)
+        HybridRetriever(backend=backend, vector_backend=vector).retrieve(
+            request(IntentRoute.BUYING)
+        )
+        self.assertEqual(len(vector.calls), before)
+
+    def test_vector_failure_falls_back_to_lexical_routes(self):
+        backend = FakeBackend({"lightweight running shoes": (SearchHit("P1"),)})
+        vector = FakeVectorBackend(error=ValueError("unavailable"))
+        result = HybridRetriever(backend=backend, vector_backend=vector).retrieve(
+            request(IntentRoute.BROWSING)
+        )
+        self.assertIn("P1", {item.parent_asin for item in result.candidates})
+
+    def test_browsing_diversity_reorders_without_changing_membership(self):
+        hits = tuple(SearchHit(f"P{i}") for i in range(1, 7))
+        backend = FakeBackend({"lightweight running shoes": hits})
+        backend._valid_asins = frozenset(item.parent_asin for item in hits)
+        vector = FakeVectorBackend(categories={
+            "P1": "shoe", "P2": "shoe", "P3": "shoe",
+            "P4": "boot", "P5": "dress", "P6": "hat",
+        })
+        result = HybridRetriever(
+            backend=backend,
+            vector_backend=vector,
+            diversity_window=6,
+            diversity_category_cap=1,
+        ).retrieve(request(IntentRoute.BROWSING, candidate_limit=6))
+        identifiers = [item.parent_asin for item in result.candidates]
+        self.assertEqual(set(identifiers), {item.parent_asin for item in hits})
+        self.assertLess(identifiers.index("P4"), identifiers.index("P2"))
 
     def test_rrf_evidence_merge_deduplication_and_rank(self):
         backend = FakeBackend({

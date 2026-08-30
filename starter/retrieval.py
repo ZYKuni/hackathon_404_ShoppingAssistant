@@ -23,6 +23,7 @@ from .pipeline_contracts import (
     RouteEvidence,
     SearchRequest,
 )
+from .vector_index import InMemoryTfidfIndex
 
 
 TOKEN_RE = re.compile(r"[a-z0-9]+", re.IGNORECASE)
@@ -38,6 +39,7 @@ CURRENT_TURN_ROUTE = "current_turn_bm25"
 CATEGORY_ANCHOR_ROUTE = "category_anchor_bm25"
 STRUCTURED_CONSTRAINT_ROUTE = "structured_constraint_bm25"
 USE_CASE_ROUTE = "use_case_bm25"
+VECTOR_SIMILARITY_ROUTE = "tfidf_vector_similarity"
 POPULARITY_ROUTE = "popularity_fallback"
 
 BUYING_ROUTE_WEIGHTS: Mapping[str, float] = {
@@ -52,6 +54,7 @@ BROWSING_ROUTE_WEIGHTS: Mapping[str, float] = {
     CURRENT_TURN_ROUTE: 0.55,
     CATEGORY_ANCHOR_ROUTE: 0.35,
     USE_CASE_ROUTE: 0.75,
+    VECTOR_SIMILARITY_ROUTE: 0.65,
 }
 
 
@@ -72,6 +75,14 @@ class SearchBackend(Protocol):
     def search(self, query: str, limit: int) -> Sequence[SearchHit]: ...
 
     def popularity(self, limit: int) -> Sequence[SearchHit]: ...
+
+
+class VectorBackend(Protocol):
+    def search(self, query: str, limit: int) -> Sequence[object]: ...
+
+    def score_many(self, query: str, parent_asins: Sequence[str]) -> dict[str, float]: ...
+
+    def category_key(self, parent_asin: str) -> str: ...
 
 
 def _text(value: object) -> str:
@@ -102,6 +113,7 @@ class SQLiteCatalogSearchIndex:
         self.connection = sqlite3.connect(":memory:")
         self._valid_asins: frozenset[str] = frozenset()
         self._popular: tuple[SearchHit, ...] = ()
+        self._category_keys: dict[str, str] = {}
         self._build()
 
     @property
@@ -135,6 +147,12 @@ class SQLiteCatalogSearchIndex:
                 if parent_asin in asins:
                     raise RetrievalError(f"duplicate parent_asin: {parent_asin}")
                 asins.add(parent_asin)
+                categories = product.get("categories") or []
+                category_values = categories if isinstance(categories, list) else [categories]
+                self._category_keys[parent_asin] = (
+                    str(category_values[-1]).split(",")[-1].strip().lower()
+                    if category_values else "unknown"
+                )
                 batch.append((
                     parent_asin,
                     _text(product.get("title")),
@@ -180,6 +198,9 @@ class SQLiteCatalogSearchIndex:
     def popularity(self, limit: int) -> Sequence[SearchHit]:
         return self._popular[:limit]
 
+    def category_key(self, parent_asin: str) -> str:
+        return self._category_keys.get(parent_asin, "unknown")
+
 
 @dataclass(frozen=True)
 class _RouteSpec:
@@ -196,16 +217,31 @@ class HybridRetriever:
         catalog_path: str | Path = "data/catalog.jsonl",
         *,
         backend: SearchBackend | None = None,
+        vector_backend: VectorBackend | None = None,
+        enable_vector: bool = True,
         per_route_limit: int = 120,
         rrf_k: float = 60.0,
+        diversity_window: int = 30,
+        diversity_category_cap: int = 4,
     ) -> None:
         if per_route_limit < 1:
             raise ValueError("per_route_limit must be positive")
         if rrf_k <= 0:
             raise ValueError("rrf_k must be positive")
+        if diversity_window < 0 or diversity_category_cap < 1:
+            raise ValueError("invalid diversity configuration")
         self.backend = backend or SQLiteCatalogSearchIndex(catalog_path)
+        self.vector_backend = vector_backend
+        if enable_vector and self.vector_backend is None and backend is None:
+            try:
+                self.vector_backend = InMemoryTfidfIndex(catalog_path)
+            except (OSError, ValueError, MemoryError):
+                # Lexical routes remain a complete offline fallback.
+                self.vector_backend = None
         self.per_route_limit = per_route_limit
         self.rrf_k = float(rrf_k)
+        self.diversity_window = diversity_window
+        self.diversity_category_cap = diversity_category_cap
 
     @staticmethod
     def _constraint_query(request: SearchRequest, field: str | None = None) -> str:
@@ -243,6 +279,7 @@ class HybridRetriever:
                     dict.fromkeys(value for value in (category, request.base_request) if value)
                 ),
                 USE_CASE_ROUTE: use_case or request.base_request,
+                VECTOR_SIMILARITY_ROUTE: active,
             }
             weights = BROWSING_ROUTE_WEIGHTS
         return tuple(_RouteSpec(name, queries[name], weight) for name, weight in weights.items())
@@ -264,14 +301,25 @@ class HybridRetriever:
 
         route_results: list[tuple[_RouteSpec, tuple[SearchHit, ...]]] = []
         failures = 0
+        attempts = 0
         for spec in nonempty_specs:
+            if spec.name == VECTOR_SIMILARITY_ROUTE and self.vector_backend is None:
+                continue
+            attempts += 1
             try:
-                hits = tuple(self.backend.search(spec.query, self.per_route_limit))
-            except RetrievalRouteError:
+                if spec.name == VECTOR_SIMILARITY_ROUTE:
+                    vector_hits = self.vector_backend.search(spec.query, self.per_route_limit)
+                    hits = tuple(
+                        SearchHit(str(item.parent_asin), float(item.score))
+                        for item in vector_hits
+                    )
+                else:
+                    hits = tuple(self.backend.search(spec.query, self.per_route_limit))
+            except Exception:
                 failures += 1
                 continue
             route_results.append((spec, hits))
-        if failures == len(nonempty_specs):
+        if attempts and failures == attempts:
             raise RetrievalError("all usable retrieval routes failed")
 
         scores: dict[str, float] = {}
@@ -297,12 +345,36 @@ class HybridRetriever:
                 Candidate(asin, tuple(evidence[asin]), scores[asin])
                 for asin in ordered_asins[:request.candidate_limit]
             )
+            if request.route_decision.route is IntentRoute.BROWSING:
+                candidates = self._diversify(candidates)
         return CandidatePool(
             candidates=candidates,
             requested_limit=request.candidate_limit,
             route=request.route_decision.route,
             retrieval_latency_ms=(time.perf_counter() - started) * 1000.0,
         )
+
+    def _diversify(self, candidates: tuple[Candidate, ...]) -> tuple[Candidate, ...]:
+        """Reorder a Top-N window without changing the CandidatePool membership."""
+        window_size = min(self.diversity_window, len(candidates))
+        if window_size < 2:
+            return candidates
+        category_key = getattr(self.vector_backend or self.backend, "category_key", None)
+        if not callable(category_key):
+            return candidates
+        head = list(candidates[:window_size])
+        selected: list[Candidate] = []
+        deferred: list[Candidate] = []
+        category_counts: dict[str, int] = {}
+        for candidate in head:
+            key = str(category_key(candidate.parent_asin))
+            if category_counts.get(key, 0) < self.diversity_category_cap:
+                selected.append(candidate)
+                category_counts[key] = category_counts.get(key, 0) + 1
+            else:
+                deferred.append(candidate)
+        selected.extend(deferred)
+        return tuple((*selected, *candidates[window_size:]))
 
     def _popularity_candidates(self, limit: int) -> tuple[Candidate, ...]:
         candidates: list[Candidate] = []
@@ -335,4 +407,5 @@ __all__ = [
     "STRUCTURED_CONSTRAINT_ROUTE",
     "SearchHit",
     "USE_CASE_ROUTE",
+    "VECTOR_SIMILARITY_ROUTE",
 ]

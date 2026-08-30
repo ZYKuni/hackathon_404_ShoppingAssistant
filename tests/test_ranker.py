@@ -149,6 +149,47 @@ class LocalConstraintRankerTests(unittest.TestCase):
         with self.assertRaisesRegex(RankingError, "route"):
             self.ranker.rank(request(), pool(("A_BLACK", 0.1), route=IntentRoute.BROWSING))
 
+    def test_semantic_scorer_reranks_only_configured_top_n(self):
+        class Scorer:
+            def __init__(self):
+                self.parent_asins = ()
+
+            def score_many(self, query, parent_asins):
+                self.parent_asins = parent_asins
+                return {"B_WHITE": 1.0, "A_BLACK": 0.0}
+
+        scorer = Scorer()
+        ranker = LocalConstraintRanker(
+            catalog=self.catalog,
+            semantic_scorer=scorer,
+            semantic_top_n=2,
+            weights=RankerWeights(semantic_similarity=2.0),
+        )
+        result = ranker.rank(
+            request(category=None),
+            pool(("A_BLACK", 0.5), ("B_WHITE", 0.49), ("C_UNKNOWN", 0.1)),
+        )
+        self.assertEqual(set(scorer.parent_asins), {"A_BLACK", "B_WHITE"})
+        self.assertEqual(result.candidates[0].parent_asin, "B_WHITE")
+        self.assertEqual(result.candidates[-1].parent_asin, "C_UNKNOWN")
+        self.assertEqual(result.candidates[0].explanation.semantic_similarity, 1.0)
+
+    def test_semantic_failure_uses_local_ranker_order(self):
+        class BrokenScorer:
+            def score_many(self, query, parent_asins):
+                raise ValueError("model unavailable")
+
+        ranker = LocalConstraintRanker(catalog=self.catalog, semantic_scorer=BrokenScorer())
+        result = ranker.rank(
+            request(category=None), pool(("A_BLACK", 0.5), ("B_WHITE", 0.4))
+        )
+        self.assertEqual(result.candidates[0].parent_asin, "A_BLACK")
+        self.assertTrue(ranker.last_semantic_fallback)
+
+    def test_semantic_top_n_is_capped_at_thirty(self):
+        with self.assertRaises(ValueError):
+            LocalConstraintRanker(catalog=self.catalog, semantic_top_n=31)
+
 
 if __name__ == "__main__":
     unittest.main()
