@@ -47,7 +47,7 @@ class AgentPipelineIntegrationTests(unittest.TestCase):
         self.temporary_directory.cleanup()
 
     def test_local_pipeline_preserves_public_api_and_session_reset(self):
-        agent = Agent.with_local_pipeline(self.catalog_path)
+        agent = Agent(self.catalog_path)
         try:
             agent.reset("session", {"preference_tags": ["comfort"]})
             response = agent.respond(
@@ -56,12 +56,30 @@ class AgentPipelineIntegrationTests(unittest.TestCase):
             self.assertEqual(response["recommendations"][0]["parent_asin"], "SHOE_BLUE")
             self.assertEqual(response["usage"], {"prompt_tokens": 0, "completion_tokens": 0})
             self.assertEqual(agent.pipeline_fallbacks("session"), ())
+            self.assertIs(agent._orchestrator.retriever.backend, agent._search_backend)
+
+            agent.reset("broad", {})
+            message, attribute = agent._next_question(
+                agent._sessions["broad"], "show me options", 1, over_general=True
+            )
+            self.assertEqual(attribute, "material")
+            self.assertIn("broad set", message)
 
             agent.reset("session", {})
             self.assertEqual(agent._sessions["session"].active_messages, [])
             self.assertEqual(agent.pipeline_fallbacks("session"), ())
         finally:
             agent.connection.close()
+
+    def test_compatibility_constructor_and_explicit_legacy_mode(self):
+        formal = Agent.with_local_pipeline(self.catalog_path)
+        legacy = Agent.legacy(self.catalog_path)
+        try:
+            self.assertIsNotNone(formal._orchestrator)
+            self.assertIsNone(legacy._orchestrator)
+        finally:
+            formal.connection.close()
+            legacy.connection.close()
 
     def test_dependency_pair_is_atomic(self):
         class Retriever:

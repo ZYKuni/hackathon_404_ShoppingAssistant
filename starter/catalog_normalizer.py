@@ -118,20 +118,37 @@ def _add(
 
 
 @lru_cache(maxsize=None)
-def _phrase_pattern(alias: str) -> re.Pattern[str]:
-    # Treat spaces/hyphens/underscores as equivalent and enforce token boundaries;
-    # this keeps "leather" from matching inside "faux leather" via substring logic.
-    words = [re.escape(word) for word in normalize_phrase(alias).split()]
-    return re.compile(r"(?<![a-z0-9])" + r"[\s_-]+".join(words) + r"(?![a-z0-9])", re.I)
+def _alias_matcher(
+    entries: tuple[tuple[str, str], ...],
+) -> tuple[re.Pattern[str], Mapping[str, str]]:
+    """Compile one longest-first matcher instead of scanning once per alias."""
+    canonical_by_phrase: dict[str, str] = {}
+    alternatives: list[str] = []
+    for alias, canonical in sorted(entries, key=lambda item: len(item[0]), reverse=True):
+        normalized = normalize_phrase(alias)
+        if not normalized or normalized in canonical_by_phrase:
+            continue
+        canonical_by_phrase[normalized] = canonical
+        words = [re.escape(word) for word in normalized.split()]
+        alternatives.append(r"[\s_-]+".join(words))
+    if not alternatives:
+        return re.compile(r"(?!x)x"), canonical_by_phrase
+    pattern = re.compile(
+        r"(?<![a-z0-9])(?:" + "|".join(alternatives) + r")(?![a-z0-9])",
+        re.I,
+    )
+    return pattern, canonical_by_phrase
 
 
 def _known_values(texts: Iterable[object], aliases: Mapping[str, str]) -> set[str]:
     joined = " \n ".join(str(text) for text in texts if text)
-    found: set[str] = set()
-    # Longest aliases first allows the compound-material guard below.
-    for alias in sorted(aliases, key=len, reverse=True):
-        if _phrase_pattern(alias).search(joined):
-            found.add(aliases[alias])
+    if not joined:
+        return set()
+    matcher, canonical_by_phrase = _alias_matcher(tuple(aliases.items()))
+    found = {
+        canonical_by_phrase[normalize_phrase(match.group(0))]
+        for match in matcher.finditer(joined)
+    }
     if "faux_leather" in found:
         # A compound phrase is evidence for faux leather, not genuine leather.
         without_compounds = re.sub(

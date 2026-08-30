@@ -12,8 +12,9 @@ import re
 import sqlite3
 import time
 from dataclasses import dataclass
+from functools import lru_cache
 from pathlib import Path
-from typing import Mapping, Protocol, Sequence
+from typing import AbstractSet, Mapping, Protocol, Sequence
 
 from .pipeline_contracts import (
     Candidate,
@@ -167,10 +168,47 @@ class SQLiteCatalogSearchIndex:
         if not terms:
             return ()
         expression = " OR ".join(f'"{term}"' for term in terms)
+        return self._search_expression(expression, int(limit))
+
+    @lru_cache(maxsize=8192)
+    def _search_expression(self, expression: str, limit: int) -> tuple[SearchHit, ...]:
+        """Cache deterministic searches against the frozen in-memory catalog."""
         try:
             rows = self.connection.execute(
                 "SELECT parent_asin, bm25(products, 0.0, 6.0, 4.0, 2.5, 2.5, 1.5, 1.0) "
                 "FROM products WHERE products MATCH ? ORDER BY 2, parent_asin LIMIT ?",
+                (expression, limit),
+            ).fetchall()
+        except sqlite3.Error as error:
+            raise RetrievalRouteError(str(error)) from error
+        return tuple(SearchHit(str(row[0]), float(row[1])) for row in rows)
+
+    def search_legacy(
+        self,
+        query: str,
+        limit: int,
+        *,
+        stopwords: AbstractSet[str] = frozenset(STOPWORDS),
+    ) -> Sequence[SearchHit]:
+        """Preserve the published Legacy BM25 ordering for guarded Top-K recall."""
+        terms = tuple(dict.fromkeys(
+            token.lower()
+            for token in TOKEN_RE.findall(query)
+            if len(token) > 1 and token.lower() not in stopwords
+        ))[:60]
+        if not terms:
+            return ()
+        expression = " OR ".join(f'"{term}"' for term in terms)
+        return self._search_legacy_expression(expression, int(limit))
+
+    @lru_cache(maxsize=8192)
+    def _search_legacy_expression(
+        self, expression: str, limit: int
+    ) -> tuple[SearchHit, ...]:
+        try:
+            rows = self.connection.execute(
+                "SELECT parent_asin, bm25(products, 0.0, 6.0, 4.0, 2.5, 2.5, 1.5, 1.0) "
+                "FROM products WHERE products MATCH ? ORDER BY 2 LIMIT ?",
                 (expression, limit),
             ).fetchall()
         except sqlite3.Error as error:

@@ -1,273 +1,84 @@
-# Shopping Copilot 当前工作进度
+# Shopping Copilot current progress
 
-> 更新时间：2026-08-29
->
-> 当前分支：`feature/ykzhao0829`
-> 本文用于帮助团队成员快速理解已完成内容、设计约定和下一步接口。
+> Updated: 2026-08-31
+> Branch: `feature/ykzhao0829_02`
 
-## 总览
+## Current status
 
-目前完成了三个基础步骤：
+The required offline MVP pipeline is integrated behind the organizer's default
+construction path, `Agent(catalog_path)`. The previously duplicated merge
+fragments in Agent, router, orchestrator, state adapter, and their tests were
+removed. The implementation now compiles, passes 93 tests, and completes the
+unchanged 200-session public evaluator.
 
-1. **第一步：补全可运行的 `agent.py` 基线**——建立离线、多轮、可评测的 BM25 Agent。
-2. **第二步：冻结结构化对话状态协议**——定义 State、StatePatch、共享词典、合并规则和 30 条黄金案例。
-3. **第三步：接入确定性解析与结构化状态**——每轮执行 Parser → StatePatch → reducer，并保留开放词汇 raw evidence。
+| Metric | Current formal Agent |
+| --- | ---: |
+| Hit Rate@10 | 0.855000 |
+| MRR | 0.495175 |
+| MTTC | 4.745 |
+| Technical Score | 0.701152 |
 
-结构化状态已经接入 `agent.py` 的响应路径。现阶段 raw evidence 仍是 BM25 的权威输入，结构化状态负责约束语义、无偏好、已询问字段和 Intent Override 清理；商品侧标准化完成后再用于确定性过滤与重排。
+## Completed MVP layers
 
----
+1. Deterministic natural-language parser to `StatePatch`.
+2. Immutable reducer semantics and 30 golden state transitions.
+3. Per-session memory, no-preference handling, and category/constraint override.
+4. Product normalization for category, price, audience, color, material, brand,
+   style, use case, feature, and open-vocabulary text.
+5. Hard-constraint three-state matcher (`match`, `mismatch`, `unknown`).
+6. Explainable Buying/Browsing route selection.
+7. Multi-route in-memory BM25 retrieval and weighted RRF Top-200 fusion.
+8. Local structured ranker with constraint, profile, route, and popularity features.
+9. Official guarded Top-10 rerank, deterministic fallback, and overload prompt.
+10. Setup README, short submission report, checklist, and runnable multi-turn demo.
 
-## 第一步：可运行的 Agent 基线
+## Important implementation decision
 
-主要文件：`starter/agent.py`
+The formal ranker does not replace the validated lexical candidate set in
+Official mode. It reorders the same Top 10 at weight 0.4. This retains Hit@10
+and MTTC while improving MRR. Development mode can expose formal retrieval or
+ranking failures directly; Official mode records and applies safe fallbacks.
 
-当前实现包括：
+The shared SQLite index must keep two tokenization policies: the formal routes
+use their compact search stopword set, while the guarded Legacy path uses its
+conversation-specific stopwords. Accidentally sharing the former reduced
+Hit@10 from 0.855 to 0.795 and is now regression-tested.
 
-- SQLite FTS5 + BM25 商品检索；
-- title、categories、features、details、store、description 分字段加权；
-- Porter stemming；
-- 每个 session 独立的多轮消息记忆；
-- 主动询问 material、feature、color、style、size、use_case、budget、brand；
-- 忽略“没有偏好”等无效检索文本；
-- 识别简单的意图覆盖；
-- 当前消息、累计消息和类别锚点的 RRF 融合；
-- 空查询热门商品 fallback；
-- 完全离线，无 LLM、无 API Key、token 成本为 0。
+## Remaining work, ordered by release priority
 
-当前本地 `results.json` 记录的公开集结果：
+### P0 — human release gates
 
-| 指标 | 当前结果 |
-|---|---:|
-| Hit Rate@10 | 0.840000 |
-| MRR | 0.476401 |
-| MTTC | 4.885 |
-| Technical Score | 0.685220 |
+- Confirm team names/contributions in `SUBMISSION_REPORT.md`.
+- Confirm portal-specific archive name, repository URL, and video requirements.
+- Produce a clean archive and test it without the untracked catalog/results.
+- Record the demo if the organizer expects a video rather than a live command.
 
-以上是公开 200 会话上的开发结果，不代表隐藏 800 会话的最终成绩。
+### P1 — robustness before hidden evaluation
 
----
+- Add more long-tail category/material/color aliases from error analysis only.
+- Add category-aware size normalization.
+- Benchmark the archive under the organizer's actual CPU/memory timeout.
+- Run several deterministic reruns and record checksums for release artifacts.
 
-## 第二步：结构化对话状态协议
+### P2 — post-MVP experiments
 
-### 目标
+- Package an optional offline neural/LLM semantic reranker and compare it by
+  ablation; it must never reduce the guarded candidate set or become an
+  undeclared network dependency.
+- Replace fixed question priority only if a candidate-distribution/value-of-
+  information policy beats the public and adversarial regression suites.
+- Cache a versioned normalized-catalog artifact if the rules permit small local
+  assets; observed cold initialization is approximately 28–40 seconds.
 
-第二步解决的问题不是“怎样自动理解用户”，而是先定义：
-
-> 给定上一轮 State 和本轮 StatePatch，什么才是唯一、正确、可测试的新 State。
-
-后续无论采用正则、LLM 还是小模型解析用户消息，都必须生成同一种 StatePatch，并通过相同的黄金案例。
-
-### 新增文件
-
-| 文件 | 作用 |
-|---|---|
-| `starter/conversation_state.py` | State、Patch、操作类型和确定性合并逻辑 |
-| `starter/attribute_lexicons.py` | 对话端和商品清洗端共用的标准值及别名 |
-| `starter/state_patch_cases.jsonl` | 30 条人工标注的黄金状态更新案例 |
-| `tests/test_conversation_state.py` | 黄金案例和边界语义的自动化测试 |
-| `starter/PROJECT_PROGRESS.md` | 当前工作说明与团队交接文档 |
-
-### ConversationState v0.1.0
-
-状态包含：
-
-```json
-{
-  "schema_version": "0.1.0",
-  "category": "running_shoes",
-  "hard_constraints": {
-    "audience": ["women"],
-    "price_max": 120
-  },
-  "soft_preferences": {
-    "feature": ["lightweight"]
-  },
-  "excluded": {
-    "color": ["white"]
-  },
-  "no_preference": [],
-  "asked_attributes": [],
-  "turn": 1
-}
-```
-
-当前允许的内部字段：
-
-```text
-category
-audience
-price_min
-price_max
-color
-material
-brand
-size
-style
-use_case
-feature
-```
-
-其中：
-
-- 单值字段：category、price_min、price_max；
-- 多值字段：audience、color、material、brand、size、style、use_case、feature；
-- category、audience、price、size 默认是硬约束；
-- color、material、brand、style、use_case、feature 默认是软偏好；
-- 用户语言中的 `must`、`only` 等强表达可以覆盖默认强度。
-
-### StatePatch
-
-Patch 只描述本轮发生的变化，不直接重写整个 State。
-
-支持的操作：
-
-| 操作 | 语义 |
-|---|---|
-| `set` | 设置或覆盖字段 |
-| `add` | 向多值字段追加可接受值 |
-| `replace` | 明确替换字段全部旧值 |
-| `remove` | 移除一个正向值 |
-| `clear` | 清空字段，但不声明用户无偏好 |
-| `exclude` | 添加明确排除值 |
-| `allow` | 撤销一个排除值，但不创建正向偏好 |
-| `set_no_preference` | 清空正向偏好并记录无需继续追问 |
-| `reset_scope` | 清空整个 session 的商品级条件 |
-
-示例：
-
-```json
-{
-  "source_turn": 2,
-  "operations": [
-    {
-      "op": "replace",
-      "field": "price_max",
-      "value": 150,
-      "strength": "hard"
-    },
-    {
-      "op": "exclude",
-      "field": "color",
-      "value": "white"
-    }
-  ]
-}
-```
-
-### 已冻结的合并语义
-
-1. **最新明确单值覆盖旧值**：预算 100 改成 150 后只保留 150。
-2. **`add` 累积多值偏好**：black 后补充 blue，结果为 `[black, blue]`。
-3. **`replace` 完整替换字段**：blue instead of black 后只保留 blue。
-4. **硬约束优先**：同一值从 soft 升级为 hard 时，从 soft 中移除。
-5. **否定独立存储**：`not white` 保存为 `excluded.color=[white]`。
-6. **排除覆盖正向冲突**：先喜欢 white、后来明确不要 white，最终只保留排除。
-7. **unknown 不等于 no preference**：后者表示已确认无需继续询问。
-8. **无偏好可与排除共存**：任意颜色都可以，但不能是白色。
-9. **类别变化自动清空商品级条件**：防止鞋的尺码、材质污染夹克意图。
-10. **同义类别不触发重置**：`road running` 与 `running shoes` 都归一为 `running_shoes`。
-11. **冲突预算采用最新值**：原有最低 100，后来要求最高 80，则清除旧最低价。
-12. **Patch 合并不修改输入 State**：`apply_patch` 返回新状态，便于回放和调试。
-
-### 共享词典
-
-`attribute_lexicons.py` 是对话解析与商品清洗的唯一共享词典来源。目前包含：
-
-- audience 别名：womens、women's、ladies → women；
-- color 别名：grey → gray，multi/multicoloured → multicolor；
-- material 别名：poly → polyester，faux leather 与 leather 分开；
-- category 别名：road running → running_shoes，trainers → sneakers；
-- use_case 别名：walk → walking，workout → gym；
-- feature 别名：water proof → waterproof，light weight → lightweight；
-- 内部字段到官方 `ask_attribute` 的映射。
-
-未知开放词汇不会被静默删除，而是经过基础标准化后保留。当前词典是 MVP v0.1，不是完整 Amazon 类目词典。
-
-### 30 条黄金案例
-
-`state_patch_cases.jsonl` 每行包含：
-
-```text
-case_id
-scenario
-previous_state
-user_message
-人工标注 patch
-expected_state
-reason
-```
-
-覆盖范围：
-
-- 单轮明确购买；
-- 模糊浏览与多轮累积；
-- 硬约束和软偏好；
-- 颜色、材质等否定条件；
-- 单字段覆盖；
-- 完整类别切换；
-- 无偏好与 Boundary；
-- 正向偏好和排除冲突；
-- 预算上下界冲突；
-- 同义词标准化。
-
-这些案例目前验证的是“Patch 合并是否正确”。自然语言到 Patch 的自动抽取器尚未实现；实现后应新增测试，比较模型/规则输出与案例中的人工 Patch。
-
----
-
-## 如何运行验证
-
-在仓库根目录运行：
+## Reproduce
 
 ```bash
-python3 -m compileall -q starter tests evaluator
-python3 -m unittest discover -v
+python -m compileall -q starter tests evaluator analysis demo_session.py
+python -m unittest discover -s tests -v
+python -m evaluator.local_evaluator --output results.json
+python demo_session.py --catalog data/catalog.jsonl
+git diff --check
 ```
 
-完整公开集评测：
-
-```bash
-python3 -m evaluator.local_evaluator
-```
-
-验收要求：
-
-- 30 条黄金案例全部通过；
-- 原 Agent 和 evaluator 测试不能回归；
-- `apply_patch` 不修改 previous state；
-- 非法字段、非法置信度和非法操作必须抛出异常；
-- 50,000 商品和 evaluator 文件不得被修改。
-
----
-
-## 当前边界与未完成内容
-
-当前仍未完成以下内容：
-
-- 尚未实现商品侧共享字段清洗；
-- 尚未将 hard constraints 接入确定性过滤；
-- 尚未根据候选不确定性动态选择澄清问题；
-- category 词典只覆盖一部分高频类别；
-- size 仍是开放文本，没有按鞋、服装、珠宝分别解释。
-
----
-
-## 建议的下一步
-
-下一步应推进商品侧标准化和检索接入：
-
-1. **Catalog Normalizer**：商品端导入同一个 `attribute_lexicons.py`，输出 category、audience、price、color、material、brand 等标准值和置信度。
-2. **Constraint-aware retrieval**：BM25 先召回 Top 200，再执行 hard constraint 三态过滤和 soft preference 重排序。
-
-目标链路：
-
-```text
-user_message
-→ StatePatch
-→ ConversationState
-→ BM25 Top 200
-→ hard constraint 三态过滤
-→ soft preference 重排序
-→ Top 10
-```
-
-接入时必须做消融评估，确认结构化状态没有降低 Candidate Recall 和现有 Hit Rate@10。
+The catalog and evaluator remain frozen. Ground truth is used only by the
+evaluator and offline metrics, never in runtime ranking features.

@@ -1,0 +1,1 @@
+# No third-party runtime dependencies. Requires CPython >=3.10 with SQLite FTS5.
