@@ -1,0 +1,226 @@
+{
+  "scenario": "women's running shoes -> clarification -> new information -> waterproof winter boots",
+  "profile_is_low_weight_only": true,
+  "turns": [
+    {
+      "turn": 1,
+      "input": "I need women's running shoes under $120 and prefer lightweight options.",
+      "state": {
+        "schema_version": "0.1.0",
+        "category": "running_shoes",
+        "hard_constraints": {
+          "price_max": 120,
+          "audience": [
+            "women"
+          ]
+        },
+        "soft_preferences": {
+          "feature": [
+            "lightweight"
+          ]
+        },
+        "asked_attributes": [
+          "material"
+        ],
+        "turn": 1
+      },
+      "decision": {
+        "ask_attribute": "material",
+        "question": "Do you have a preferred material?"
+      },
+      "top3": [
+        {
+          "parent_asin": "B019U4TS5Y",
+          "title": "Feetures - Elite Ultra Light - No Show Tab - Athletic Running Socks for Men and Women",
+          "score": 0.040983606557377046
+        },
+        {
+          "parent_asin": "B079JJD1QQ",
+          "title": "Men's Short/Long Sleeve Cycling Jersey Full Zip Moisture Wicking, Breathable Running Top - Bike Shirt",
+          "score": 0.04032258064516128
+        },
+        {
+          "parent_asin": "B07P42PNVW",
+          "title": "MANCYFIT Thermal Underwear for Women Long Johns Set Fleece Lined Ultra Soft 2 Pack White x2 Small",
+          "score": 0.03968253968253968
+        }
+      ]
+    },
+    {
+      "turn": 2,
+      "input": "Mesh would be ideal.",
+      "state": {
+        "schema_version": "0.1.0",
+        "category": "running_shoes",
+        "hard_constraints": {
+          "price_max": 120,
+          "audience": [
+            "women"
+          ]
+        },
+        "soft_preferences": {
+          "feature": [
+            "lightweight"
+          ],
+          "material": [
+            "mesh"
+          ]
+        },
+        "asked_attributes": [
+          "material",
+          "feature"
+        ],
+        "turn": 2
+      },
+      "decision": {
+        "ask_attribute": "feature",
+        "question": "Which product feature matters most to you?"
+      },
+      "top3": [
+        {
+          "parent_asin": "B08THB3STJ",
+          "title": "WYSBAOSHU Boys Girls Shoes Kids Tennis Running Sneakers Lightweight Mesh Breathable Athletic Shoes",
+          "score": 0.0347041847041847
+        },
+        {
+          "parent_asin": "B08TH9TRQX",
+          "title": "WYSBAOSHU Boys Girls Shoes Kids Tennis Running Sneakers Lightweight Mesh Breathable Athletic Shoes",
+          "score": 0.0341767723880597
+        },
+        {
+          "parent_asin": "B08L9DLPS9",
+          "title": "Workout Tank Tops for Women Mesh Racerback Base Layer Running Yoga Tops Sleeveless Athletic Shirts",
+          "score": 0.03340643274853801
+        }
+      ]
+    },
+    {
+      "turn": 3,
+      "input": "Actually, ignore my earlier preference. What I need is waterproof winter boots under $180.",
+      "route": "buying",
+      "state": {
+        "schema_version": "0.1.0",
+        "category": "winter_boots",
+        "hard_constraints": {
+          "price_max": 180,
+          "feature": [
+            "waterproof"
+          ]
+        },
+        "asked_attributes": [
+          "material"
+        ],
+        "turn": 3
+      },
+      "overridden_slots": {
+        "category": {
+          "before": "running_shoes",
+          "after": "winter_boots"
+        },
+        "price_max": {
+          "before": 120,
+          "after": 180
+        },
+        "feature": {
+          "before": [
+            "lightweight"
+          ],
+          "after": [
+            "waterproof"
+          ]
+        },
+        "audience": {
+          "before": [
+            "women"
+          ],
+          "after": null
+        },
+        "material": {
+          "before": [
+            "mesh"
+          ],
+          "after": null
+        }
+      },
+      "decision": {
+        "ask_attribute": "material",
+        "question": "Do you have a preferred material?",
+        "reason": "Highest candidate-aware value: diversity \u00d7 coverage \u00d7 route relevance \u00d7 expected reduction",
+        "score_order": [
+          {
+            "attribute": "material",
+            "value": 0.645802
+          },
+          {
+            "attribute": "size",
+            "value": 0.44
+          },
+          {
+            "attribute": "use_case",
+            "value": 0.348986
+          },
+          {
+            "attribute": "color",
+            "value": 0.285
+          },
+          {
+            "attribute": "brand",
+            "value": 0.27576
+          },
+          {
+            "attribute": "style",
+            "value": 0.0
+          }
+        ]
+      },
+      "top3": [
+        {
+          "parent_asin": "B07YR7GCSG",
+          "title": "Rey Misterio Lycra Lucha Libre Luchador Wrestling Masks Adult Size (Choose Color)",
+          "score": 0.04091750396615547
+        },
+        {
+          "parent_asin": "B09JG9X6LF",
+          "title": "ELESOL Womens Sweaters V-Neck Long Sleeve Side Slit Sweatershirt with Drawstring Hood Casual Knit Pullover Sweater S-XXL",
+          "score": 0.03986175115207373
+        },
+        {
+          "parent_asin": "B08YJ9W4T4",
+          "title": "RRLOM Men's Soft Toe Work Boots Waterproof Leather Nubuck Non-Slip Work Boots Construction Oil Resistant Full Grain Rubber Sole",
+          "score": 0.03571428571428571
+        }
+      ],
+      "demo_target": {
+        "parent_asin": "B08YJ9W4T4",
+        "rank": 3
+      }
+    }
+  ],
+  "retrieval_routes": [
+    {
+      "name": "current_scope",
+      "weight": 1.4
+    },
+    {
+      "name": "latest_message",
+      "weight": 0.85
+    },
+    {
+      "name": "category_anchor",
+      "weight": 0.25
+    }
+  ],
+  "candidate_pool_change": {
+    "top10_overlap": 0,
+    "top10_new_after_override": 10
+  },
+  "fallback_triggered": false,
+  "checks": {
+    "category_changed_to_boots": true,
+    "old_lightweight_removed": true,
+    "old_material_removed": true,
+    "override_dynamic_question_has_reason": true,
+    "target_reaches_top3": true,
+    "target_was_not_in_pre_override_top10": true
+  }
+}

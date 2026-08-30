@@ -2,8 +2,10 @@
 
 ## Outcome
 
-This branch implements the P0 Question Policy and context boundary without
-silently promoting an experiment that regresses the current public baseline.
+This branch implements and tunes the P0 Question Policy and context boundary.
+The tuned dynamic experiment now improves public Hit@10, MRR, and Technical
+Score; the safe mode remains the default until MTTC and cross-validation meet
+the full promotion gate.
 
 Delivered files:
 
@@ -11,7 +13,9 @@ Delivered files:
 - `starter/context_distillation.py`: separate short-term state and low-weight long-term profile context;
 - `starter/question_policy_cases.jsonl`: 20 hand-authored golden cases;
 - `tests/test_question_policy.py`: policy, context, boundary, override, and Agent integration tests;
-- `analysis/question_policy_ablation.py`: reproducible fixed/dynamic and profile on/off evaluation runner.
+- `analysis/question_policy_ablation.py`: reproducible fixed/dynamic and profile on/off evaluation runner;
+- `analysis/question_policy_trace.py`: exact per-session question order, reason, score, and rank trace;
+- `analysis/question_policy_demo.py`: reproducible running-shoes-to-winter-boots Override demo.
 
 ## Candidate-aware policy
 
@@ -69,11 +73,17 @@ The free-form profile `summary` is deliberately excluded. Long-term context:
 |---|---|---|
 | `safe` | Current validated fixed question order | Default production behavior |
 | `fixed` | Explicit fixed-order ablation | Baseline reproduction |
-| `dynamic` | Candidate-aware policy | Experiments and targeted QA |
+| `dynamic` | Candidate-aware policy with conservative explicit-Buying guard | Experiments and targeted QA |
 
-`safe` remains the default because the current dynamic experiment regresses the
-overall public baseline. The implementation is ready for further tuning and
-integration with the team's normalized Top-200 candidate pool and frozen router.
+Explicit Buying keeps the validated order until the normalized Top-200 pool can
+provide reliable hard-conflict signals. Browsing and Override use candidate-aware
+scores. Long-tail category evidence prevents semantically repeated category
+questions, and the first customer request no longer counts as an ineffective
+reply toward the one-time `other` trigger.
+
+`safe` remains the default because dynamic MTTC is still `0.045` turns above the
+main baseline and above the Todo target of `4.0`. Hit@10, MRR, and Technical
+Score now pass their non-regression gate.
 
 ## Public-set ablation
 
@@ -83,20 +93,23 @@ dependency was added.
 | Policy | Profile | Hit@10 | MRR | MTTC | Technical score |
 |---|---|---:|---:|---:|---:|
 | Main baseline / `safe` | on | 0.840 | 0.476401 | 4.885 | 0.685220 |
-| Full dynamic | on | 0.835 | 0.466712 | 5.045 | 0.676614 |
-| Full dynamic | off | 0.835 | 0.466712 | 5.050 | 0.676514 |
+| Tuned dynamic | on | 0.855 | 0.484141 | 4.930 | 0.694142 |
+| Tuned dynamic | off | 0.855 | 0.480808 | 4.915 | 0.693442 |
 
-The dynamic experiment produced one useful stratified signal:
+Relative to `safe`, tuned dynamic changes Hit@10 by `+0.015`, MRR by
+`+0.007740`, and Technical Score by `+0.008922`; MTTC is `+0.045` turns slower.
+Profile on/off keeps Hit identical and changes MRR by only `0.003333`, consistent
+with the profile's deliberately low-weight role.
 
-| Intent Override metric | Main baseline | Full dynamic |
-|---|---:|---:|
-| Hit@10 | 0.666667 | 0.866667 |
-| MRR | 0.419537 | 0.433095 |
-| MTTC | 6.700 | 6.000 |
+| Scenario (dynamic on) | Hit@10 | MRR | MTTC |
+|---|---:|---:|---:|
+| Boundary | 0.800000 | 0.750000 | 6.600000 |
+| Browsing | 0.850000 | 0.479673 | 4.300000 |
+| Buying | 0.887500 | 0.491533 | 4.925000 |
+| Intent Override | 0.800000 | 0.387725 | 6.066667 |
 
-This is promising but insufficient to promote the policy because overall
-Browsing and Boundary results regress. The correct next action is stratified
-tuning, not public-set-only question-order selection.
+Overall promotion is still blocked by MTTC and the need for validation beyond
+the public set, not by Hit/MRR regression.
 
 ## Golden QA coverage
 
@@ -122,7 +135,14 @@ python3 -m analysis.question_policy_ablation \
   --mode dynamic --profile on --output results_question_dynamic.json
 python3 -m analysis.question_policy_ablation \
   --mode dynamic --profile off --output results_question_dynamic_profile_off.json
+python3 -m analysis.question_policy_trace \
+  --mode dynamic --sample-id public_0001 --output question_trace.json
+python3 -m analysis.question_policy_demo
 ```
+
+The demo output records state before/after Override, cleared/replaced slots,
+three retrieval routes, Top-10 pool change, exact question reason, and a real
+waterproof boot target reaching rank 3. All six demo checks must pass.
 
 ## Known risks and next integration points
 
@@ -131,4 +151,4 @@ python3 -m analysis.question_policy_ablation \
 - Dynamic facet extraction adds latency and should be cached or supplied by the normalizer.
 - Brand evidence currently uses `store` as a weak signal and must not be treated as ground truth.
 - Price is not present in the FTS row, so candidate-aware budget value is limited until catalog normalization lands.
-- Dynamic promotion requires overall Hit/MRR non-regression, Boundary loop checks, and cross-validation beyond the public set.
+- Dynamic promotion still requires MTTC optimization toward `<= 4.0`, the normalized candidate pool, and cross-validation beyond the public set.

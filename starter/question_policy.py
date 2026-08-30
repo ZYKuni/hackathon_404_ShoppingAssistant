@@ -43,13 +43,16 @@ QUESTION_TEXT = {
 ROUTE_RELEVANCE = {
     IntentRoute.BUYING: {
         "budget": 1.30,
-        "size": 1.25,
+        # Size extraction from free-form catalog copy is noisy (model numbers,
+        # pack counts, and measurements); require stronger differentiation.
+        "size": 0.55,
         "material": 1.15,
         "feature": 1.05,
         "color": 0.95,
         "style": 0.85,
         "use_case": 0.75,
-        "brand": 0.65,
+        # ``store`` is only a weak brand proxy until catalog normalization lands.
+        "brand": 0.35,
     },
     IntentRoute.BROWSING: {
         "use_case": 1.35,
@@ -58,8 +61,8 @@ ROUTE_RELEVANCE = {
         "material": 1.00,
         "color": 0.90,
         "budget": 0.80,
-        "size": 0.70,
-        "brand": 0.60,
+        "size": 0.35,
+        "brand": 0.30,
     },
 }
 
@@ -90,7 +93,7 @@ BROWSING_RE = re.compile(
     re.IGNORECASE,
 )
 BUYING_RE = re.compile(
-    r"\b(?:must|need|require|only|under|below|up to|size|budget|exactly)\b|\$\s*\d",
+    r"\b(?:must|need|require|only|under|below|up to|size|budget|exactly|key requirement)\b|\$\s*\d",
     re.IGNORECASE,
 )
 
@@ -222,6 +225,7 @@ class QuestionPolicy:
         *,
         rounds_without_new_constraints: int = 0,
         other_used: bool = False,
+        category_evidence: bool = False,
     ) -> QuestionDecision:
         short_term = context.short_term
         if short_term.turn >= 10:
@@ -233,7 +237,7 @@ class QuestionPolicy:
 
         blocked = set(short_term.asked_attributes) | set(short_term.no_preference)
         known = set(short_term.known_ask_attributes)
-        if not short_term.category and "category" not in blocked:
+        if not short_term.category and not category_evidence and "category" not in blocked:
             return QuestionDecision(
                 ask_attribute="category",
                 message=QUESTION_TEXT["category"],

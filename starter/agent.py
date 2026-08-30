@@ -122,6 +122,7 @@ class SessionState:
     rounds_without_new_constraints: int = 0
     other_used: bool = False
     last_override_detected: bool = False
+    override_active: bool = False
     last_question_decision: QuestionDecision | None = None
 
 
@@ -268,12 +269,18 @@ class Agent:
             state.conversation_state.no_preference.clear()
             state.last_asked_attribute = None
             state.other_used = False
+            state.override_active = True
         else:
             state.active_messages.append(user_message)
 
         after_signature = constraint_signature(state.conversation_state)
+        # The first customer request is not a reply to one of our questions, so
+        # it must not consume one of the two ineffective-reply slots that unlock
+        # the one-time ``other`` escape hatch.
         state.rounds_without_new_constraints = (
-            0 if after_signature != before_signature else state.rounds_without_new_constraints + 1
+            0
+            if turn == 1 or after_signature != before_signature
+            else state.rounds_without_new_constraints + 1
         )
         state.last_override_detected = override_detected
 
@@ -344,10 +351,26 @@ class Agent:
         user_message: str,
         recommendations: list[dict],
     ) -> tuple[str, str | None]:
-        # ``safe`` is the production default: the candidate-aware policy remains
-        # available for deterministic shadow/ablation runs, but public-set MRR and
-        # MTTC must not regress before the dynamic policy is promoted.
-        use_dynamic_policy = self._question_policy_mode == "dynamic"
+        context = distill_context(
+            state.conversation_state,
+            state.profile_context,
+            override_detected=state.last_override_detected,
+        )
+        active_route_evidence = " ".join(state.active_messages) or user_message
+        # Rollout eligibility uses session evidence, while the score weights use
+        # the current turn so a newly supplied constraint can immediately change
+        # the Buying/Browsing emphasis.
+        route = infer_route(user_message, context)
+        # Candidate facets are currently reliable enough for exploratory and
+        # override flows.  Explicit Buying flows keep the validated conservative
+        # order until the normalized Top-200 pool supplies hard-conflict signals.
+        explicit_buying_request = bool(
+            context.short_term.hard_fields
+            or re.search(r"\bkey requirement\b", active_route_evidence, re.I)
+        )
+        use_dynamic_policy = self._question_policy_mode == "dynamic" and (
+            state.override_active or not explicit_buying_request
+        )
         if not use_dynamic_policy:
             if state.conversation_state.turn >= 10:
                 decision = QuestionDecision(
@@ -386,18 +409,18 @@ class Agent:
             state.last_asked_attribute = ask_attribute
             return decision.message, ask_attribute
 
-        context = distill_context(
-            state.conversation_state,
-            state.profile_context,
-            override_detected=state.last_override_detected,
-        )
-        route = infer_route(user_message, context)
         decision = self._question_policy.choose(
             context,
             route,
             self._candidate_facets(recommendations),
             rounds_without_new_constraints=state.rounds_without_new_constraints,
             other_used=state.other_used,
+            # A raw request may name a valid long-tail category outside the
+            # deterministic parser's deliberately small category lexicon.
+            category_evidence=bool(
+                state.conversation_state.category
+                or re.search(r"\b(?:looking for|shopping for|need|want)\b", state.base_request, re.I)
+            ),
         )
         state.last_question_decision = decision
         ask_attribute = decision.ask_attribute

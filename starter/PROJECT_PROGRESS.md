@@ -285,7 +285,10 @@ user_message
 - 短期会话状态与低权重长期画像隔离；
 - Buying、Browsing、Intent Override、Boundary 各 5 条黄金案例；
 - fixed/dynamic 与 profile on/off 消融脚本。
+- 可输出准确提问顺序、问题理由和逐轮目标排名的 trace 工具；
+- 跑鞋切换到防水冬靴的可复现 Override Demo（目标进入 Top 3）。
 
-当前 `safe` 默认模式保持主线公开集指标不回归。全动态实验对 Intent
-Override 有明显改善，但整体 MRR 与 MTTC 回归，因此尚未默认启用。完整设计、
-指标和风险见 `docs/SHIERLY_QUESTION_POLICY_CONTEXT.md`。
+调优后的 `dynamic` 在公开集达到 Hit `0.855`、MRR `0.484141`、Technical
+Score `0.694142`，均高于主线；MTTC `4.930` 仍比主线慢 `0.045` 轮，也未达到
+Todo 的 `<= 4.0` 目标，因此 `safe` 暂时仍是默认。完整设计、指标和风险见
+`docs/SHIERLY_QUESTION_POLICY_CONTEXT.md`。

@@ -101,6 +101,13 @@ The candidate-aware clarification policy, personalized-context boundary, 20-case
 QA set, and ablation commands are documented in
 `docs/SHIERLY_QUESTION_POLICY_CONTEXT.md`.
 
+The reproducible Override demo and exact question-order trace can be run with:
+
+```bash
+python3 -m analysis.question_policy_demo
+python3 -m analysis.question_policy_trace --mode dynamic --sample-id public_0001 --output question_trace.json
+```
+
 ## Judging and Submission Policy
 
 - Participant submission requirements: `docs/submission_rules.md`

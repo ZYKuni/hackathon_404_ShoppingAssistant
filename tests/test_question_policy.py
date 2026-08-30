@@ -136,6 +136,16 @@ class QuestionPolicyTest(unittest.TestCase):
         override_context = distill_context(browsing_state, profile, override_detected=True)
         self.assertEqual(infer_route("Actually, boots instead.", override_context), IntentRoute.BUYING)
 
+    def test_explicit_long_tail_category_is_not_reasked(self) -> None:
+        context = distill_context(ConversationState(turn=1), distill_profile({}))
+        decision = QuestionPolicy().choose(
+            context,
+            IntentRoute.BROWSING,
+            {"feature": ("warm", "waterproof")},
+            category_evidence=True,
+        )
+        self.assertEqual(decision.ask_attribute, "feature")
+
 
 PRODUCTS = [
     {
@@ -206,6 +216,31 @@ class AgentQuestionPolicyIntegrationTest(unittest.TestCase):
         finally:
             safe_agent.connection.close()
 
+    def test_dynamic_mode_guards_explicit_buying_until_normalized_pool_exists(self) -> None:
+        self.agent.reset("buying", {})
+        response = self.agent.respond(
+            "buying",
+            "I need running shoes and waterproof is required.",
+            1,
+            10,
+        )
+        self.assertEqual(response["ask_attribute"], "material")
+        self.assertIn("rollout guard", self.agent._sessions["buying"].last_question_decision.reason)
+
+    def test_override_keeps_dynamic_policy_active_on_later_turns(self) -> None:
+        self.agent.reset("override", {})
+        self.agent.respond("override", "I'm looking for running shoes.", 1, 10)
+        self.agent.respond(
+            "override",
+            "Actually, ignore my earlier preference. What I need is waterproof.",
+            2,
+            10,
+        )
+        third = self.agent.respond("override", "No preference for material.", 3, 10)
+        self.assertTrue(self.agent._sessions["override"].override_active)
+        self.assertNotIn("rollout guard", self.agent._sessions["override"].last_question_decision.reason)
+        self.assertIn(third["ask_attribute"], QUESTION_TEXT)
+
     def test_invalid_rollout_mode_is_rejected(self) -> None:
         with self.assertRaises(ValueError):
             Agent(self.agent.catalog_path, question_policy_mode="unknown")
@@ -213,7 +248,9 @@ class AgentQuestionPolicyIntegrationTest(unittest.TestCase):
     def test_boundary_other_is_used_once_and_turn_ten_stops(self) -> None:
         self.agent.reset("session", {})
         self.agent.respond("session", "I'm looking for running shoes.", 1, 10)
+        self.assertEqual(self.agent._sessions["session"].rounds_without_new_constraints, 0)
         self.agent.respond("session", "I don't have a preference for material.", 2, 10)
+        self.assertEqual(self.agent._sessions["session"].rounds_without_new_constraints, 1)
         third = self.agent.respond("session", "Nothing else is important.", 3, 10)
         self.assertEqual(third["ask_attribute"], "other")
         fourth = self.agent.respond("session", "No other requirement.", 4, 10)
