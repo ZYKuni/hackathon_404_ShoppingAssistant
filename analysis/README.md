@@ -61,6 +61,16 @@ python analysis/run_agent_experiments.py `
   --fold 0
 ```
 
+Run all five held-out folds from one frozen Git state and write a mean/standard-deviation summary:
+
+```powershell
+python analysis/run_agent_experiments.py `
+  --config analysis/configs/baseline.json `
+  --folds-file analysis/folds.json `
+  --all-folds `
+  --experiment-id baseline_cv
+```
+
 The experiment environment records SHA-256 hashes for the config, catalog, dataset, and fold assignment so later runs can prove that they used the same artifacts.
 
 An experiment directory is never overwritten. Use a new experiment ID for a new run. A dirty working tree is recorded rather than hidden; official before/after evidence should use committed code.

@@ -6,6 +6,7 @@ import unittest
 from pathlib import Path
 
 from analysis.run_agent_experiments import (
+    aggregate_cross_validation,
     append_registry,
     compare_sessions,
     load_fold_sample_ids,
@@ -52,6 +53,32 @@ class ExperimentRunnerTest(unittest.TestCase):
             }), encoding="utf-8")
             with self.assertRaisesRegex(ValueError, "dataset hash"):
                 load_fold_sample_ids(path, 0, expected_dataset_sha256="different")
+
+    def test_cross_validation_uses_sample_standard_deviation(self) -> None:
+        entries = []
+        for fold, hit_rate in enumerate([0.5, 0.7]):
+            entries.append({
+                "experiment_id": f"fold_{fold}",
+                "commit": "abc",
+                "dirty": False,
+                "metrics": {
+                    "hit_rate_at_10": hit_rate,
+                    "mrr": hit_rate,
+                    "mttc": 5.0,
+                    "efficiency": 0.6,
+                    "recommended_technical_score": hit_rate,
+                    "scenario_metrics": {
+                        "buying": {
+                            "hit_rate_at_10": hit_rate,
+                            "mrr": hit_rate,
+                            "mttc": 5.0,
+                        }
+                    },
+                },
+            })
+        summary = aggregate_cross_validation(entries)
+        self.assertEqual(summary["overall"]["hit_rate_at_10"]["mean"], 0.6)
+        self.assertAlmostEqual(summary["overall"]["hit_rate_at_10"]["std"], 0.141421)
 
 
 if __name__ == "__main__":

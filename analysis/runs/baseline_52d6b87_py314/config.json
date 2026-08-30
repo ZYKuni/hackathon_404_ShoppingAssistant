@@ -1,0 +1,28 @@
+{
+  "agent": {
+    "class": "Agent",
+    "kwargs": {
+      "catalog_path": "{catalog}"
+    },
+    "module": "starter.agent"
+  },
+  "description": "Current offline SQLite FTS5 BM25 and three-route RRF baseline.",
+  "external_services": [],
+  "known_risks": [
+    "ConversationState is not connected to the Agent response path.",
+    "The fixed question order is not candidate-uncertainty aware.",
+    "The public 200-session result must not be treated as an unbiased hidden-set estimate."
+  ],
+  "measure_python_allocations": false,
+  "name": "current_bm25_rrf",
+  "profile_enabled": false,
+  "question_policy": "fixed_attribute_order",
+  "ranker_version": "starter_bm25_rrf",
+  "retrieval_routes": [
+    "active_context",
+    "current_turn",
+    "category_anchor"
+  ],
+  "route_strategy": "bm25_rrf",
+  "seed": 404
+}

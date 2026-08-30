@@ -9,6 +9,7 @@ import os
 import platform
 import random
 import sqlite3
+import statistics
 import subprocess
 import sys
 import time
@@ -300,9 +301,10 @@ def run_experiment(
     fold_index: int | None = None,
     experiment_id: str | None = None,
     register: bool = True,
+    metadata_override: dict[str, Any] | None = None,
 ) -> tuple[Path, dict[str, Any]]:
     config = _read_json(config_path)
-    metadata = git_metadata()
+    metadata = dict(metadata_override) if metadata_override is not None else git_metadata()
     experiment_id = experiment_id or make_experiment_id(config, metadata["commit"])
     output_dir = output_root / experiment_id
     if output_dir.exists():
@@ -406,6 +408,51 @@ def run_experiment(
     return output_dir, entry
 
 
+def aggregate_cross_validation(entries: list[dict[str, Any]]) -> dict[str, Any]:
+    if not entries:
+        raise ValueError("cannot aggregate an empty cross-validation run")
+
+    def summarize(values: list[float]) -> dict[str, float]:
+        return {
+            "mean": round(statistics.fmean(values), 6),
+            "std": round(statistics.stdev(values), 6) if len(values) > 1 else 0.0,
+        }
+
+    metric_names = (
+        "hit_rate_at_10", "mrr", "mttc", "efficiency", "recommended_technical_score"
+    )
+    overall = {
+        name: summarize([float(entry["metrics"][name]) for entry in entries])
+        for name in metric_names
+    }
+    scenario_names = sorted(entries[0]["metrics"]["scenario_metrics"])
+    scenario_metrics: dict[str, dict[str, dict[str, float]]] = {}
+    for scenario in scenario_names:
+        scenario_metrics[scenario] = {
+            name: summarize([
+                float(entry["metrics"]["scenario_metrics"][scenario][name])
+                for entry in entries
+            ])
+            for name in ("hit_rate_at_10", "mrr", "mttc")
+        }
+    return {
+        "fold_count": len(entries),
+        "experiment_ids": [entry["experiment_id"] for entry in entries],
+        "commit": entries[0]["commit"],
+        "dirty": entries[0]["dirty"],
+        "overall": overall,
+        "scenario_metrics": scenario_metrics,
+    }
+
+
+def fold_count(path: Path) -> int:
+    payload = _read_json(path)
+    count = payload.get("n_splits")
+    if not isinstance(count, int) or count < 2:
+        raise ValueError(f"fold file has an invalid n_splits value: {path}")
+    return count
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run and register a reproducible Agent experiment")
     parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG)
@@ -416,6 +463,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--baseline", type=Path)
     parser.add_argument("--folds-file", type=Path)
     parser.add_argument("--fold", type=int)
+    parser.add_argument("--all-folds", action="store_true")
     parser.add_argument("--experiment-id")
     parser.add_argument("--no-register", action="store_true")
     return parser.parse_args()
@@ -423,6 +471,41 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
+    if args.all_folds:
+        if args.folds_file is None or args.fold is not None:
+            raise ValueError("--all-folds requires --folds-file and cannot be combined with --fold")
+        config = _read_json(args.config)
+        frozen_metadata = git_metadata()
+        base_id = args.experiment_id or f"{make_experiment_id(config, frozen_metadata['commit'])}_cv"
+        entries: list[dict[str, Any]] = []
+        output_dirs: list[str] = []
+        for current_fold in range(fold_count(args.folds_file)):
+            output_dir, entry = run_experiment(
+                config_path=args.config,
+                catalog_path=args.catalog,
+                dataset_path=args.dataset,
+                output_root=args.output_root,
+                registry_path=args.registry,
+                baseline_path=args.baseline,
+                folds_path=args.folds_file,
+                fold_index=current_fold,
+                experiment_id=f"{base_id}_fold{current_fold}",
+                register=not args.no_register,
+                metadata_override=frozen_metadata,
+            )
+            entries.append(entry)
+            output_dirs.append(str(output_dir))
+        summary = aggregate_cross_validation(entries)
+        summary_path = args.output_root / f"{base_id}_summary.json"
+        _write_json(summary_path, summary)
+        print(json.dumps({
+            "cross_validation_id": base_id,
+            "output_dirs": output_dirs,
+            "summary_path": str(summary_path),
+            "summary": summary,
+        }, indent=2))
+        return
+
     output_dir, entry = run_experiment(
         config_path=args.config,
         catalog_path=args.catalog,
