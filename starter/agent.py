@@ -4,9 +4,20 @@ import heapq
 import json
 import re
 import sqlite3
-from dataclasses import dataclass, field
 from pathlib import Path
 
+from starter.conversation_state import ConversationState
+from starter.orchestrator import (
+    AgentOrchestrator,
+    LegacyQuestionPolicyAdapter,
+    LegacyRankerAdapter,
+    LegacyRetrieverAdapter,
+    OrchestrationSession,
+    RuntimeMode,
+    base_request_from_message,
+    update_session_state,
+)
+from starter.state_adapter import build_structured_query, to_state_snapshot
 from starter.constraint_parser import parse_message
 from starter.conversation_state import ConversationState, apply_patch
 from starter.orchestrator import AgentOrchestrator, RuntimeMode
@@ -14,27 +25,6 @@ from starter.pipeline_contracts import RankerProtocol, RetrieverProtocol
 
 
 TOKEN_RE = re.compile(r"[a-z0-9]+", re.IGNORECASE)
-OVERRIDE_RE = re.compile(
-    r"\b(?:actually|instead|ignore\s+(?:my\s+)?earlier|changed?\s+my\s+mind|what\s+i\s+need)\b",
-    re.IGNORECASE,
-)
-FULL_OVERRIDE_RE = re.compile(
-    r"\b(?:ignore\s+(?:my\s+)?earlier\s+preference|forget\s+(?:my\s+)?earlier|"
-    r"changed?\s+my\s+mind)\b",
-    re.IGNORECASE,
-)
-NO_PREFERENCE_RE = re.compile(
-    r"\b(?:no|don['’]?t\s+have|without)\b.{0,30}\bpreference\b",
-    re.IGNORECASE,
-)
-NO_MATCH_RE = re.compile(r"\b(?:not quite right|ask me about)\b", re.IGNORECASE)
-CATEGORY_RE = re.compile(
-    r"\b(shoes?|boots?|sneakers?|sandals?|slippers?|dress(?:es)?|shirts?|tops?|tees?|"
-    r"pants?|jeans?|shorts?|skirts?|jackets?|coats?|sweaters?|hoodies?|socks?|underwear|"
-    r"bras?|swimwear|jewelry|earrings?|necklaces?|bracelets?|rings?|watches?|bags?|hats?)\b",
-    re.IGNORECASE,
-)
-
 STOPWORDS = {
     "a", "about", "additional", "an", "and", "are", "as", "at", "be", "but", "by",
     "closest", "do", "does", "for", "found", "from", "have", "here", "i", "in", "is",
@@ -100,27 +90,14 @@ def _terms(text: str) -> list[str]:
 
 def _base_request(message: str) -> str:
     """Keep the original product category while dropping early preferences."""
-    result = re.split(r"\bA key requirement is:\s*|,\s*but\b|\.\s+", message, maxsplit=1, flags=re.I)[0]
-    return result.strip()
+    return base_request_from_message(message)
 
 
 def _mentioned_attributes(text: str) -> set[str]:
     return {attribute for attribute, pattern in ATTRIBUTE_PATTERNS.items() if pattern.search(text)}
 
 
-def _category_terms(text: str) -> set[str]:
-    return {match.group(1).lower() for match in CATEGORY_RE.finditer(text)}
-
-
-@dataclass
-class SessionState:
-    user_profile: dict
-    base_request: str = ""
-    # Raw customer evidence remains available to lexical retrieval even when a
-    # phrase is outside the deterministic parser's current vocabulary.
-    active_messages: list[str] = field(default_factory=list)
-    conversation_state: ConversationState = field(default_factory=ConversationState)
-    last_asked_attribute: str | None = None
+SessionState = OrchestrationSession
 
 
 class Agent:
@@ -156,6 +133,21 @@ class Agent:
             else None
         )
         self._build_index()
+        legacy_retriever = LegacyRetrieverAdapter(self._search, self._fallback_ids)
+        legacy_ranker = LegacyRankerAdapter()
+        legacy_question_policy = LegacyQuestionPolicyAdapter(
+            _mentioned_attributes, QUESTION_ORDER, QUESTION_TEXT
+        )
+        self.orchestrator = AgentOrchestrator(
+            legacy_retriever,
+            legacy_ranker,
+            legacy_question_policy,
+            fallback_retriever=legacy_retriever,
+            fallback_question_policy=legacy_question_policy,
+            runtime_mode=RuntimeMode.OFFICIAL,
+        )
+        # Kept as a compatibility view for the existing tests and local debugging.
+        self._sessions = self.orchestrator.sessions
 
     @classmethod
     def with_local_pipeline(
@@ -216,6 +208,7 @@ class Agent:
 
     def reset(self, session_id: str, user_profile: dict) -> None:
         """Start a clean state; no information may leak between customers."""
+        self.orchestrator.reset(session_id, user_profile)
         self._sessions[session_id] = SessionState(
             user_profile=dict(user_profile or {}),
             conversation_state=ConversationState(),
@@ -236,60 +229,10 @@ class Agent:
     @staticmethod
     def _structured_query(conversation_state: ConversationState) -> str:
         """Render positive structured state as supplementary lexical evidence."""
-        values: list[str] = []
-        if conversation_state.category:
-            values.append(conversation_state.category.replace("_", " "))
-        for constraints in (
-            conversation_state.hard_constraints,
-            conversation_state.soft_preferences,
-        ):
-            for value in constraints.values():
-                items = value if isinstance(value, list) else [value]
-                values.extend(str(item).replace("_", " ") for item in items)
-        # Exclusions are deliberately omitted: feeding a negated value such as
-        # "white" into BM25 would incorrectly reward white products.
-        return " ".join(dict.fromkeys(value for value in values if value))
+        return build_structured_query(to_state_snapshot(conversation_state))
 
     def _update_state(self, state: SessionState, user_message: str, turn: int) -> None:
-        if turn == 1 or not state.base_request:
-            state.base_request = _base_request(user_message)
-
-        full_override = turn > 1 and bool(FULL_OVERRIDE_RE.search(user_message))
-        if full_override:
-            self._reset_constraints_for_full_override(state)
-
-        patch = parse_message(user_message, state.conversation_state, turn)
-        state.conversation_state = apply_patch(state.conversation_state, patch)
-
-        no_preference = NO_PREFERENCE_RE.search(user_message) or NO_MATCH_RE.search(user_message)
-        if no_preference:
-            # The parser handles explicit replies such as "no preference for
-            # material".  This fallback also covers generic Boundary replies by
-            # associating them with the attribute asked on the preceding turn.
-            last_asked = state.last_asked_attribute
-            if last_asked and last_asked not in state.conversation_state.no_preference:
-                state.conversation_state.no_preference.append(last_asked)
-            # The previous question has already been recorded, so the response adds
-            # no positive retrieval evidence and should not pollute the query.
-            return
-
-        if OVERRIDE_RE.search(user_message) and turn > 1:
-            # Retain the category anchor when the customer only changes a constraint.
-            # If they explicitly name a different category, the new request replaces
-            # the previous category as well.
-            old_categories = _category_terms(state.base_request)
-            new_categories = _category_terms(user_message)
-            category_changed = bool(new_categories and old_categories and new_categories.isdisjoint(old_categories))
-            if category_changed:
-                state.base_request = _base_request(user_message)
-                state.active_messages = [user_message]
-            else:
-                state.active_messages = [state.base_request, user_message]
-            state.conversation_state.asked_attributes.clear()
-            state.conversation_state.no_preference.clear()
-            state.last_asked_attribute = None
-        else:
-            state.active_messages.append(user_message)
+        update_session_state(state, user_message, turn)
 
     def _search(self, text: str, limit: int = 120) -> list[str]:
         terms = _terms(text)[:60]
@@ -354,6 +297,7 @@ class Agent:
         turn: int,
         top_k: int,
     ) -> dict:
+        return self.orchestrator.respond(session_id, user_message, turn, top_k)
         if session_id not in self._sessions:
             raise RuntimeError("reset must be called before respond")
         if not 1 <= turn <= 10:
