@@ -27,3 +27,14 @@ You can override every path:
 ```powershell
 python analysis/catalog_analysis.py --catalog path/to/catalog.jsonl --sessions path/to/public_set.jsonl --report report.md --metrics metrics.json
 ```
+
+## A5 integration evaluation
+
+Run the formal Agent pipeline and its guarded-rerank ablation from the repository root:
+
+```bash
+python3 analysis/integration_a5_ablation.py
+python3 analysis/integration_a5_benchmark.py
+```
+
+The readable conclusions are recorded in `analysis/AARON_INTEGRATION_A5_REPORT.md`.
