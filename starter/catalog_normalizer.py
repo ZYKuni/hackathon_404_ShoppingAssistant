@@ -222,6 +222,17 @@ def normalize_product(product: Mapping[str, object]) -> NormalizedProduct:
         value = _detail(details, *names)
         if value is not None:
             _add(target, field, value, f"details:{names[0]}", DETAIL_CONFIDENCE)
+            component_aliases = {
+                "material": MATERIAL_ALIASES,
+                "color": COLOR_ALIASES,
+                "audience": AUDIENCE_ALIASES,
+            }.get(field)
+            if component_aliases is not None:
+                for component in _known_values((value,), component_aliases):
+                    _add(
+                        target, field, component,
+                        f"details:{names[0]}", DETAIL_CONFIDENCE,
+                    )
 
     # Category paths are strong audience evidence.
     for value in categories:
