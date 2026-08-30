@@ -1,0 +1,28 @@
+{
+  "name": "current_bm25_rrf",
+  "description": "Current offline SQLite FTS5 BM25 and three-route RRF baseline.",
+  "seed": 404,
+  "measure_python_allocations": false,
+  "agent": {
+    "module": "starter.agent",
+    "class": "Agent",
+    "kwargs": {
+      "catalog_path": "{catalog}"
+    }
+  },
+  "route_strategy": "bm25_rrf",
+  "retrieval_routes": [
+    "active_context",
+    "current_turn",
+    "category_anchor"
+  ],
+  "ranker_version": "starter_bm25_rrf",
+  "question_policy": "fixed_attribute_order",
+  "profile_enabled": false,
+  "external_services": [],
+  "known_risks": [
+    "ConversationState is not connected to the Agent response path.",
+    "The fixed question order is not candidate-uncertainty aware.",
+    "The public 200-session result must not be treated as an unbiased hidden-set estimate."
+  ]
+}

@@ -13,6 +13,60 @@ The command reads `data/catalog.jsonl` and `data/public_set.jsonl`, then writes:
 
 Only the Python standard library is required.
 
+## Reproducible agent experiments
+
+Run the registered baseline from the repository root:
+
+```powershell
+python analysis/run_agent_experiments.py --config analysis/configs/baseline.json
+```
+
+The runner leaves `evaluator/local_evaluator.py` unchanged and writes one immutable directory under `analysis/runs/` containing:
+
+- the exact config and environment, including commit, branch, dirty state, Python, platform, dataset, and seed;
+- aggregate and per-scenario metrics;
+- per-session outcomes;
+- a complete `result.json` that can be passed directly to a later run with `--baseline`;
+- initialization time, total evaluation time, P50/P95 response latency, and measured memory;
+- gained and lost sessions when `--baseline` points to an evaluator JSON result.
+
+Every successful registered run appends one JSON object to `analysis/experiment_registry.jsonl`. Give important runs an explicit stable ID:
+
+```powershell
+python analysis/run_agent_experiments.py `
+  --config analysis/configs/baseline.json `
+  --experiment-id baseline_4363569
+```
+
+Compare a later configuration with the frozen baseline:
+
+```powershell
+python analysis/run_agent_experiments.py `
+  --config analysis/configs/candidate.json `
+  --baseline analysis/runs/<baseline-experiment-id>/result.json
+```
+
+Create the fixed seed-404 stratified five-fold assignment:
+
+```powershell
+python analysis/create_stratified_folds.py
+```
+
+Each fold contains 40 sessions: 16 Buying, 16 Browsing, 6 Intent Override, and 2 Boundary. Scenario and difficulty are both used during deterministic assignment. Run one held-out fold with:
+
+```powershell
+python analysis/run_agent_experiments.py `
+  --config analysis/configs/baseline.json `
+  --folds-file analysis/folds.json `
+  --fold 0
+```
+
+The experiment environment records SHA-256 hashes for the config, catalog, dataset, and fold assignment so later runs can prove that they used the same artifacts.
+
+An experiment directory is never overwritten. Use a new experiment ID for a new run. A dirty working tree is recorded rather than hidden; official before/after evidence should use committed code.
+
+On Windows, process working set and process-lifetime peak working set include native allocations such as SQLite. Python `tracemalloc` is disabled by default because it changes the latency being measured; enable `measure_python_allocations` in a config only for a separate memory-diagnostic run.
+
 The full run takes roughly two minutes on the current 50,000-product catalog because it builds an in-memory FTS5 index and runs the public-session BM25 field ablations. The report includes:
 
 - catalog-versus-target field coverage, including percentage-point and ratio differences;
