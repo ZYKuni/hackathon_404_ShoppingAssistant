@@ -86,6 +86,26 @@ _ATTRIBUTE_FIELDS = {
     "style": "styles",
 }
 
+_CATEGORY_FAMILY_TERMS = {
+    "footwear": ("shoe", "sneaker", "boot", "sandal", "slipper", "footwear"),
+    "jewelry": ("jewelry", "earring", "necklace", "bracelet", "ring", "pendant"),
+    "clothing": (
+        "shirt", "t_shirt", "top", "tee", "tank", "camisole", "dress", "jacket",
+        "coat", "sweater", "hoodie", "pant", "jean", "short", "skirt", "sock",
+        "underwear", "bra", "swim", "legging", "clothing",
+    ),
+    "accessories": ("bag", "belt", "hat", "cap", "accessor", "wallet", "scarf"),
+    "watches": ("watch",),
+}
+
+
+def _category_family(value: str) -> str | None:
+    normalized = str(value).lower().replace(" ", "_")
+    for family, terms in _CATEGORY_FAMILY_TERMS.items():
+        if any(term in normalized for term in terms):
+            return family
+    return None
+
 
 def _canonical_expected(field: str, values: tuple[ScalarValue, ...]) -> tuple[ScalarValue, ...]:
     canonical: list[ScalarValue] = []
@@ -252,6 +272,19 @@ class ConstraintMatcher:
                 MatchState.MISMATCH if excluded else MatchState.MATCH,
                 confidence,
                 "product category path contains the requested category",
+            )
+        expected_families = {
+            family for value in expected
+            if (family := _category_family(str(value))) is not None
+        }
+        product_families = {
+            family for item in product.leaf_categories
+            if (family := _category_family(str(item.value))) is not None
+        }
+        if not expected_families or not product_families or expected_families & product_families:
+            return ConstraintMatch(
+                "category", expected, MatchState.UNKNOWN, 0.5,
+                "category is a same-family or unmapped long-tail leaf",
             )
         return ConstraintMatch(
             "category",
