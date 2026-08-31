@@ -31,6 +31,9 @@ class OrchestrationResult:
     request: SearchRequest
     candidate_count: int = 0
     over_general: bool = False
+    # Ordered IDs from the formal pre-filter Top-200 pool.  This is diagnostic
+    # evidence for clarification policy only; it never contains labels.
+    candidate_ids: tuple[str, ...] = ()
 
 
 class AgentOrchestrator:
@@ -141,6 +144,7 @@ class AgentOrchestrator:
             request,
             candidate_count=len(pool.candidates),
             over_general=len(pool.candidates) >= request.candidate_limit,
+            candidate_ids=tuple(item.parent_asin for item in pool.candidates),
         )
 
     @staticmethod
