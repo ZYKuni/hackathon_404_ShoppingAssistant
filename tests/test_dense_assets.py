@@ -5,10 +5,16 @@ import tempfile
 import unittest
 from pathlib import Path
 
-import numpy as np
-
-from analysis.build_dense_assets import build_assets
 from starter.dense_assets import DenseAssetManifest, DenseAssetsError, file_sha256
+
+try:
+    import numpy as np
+    from analysis.build_dense_assets import build_assets
+except ModuleNotFoundError as error:
+    if error.name != "numpy":
+        raise
+    np = None
+    build_assets = None
 
 
 class FakeEncoder:
@@ -21,6 +27,7 @@ class FakeEncoder:
         ], dtype=np.float32)
 
 
+@unittest.skipIf(np is None, "optional dense tests require NumPy")
 class DenseAssetsTests(unittest.TestCase):
     def setUp(self):
         self.temporary_directory = tempfile.TemporaryDirectory()

@@ -5,11 +5,18 @@ import tempfile
 import unittest
 from pathlib import Path
 
-import numpy as np
-
-from analysis.build_dense_assets import build_assets
 from starter.dense_assets import DenseAssetsError
-from starter.numpy_dense_backend import NumpyDenseSearchIndex
+
+try:
+    import numpy as np
+    from analysis.build_dense_assets import build_assets
+    from starter.numpy_dense_backend import NumpyDenseSearchIndex
+except ModuleNotFoundError as error:
+    if error.name != "numpy":
+        raise
+    np = None
+    build_assets = None
+    NumpyDenseSearchIndex = None
 
 
 class DocumentEncoder:
@@ -38,6 +45,7 @@ class QueryEncoder:
         return np.asarray([0.0, 1.0, 0.0], dtype=np.float32)
 
 
+@unittest.skipIf(np is None, "optional dense tests require NumPy")
 class NumpyDenseSearchIndexTests(unittest.TestCase):
     def setUp(self):
         self.temporary_directory = tempfile.TemporaryDirectory()

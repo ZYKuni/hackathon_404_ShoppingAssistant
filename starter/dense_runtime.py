@@ -27,6 +27,16 @@ def load_optional_dense_backend(
     if requested is DenseMode.OFF:
         return DenseRuntimeLoad(requested, DenseMode.OFF)
     try:
+        # Validate the lightweight, catalog-bound assets before importing the
+        # optional NumPy/ONNX runtime.  This keeps the fail-open reason stable
+        # across dependency-free and dense-enabled environments: missing or
+        # corrupt assets are always reported as ``DenseAssetsError`` rather
+        # than whichever optional import happens to fail first.
+        from .dense_assets import DenseAssetManifest
+
+        manifest = DenseAssetManifest.load(asset_dir)
+        manifest.validate_files(asset_dir, catalog_path)
+
         from .numpy_dense_backend import NumpyDenseSearchIndex
         from .onnx_query_encoder import OnnxMiniLMQueryEncoder
 
