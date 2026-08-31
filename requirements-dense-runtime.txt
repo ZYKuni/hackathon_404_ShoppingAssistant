@@ -1,0 +1,5 @@
+# Optional local dense runtime. PyTorch, Transformers, and network access are
+# deliberately not required.
+numpy==2.5.2
+onnxruntime==1.29.0
+tokenizers==0.22.2

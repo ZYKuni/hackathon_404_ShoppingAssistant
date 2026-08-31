@@ -97,6 +97,25 @@ class AgentTest(unittest.TestCase):
         self.assertEqual(state.conversation_state.hard_constraints["color"], ["black"])
         self.assertNotIn("red", state.conversation_state.soft_preferences.get("color", []))
 
+    def test_override_preserves_only_compatible_same_slot_evidence(self) -> None:
+        self.agent.reset("session", {})
+        self.agent.respond("session", "I'm looking for a cotton and rayon shirt.", 1, 10)
+        self.agent.respond("session", "Imported with a button closure.", 2, 10)
+
+        self.agent.respond(
+            "session",
+            "Actually, ignore my earlier preference. What I need is: cotton.",
+            3,
+            10,
+        )
+
+        state = self.agent._sessions["session"]
+        self.assertEqual(state.conversation_state.hard_constraints["material"], ["cotton"])
+        self.assertEqual(state.conversation_state.soft_preferences["material"], ["rayon"])
+        context = " ".join(state.active_messages).lower()
+        self.assertIn("cotton and rayon", context)
+        self.assertNotIn("button closure", context)
+
     def test_no_preference_reply_does_not_pollute_search_context(self) -> None:
         self.agent.reset("session", {})
         self.agent.respond("session", "I'm looking for running shoes.", 1, 10)
@@ -105,6 +124,21 @@ class AgentTest(unittest.TestCase):
         state = self.agent._sessions["session"]
         self.assertEqual(state.active_messages, before)
         self.assertIn("material", state.conversation_state.no_preference)
+
+    def test_legacy_search_uses_conversation_stopwords(self) -> None:
+        class CapturingBackend:
+            def __init__(self) -> None:
+                self.stopwords = None
+
+            def search_legacy(self, query, limit, *, stopwords):
+                self.stopwords = stopwords
+                return ()
+
+        backend = CapturingBackend()
+        self.agent._search_backend = backend
+        self.agent._search("preferred matches for running shoes")
+        self.assertIn("matches", backend.stopwords)
+        self.assertIn("preference", backend.stopwords)
 
     def test_open_vocabulary_text_remains_available_as_raw_evidence(self) -> None:
         self.agent.reset("session", {})

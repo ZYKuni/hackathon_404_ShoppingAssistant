@@ -105,3 +105,11 @@ python3 analysis/integration_a5_benchmark.py
 ```
 
 The readable conclusions are recorded in `analysis/AARON_INTEGRATION_A5_REPORT.md`.
+
+## Optional dense retrieval experiment
+
+The isolated OFF/SHADOW/ON dense route, immutable embedding builder, minimal
+int8 ONNX exporter, and public-set benchmark are documented in
+`analysis/DENSE_RETRIEVAL_REPORT.md`. The default `Agent(catalog_path)` remains
+the dependency-free MVP until generated assets are packaged and the release
+environment gates pass.
