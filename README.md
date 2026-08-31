@@ -5,6 +5,11 @@ E-Commerce Search Challenge. The official `Agent(catalog_path)` entry point
 combines multi-turn state, Buying/Browsing routing, multi-route BM25 retrieval,
 structured constraint matching, and a guarded local reranker.
 
+An optional candidate-aware Question Policy reads the formal Router decision
+and normalized Top-200 pool. `safe` is the unchanged default, `shadow` records
+the alternative without changing the response, and `dynamic` is reserved for
+explicit ablation.
+
 ## Public-set result
 
 Measured on the frozen 200-session public set on 2026-08-31:
@@ -79,6 +84,14 @@ python -m unittest discover -s tests -v
 git diff --check
 ```
 
+Run Question Policy QA, shadow evaluation, or an exact turn trace:
+
+```bash
+python -m unittest tests.test_question_policy -v
+python -m analysis.question_policy_ablation --mode shadow --output question_shadow.json
+python -m analysis.question_policy_trace --mode shadow --sample-id public_0001 --output question_trace.json
+```
+
 Run the demonstrated three-turn session:
 
 ```bash
@@ -116,10 +129,11 @@ Reported token usage and estimated model/API cost are therefore zero, and the
 agent works with network access disabled.
 
 Known limitations include incomplete long-tail aliases, open-text sizing, a
-fixed clarification priority after overload detection, cold-start catalog
+fixed clarification priority in the safe default, cold-start catalog
 normalization, and lexical weakness on paraphrases not represented in the
-catalog. An optional neural/LLM reranker is a post-MVP experiment, not a hidden
-runtime dependency.
+catalog. Candidate-aware questions remain shadow/ablation-only until they beat
+the public and adversarial gates. An optional neural/LLM reranker is a post-MVP
+experiment, not a hidden runtime dependency.
 
 ## Submission files
 
@@ -131,6 +145,7 @@ runtime dependency.
 - `demo_session.py` — reproducible multi-turn demonstration
 - `DEMO_TRANSCRIPT.md` — captured three-turn demonstration
 - `analysis/AARON_INTEGRATION_A5_REPORT.md` — detailed ablation evidence
+- `docs/SHIERLY_QUESTION_POLICY_CONTEXT.md` — Question Policy design, QA, and rollout gates
 
 Competition rules and API details remain in `docs/competition_specification.md`,
 `docs/submission_rules.md`, and `docs/agent_api_contract.json`.

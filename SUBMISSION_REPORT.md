@@ -100,5 +100,8 @@ and abbreviated recommendations are in `DEMO_TRANSCRIPT.md`.
 - Yikun Zhao: baseline Agent, conversation state/parser integration, override
   handling, clarification behavior, performance/regression repair, evaluation,
   and submission/demo documentation.
+- Shierly: candidate-aware Question Policy, formal Top-200/RouteDecision
+  integration, personalized question hints, golden QA, shadow diagnostics, and
+  policy ablation tooling.
 
 Before submission, the team should verify names and contribution wording.
