@@ -1,0 +1,3 @@
+# Offline query-model export environment. Kept separate from both the default
+# MVP and the lightweight dense runtime.
+sentence-transformers[onnx]==5.1.2

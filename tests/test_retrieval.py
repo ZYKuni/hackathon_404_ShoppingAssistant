@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import unittest
 
+from starter.embedding_text import build_query_embedding_text
 from starter.pipeline_contracts import (
     ConstraintTerm,
     IntentRoute,
@@ -15,6 +16,8 @@ from starter.retrieval import (
     ACTIVE_CONTEXT_ROUTE,
     CATEGORY_ANCHOR_ROUTE,
     CURRENT_TURN_ROUTE,
+    DENSE_SEMANTIC_ROUTE,
+    DenseMode,
     POPULARITY_ROUTE,
     STRUCTURED_CONSTRAINT_ROUTE,
     USE_CASE_ROUTE,
@@ -50,6 +53,19 @@ class FakeBackend:
         return self._popularity[:limit]
 
 
+class FakeDenseBackend:
+    def __init__(self, responses=None, *, error=None):
+        self.responses = responses or {}
+        self.error = error
+        self.calls = []
+
+    def search(self, query, limit):
+        self.calls.append((query, limit))
+        if self.error is not None:
+            raise self.error
+        return tuple(self.responses.get(query, ()))[:limit]
+
+
 def request(route=IntentRoute.BUYING, *, candidate_limit=200, empty=False):
     message = "the" if empty else "lightweight running shoes"
     state = StateSnapshot(
@@ -75,6 +91,14 @@ def request(route=IntentRoute.BUYING, *, candidate_limit=200, empty=False):
 
 
 class HybridRetrieverTests(unittest.TestCase):
+    def test_dense_route_weight_requires_a_bounded_number(self):
+        with self.assertRaises(TypeError):
+            HybridRetriever(backend=FakeBackend(), dense_route_weight=True)
+        with self.assertRaises(TypeError):
+            HybridRetriever(backend=FakeBackend(), dense_route_weight="0.35")
+        with self.assertRaises(ValueError):
+            HybridRetriever(backend=FakeBackend(), dense_route_weight=2.1)
+
     def test_buying_and_browsing_use_distinct_stable_routes(self):
         buying = HybridRetriever._route_specs(request(IntentRoute.BUYING))
         browsing = HybridRetriever._route_specs(request(IntentRoute.BROWSING))
@@ -86,6 +110,107 @@ class HybridRetrieverTests(unittest.TestCase):
             {item.name for item in browsing},
             {ACTIVE_CONTEXT_ROUTE, CURRENT_TURN_ROUTE, CATEGORY_ANCHOR_ROUTE, USE_CASE_ROUTE},
         )
+
+    def test_buying_never_calls_dense_backend(self):
+        lexical = FakeBackend({
+            "lightweight running shoes": (SearchHit("P1"),),
+        })
+        dense = FakeDenseBackend({
+            "lightweight running shoes": (SearchHit("P2", 0.9),),
+        })
+        retriever = HybridRetriever(
+            backend=lexical,
+            dense_backend=dense,
+            dense_mode=DenseMode.ON,
+        )
+
+        pool = retriever.retrieve(request(IntentRoute.BUYING))
+
+        self.assertEqual(dense.calls, [])
+        self.assertNotIn(
+            DENSE_SEMANTIC_ROUTE,
+            {item.route_name for candidate in pool.candidates for item in candidate.evidence},
+        )
+
+    def test_shadow_dense_observes_without_changing_candidate_pool(self):
+        browsing_request = request(IntentRoute.BROWSING)
+        dense_query = build_query_embedding_text(browsing_request)
+        lexical = FakeBackend({
+            "lightweight running shoes": (SearchHit("P1"), SearchHit("P2")),
+            "running shoes": (SearchHit("P2"), SearchHit("P1")),
+            "running shoes under 120": (SearchHit("P1"),),
+        })
+        lexical._valid_asins = frozenset({"P1", "P2", "P3"})
+        dense = FakeDenseBackend({
+            dense_query: (SearchHit("P3", 0.91), SearchHit("P1", 0.8)),
+        })
+        off = HybridRetriever(backend=lexical).retrieve(browsing_request)
+        shadow_retriever = HybridRetriever(
+            backend=lexical,
+            dense_backend=dense,
+            dense_mode=DenseMode.SHADOW,
+        )
+
+        shadow = shadow_retriever.retrieve(browsing_request)
+
+        self.assertEqual(shadow.candidates, off.candidates)
+        self.assertEqual(shadow.requested_limit, off.requested_limit)
+        self.assertEqual(shadow.route, off.route)
+        self.assertEqual(dense.calls, [(dense_query, 120)])
+        diagnostics = shadow_retriever.dense_diagnostics("S1", 1)
+        self.assertTrue(diagnostics.attempted)
+        self.assertEqual(diagnostics.returned_count, 2)
+        self.assertEqual(diagnostics.exclusive_count, 1)
+        self.assertEqual(diagnostics.contributed_count, 0)
+        self.assertIsNone(diagnostics.error)
+
+    def test_on_dense_fuses_valid_candidates_and_evidence(self):
+        browsing_request = request(IntentRoute.BROWSING)
+        dense_query = build_query_embedding_text(browsing_request)
+        lexical = FakeBackend({
+            "lightweight running shoes": (SearchHit("P1"),),
+            "running shoes": (SearchHit("P1"),),
+        })
+        lexical._valid_asins = frozenset({"P1", "P3"})
+        dense = FakeDenseBackend({
+            dense_query: (SearchHit("P3", 0.91), SearchHit("P1", 0.8)),
+        })
+        retriever = HybridRetriever(
+            backend=lexical,
+            dense_backend=dense,
+            dense_mode=DenseMode.ON,
+        )
+
+        pool = retriever.retrieve(browsing_request)
+
+        dense_candidate = next(item for item in pool.candidates if item.parent_asin == "P3")
+        self.assertEqual(dense_candidate.evidence[0].route_name, DENSE_SEMANTIC_ROUTE)
+        diagnostics = retriever.dense_diagnostics("S1", 1)
+        self.assertEqual(diagnostics.exclusive_count, 1)
+        self.assertEqual(diagnostics.contributed_count, 2)
+
+    def test_dense_failure_isolated_from_lexical_pool(self):
+        lexical = FakeBackend({
+            "lightweight running shoes": (SearchHit("P1"), SearchHit("P2")),
+            "running shoes": (SearchHit("P2"),),
+        })
+        dense = FakeDenseBackend(error=RuntimeError("model unavailable"))
+        baseline = HybridRetriever(backend=lexical).retrieve(request(IntentRoute.BROWSING))
+        retriever = HybridRetriever(
+            backend=lexical,
+            dense_backend=dense,
+            dense_mode=DenseMode.ON,
+        )
+
+        result = retriever.retrieve(request(IntentRoute.BROWSING))
+
+        self.assertEqual(result.candidates, baseline.candidates)
+        self.assertEqual(result.requested_limit, baseline.requested_limit)
+        self.assertEqual(result.route, baseline.route)
+        diagnostics = retriever.dense_diagnostics("S1", 1)
+        self.assertTrue(diagnostics.attempted)
+        self.assertEqual(diagnostics.error, "RuntimeError")
+        self.assertEqual(diagnostics.contributed_count, 0)
 
     def test_rrf_evidence_merge_deduplication_and_rank(self):
         backend = FakeBackend({

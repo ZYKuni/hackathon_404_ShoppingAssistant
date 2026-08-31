@@ -11,6 +11,7 @@ from pathlib import Path
 from starter.constraint_parser import parse_message
 from starter.conversation_state import ConversationState, apply_patch
 from starter.attribute_lexicons import normalize_phrase
+from starter.dense_retrieval import DenseMode, DenseRouteDiagnostics, DenseSearchBackend
 from starter.orchestrator import AgentOrchestrator, RuntimeMode
 from starter.pipeline_contracts import RankerProtocol, RetrieverProtocol
 
@@ -141,6 +142,8 @@ class Agent:
         ranker: RankerProtocol | None = None,
         runtime_mode: RuntimeMode = RuntimeMode.OFFICIAL,
         use_local_pipeline: bool = True,
+        dense_mode: DenseMode | str = DenseMode.OFF,
+        dense_backend: DenseSearchBackend | None = None,
     ) -> None:
         self.catalog_path = Path(catalog_path)
         if not self.catalog_path.is_file():
@@ -151,10 +154,20 @@ class Agent:
         self._sessions: dict[str, SessionState] = {}
         self._fallback_ids: list[str] = []
         self._pipeline_fallbacks: dict[str, tuple[str, ...]] = {}
+        self._dense_load_error: str | None = None
         if not isinstance(use_local_pipeline, bool):
             raise TypeError("use_local_pipeline must be bool")
+        self._dense_mode = DenseMode(dense_mode)
         if (retriever is None) != (ranker is None):
             raise ValueError("retriever and ranker must be supplied together")
+        if retriever is not None and (
+            dense_backend is not None or self._dense_mode is not DenseMode.OFF
+        ):
+            raise ValueError("dense options are only supported by the default local pipeline")
+        if not use_local_pipeline and (
+            dense_backend is not None or self._dense_mode is not DenseMode.OFF
+        ):
+            raise ValueError("dense options require use_local_pipeline=True")
         self._build_index()
         if retriever is None and use_local_pipeline:
             from starter.catalog_normalizer import CatalogNormalizer
@@ -162,7 +175,11 @@ class Agent:
             from starter.retrieval import HybridRetriever
 
             catalog = CatalogNormalizer.from_jsonl(self.catalog_path)
-            retriever = HybridRetriever(backend=self._search_backend)
+            retriever = HybridRetriever(
+                backend=self._search_backend,
+                dense_backend=dense_backend,
+                dense_mode=self._dense_mode,
+            )
             ranker = LocalConstraintRanker(catalog=catalog)
         self._orchestrator = (
             AgentOrchestrator(retriever, ranker, runtime_mode=runtime_mode)
@@ -176,9 +193,45 @@ class Agent:
         catalog_path: str | Path = "data/catalog.jsonl",
         *,
         runtime_mode: RuntimeMode = RuntimeMode.OFFICIAL,
+        dense_mode: DenseMode | str = DenseMode.OFF,
+        dense_backend: DenseSearchBackend | None = None,
     ) -> "Agent":
         """Compatibility constructor for the default formal local pipeline."""
-        return cls(catalog_path, runtime_mode=runtime_mode, use_local_pipeline=True)
+        return cls(
+            catalog_path,
+            runtime_mode=runtime_mode,
+            use_local_pipeline=True,
+            dense_mode=dense_mode,
+            dense_backend=dense_backend,
+        )
+
+    @classmethod
+    def with_optional_dense_assets(
+        cls,
+        catalog_path: str | Path,
+        *,
+        asset_dir: str | Path,
+        model_dir: str | Path,
+        dense_mode: DenseMode | str = DenseMode.SHADOW,
+        runtime_mode: RuntimeMode = RuntimeMode.OFFICIAL,
+    ) -> "Agent":
+        """Load local dense assets or return the unchanged OFF pipeline."""
+        from starter.dense_runtime import load_optional_dense_backend
+
+        loaded = load_optional_dense_backend(
+            catalog_path,
+            asset_dir,
+            model_dir,
+            mode=dense_mode,
+        )
+        agent = cls(
+            catalog_path,
+            runtime_mode=runtime_mode,
+            dense_mode=loaded.effective_mode,
+            dense_backend=loaded.backend,
+        )
+        agent._dense_load_error = loaded.error
+        return agent
 
     @classmethod
     def legacy(cls, catalog_path: str | Path = "data/catalog.jsonl") -> "Agent":
@@ -210,6 +263,19 @@ class Agent:
     def pipeline_fallbacks(self, session_id: str) -> tuple[str, ...]:
         """Return machine-readable fallback events from the session's last turn."""
         return self._pipeline_fallbacks.get(session_id, ())
+
+    def dense_diagnostics(self, session_id: str, turn: int) -> DenseRouteDiagnostics:
+        """Return aggregate dense-route diagnostics without retaining query text."""
+        if self._orchestrator is None:
+            return DenseRouteDiagnostics(mode=DenseMode.OFF)
+        diagnostics = getattr(self._orchestrator.retriever, "dense_diagnostics", None)
+        if diagnostics is None:
+            return DenseRouteDiagnostics(mode=self._dense_mode)
+        return diagnostics(session_id, turn)
+
+    def dense_load_error(self) -> str | None:
+        """Return a safe error type when optional dense startup fell back OFF."""
+        return self._dense_load_error
 
     @staticmethod
     def _reset_constraints_for_full_override(state: SessionState) -> None:

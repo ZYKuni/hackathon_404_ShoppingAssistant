@@ -1,14 +1,14 @@
 # Shopping Copilot current progress
 
 > Updated: 2026-08-31
-> Branch: `feature/ykzhao0829_02`
+> Branch: `codex/dense-retrieval-shadow`
 
 ## Current status
 
 The required offline MVP pipeline is integrated behind the organizer's default
 construction path, `Agent(catalog_path)`. The previously duplicated merge
 fragments in Agent, router, orchestrator, state adapter, and their tests were
-removed. The implementation now compiles, passes 93 tests, and completes the
+removed. The implementation now compiles, passes 117 tests, and completes the
 unchanged 200-session public evaluator.
 
 | Metric | Current formal Agent |
@@ -62,9 +62,12 @@ Hit@10 from 0.855 to 0.795 and is now regression-tested.
 
 ### P2 — post-MVP experiments
 
-- Package an optional offline neural/LLM semantic reranker and compare it by
-  ablation; it must never reduce the guarded candidate set or become an
-  undeclared network dependency.
+- The optional Browsing-only dense route now has OFF/SHADOW/ON modes, catalog-
+  bound float16 embeddings, a direct int8 ONNX query encoder, and full public-
+  set ablations. ONNX ON preserves Hit@10 and improves the technical score to
+  0.701983, but remains non-default until its approximately 84 MB assets and
+  x86 release environment pass final packaging gates. See
+  `analysis/DENSE_RETRIEVAL_REPORT.md`.
 - Replace fixed question priority only if a candidate-distribution/value-of-
   information policy beats the public and adversarial regression suites.
 - Cache a versioned normalized-catalog artifact if the rules permit small local

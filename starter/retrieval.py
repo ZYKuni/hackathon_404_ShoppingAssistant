@@ -24,6 +24,9 @@ from .pipeline_contracts import (
     RouteEvidence,
     SearchRequest,
 )
+from .dense_retrieval import DenseMode, DenseRouteDiagnostics, DenseSearchBackend
+from .embedding_text import build_query_embedding_text
+from .retrieval_types import SearchHit
 
 
 TOKEN_RE = re.compile(r"[a-z0-9]+", re.IGNORECASE)
@@ -39,6 +42,7 @@ CURRENT_TURN_ROUTE = "current_turn_bm25"
 CATEGORY_ANCHOR_ROUTE = "category_anchor_bm25"
 STRUCTURED_CONSTRAINT_ROUTE = "structured_constraint_bm25"
 USE_CASE_ROUTE = "use_case_bm25"
+DENSE_SEMANTIC_ROUTE = "dense_semantic"
 POPULARITY_ROUTE = "popularity_fallback"
 
 BUYING_ROUTE_WEIGHTS: Mapping[str, float] = {
@@ -58,12 +62,6 @@ BROWSING_ROUTE_WEIGHTS: Mapping[str, float] = {
 
 class RetrievalRouteError(Exception):
     """One optional retrieval route failed while other routes may continue."""
-
-
-@dataclass(frozen=True)
-class SearchHit:
-    parent_asin: str
-    score: float | None = None
 
 
 class SearchBackend(Protocol):
@@ -224,6 +222,7 @@ class _RouteSpec:
     name: str
     query: str
     weight: float
+    dense: bool = False
 
 
 class HybridRetriever:
@@ -234,16 +233,39 @@ class HybridRetriever:
         catalog_path: str | Path = "data/catalog.jsonl",
         *,
         backend: SearchBackend | None = None,
+        dense_backend: DenseSearchBackend | None = None,
+        dense_mode: DenseMode | str = DenseMode.OFF,
         per_route_limit: int = 120,
+        dense_route_limit: int = 120,
+        dense_route_weight: float = 0.35,
         rrf_k: float = 60.0,
     ) -> None:
         if per_route_limit < 1:
             raise ValueError("per_route_limit must be positive")
         if rrf_k <= 0:
             raise ValueError("rrf_k must be positive")
+        if dense_route_limit < 1:
+            raise ValueError("dense_route_limit must be positive")
+        if isinstance(dense_route_weight, bool) or not isinstance(
+            dense_route_weight, (int, float)
+        ):
+            raise TypeError("dense_route_weight must be numeric")
+        if not 0.0 <= float(dense_route_weight) <= 2.0:
+            raise ValueError("dense_route_weight must be between 0 and 2")
         self.backend = backend or SQLiteCatalogSearchIndex(catalog_path)
+        self.dense_backend = dense_backend
+        self.dense_mode = DenseMode(dense_mode)
         self.per_route_limit = per_route_limit
+        self.dense_route_limit = dense_route_limit
+        self.dense_route_weight = float(dense_route_weight)
         self.rrf_k = float(rrf_k)
+        self._dense_diagnostics: dict[tuple[str, int], DenseRouteDiagnostics] = {}
+
+    def dense_diagnostics(self, session_id: str, turn: int) -> DenseRouteDiagnostics:
+        """Return aggregate diagnostics for one request, defaulting to OFF."""
+        return self._dense_diagnostics.get(
+            (session_id, turn), DenseRouteDiagnostics(mode=self.dense_mode)
+        )
 
     @staticmethod
     def _constraint_query(request: SearchRequest, field: str | None = None) -> str:
@@ -255,7 +277,13 @@ class HybridRetriever:
         return " ".join(dict.fromkeys(values))
 
     @classmethod
-    def _route_specs(cls, request: SearchRequest) -> tuple[_RouteSpec, ...]:
+    def _route_specs(
+        cls,
+        request: SearchRequest,
+        *,
+        include_dense: bool = False,
+        dense_route_weight: float = 0.35,
+    ) -> tuple[_RouteSpec, ...]:
         active = request.raw_context.strip() or request.structured_query.strip() or request.current_message
         category = (
             request.state.category.replace("_", " ")
@@ -283,13 +311,30 @@ class HybridRetriever:
                 USE_CASE_ROUTE: use_case or request.base_request,
             }
             weights = BROWSING_ROUTE_WEIGHTS
-        return tuple(_RouteSpec(name, queries[name], weight) for name, weight in weights.items())
+        specs = tuple(
+            _RouteSpec(name, queries[name], weight) for name, weight in weights.items()
+        )
+        if include_dense and request.route_decision.route is IntentRoute.BROWSING:
+            specs += (_RouteSpec(
+                DENSE_SEMANTIC_ROUTE,
+                build_query_embedding_text(request),
+                float(dense_route_weight),
+                dense=True,
+            ),)
+        return specs
 
     def retrieve(self, request: SearchRequest) -> CandidatePool:
         if not isinstance(request, SearchRequest):
             raise TypeError("request must be a SearchRequest")
         started = time.perf_counter()
-        specs = self._route_specs(request)
+        dense_enabled = (
+            self.dense_mode is not DenseMode.OFF and self.dense_backend is not None
+        )
+        specs = self._route_specs(
+            request,
+            include_dense=dense_enabled,
+            dense_route_weight=self.dense_route_weight,
+        )
         nonempty_specs = tuple(spec for spec in specs if _terms(spec.query))
         if not nonempty_specs:
             candidates = self._popularity_candidates(request.candidate_limit)
@@ -301,20 +346,71 @@ class HybridRetriever:
             )
 
         route_results: list[tuple[_RouteSpec, tuple[SearchHit, ...]]] = []
-        failures = 0
+        lexical_results: list[tuple[_RouteSpec, tuple[SearchHit, ...]]] = []
+        dense_result: tuple[_RouteSpec, tuple[SearchHit, ...]] | None = None
+        lexical_failures = 0
+        lexical_route_count = sum(not spec.dense for spec in nonempty_specs)
+        dense_diagnostic = DenseRouteDiagnostics(mode=self.dense_mode)
         for spec in nonempty_specs:
+            if spec.dense:
+                dense_started = time.perf_counter()
+                try:
+                    assert self.dense_backend is not None
+                    hits = tuple(
+                        self.dense_backend.search(spec.query, self.dense_route_limit)
+                    )
+                    dense_result = (spec, hits)
+                    dense_diagnostic = DenseRouteDiagnostics(
+                        mode=self.dense_mode,
+                        attempted=True,
+                        returned_count=len(hits),
+                        latency_ms=(time.perf_counter() - dense_started) * 1000.0,
+                    )
+                except Exception as error:
+                    dense_diagnostic = DenseRouteDiagnostics(
+                        mode=self.dense_mode,
+                        attempted=True,
+                        latency_ms=(time.perf_counter() - dense_started) * 1000.0,
+                        error=type(error).__name__,
+                    )
+                continue
             try:
                 hits = tuple(self.backend.search(spec.query, self.per_route_limit))
             except RetrievalRouteError:
-                failures += 1
+                lexical_failures += 1
                 continue
-            route_results.append((spec, hits))
-        if failures == len(nonempty_specs):
+            lexical_results.append((spec, hits))
+        if lexical_route_count and lexical_failures == lexical_route_count:
             raise RetrievalError("all usable retrieval routes failed")
+
+        route_results.extend(lexical_results)
+        if dense_result is not None and self.dense_mode is DenseMode.ON:
+            route_results.append(dense_result)
 
         scores: dict[str, float] = {}
         evidence: dict[str, list[RouteEvidence]] = {}
         valid_asins = self.backend.valid_asins
+        lexical_asins = {
+            hit.parent_asin
+            for _, hits in lexical_results
+            for hit in hits
+            if hit.parent_asin in valid_asins
+        }
+        if dense_result is not None:
+            _, dense_hits = dense_result
+            dense_exclusive = {
+                hit.parent_asin
+                for hit in dense_hits
+                if hit.parent_asin in valid_asins and hit.parent_asin not in lexical_asins
+            }
+            dense_diagnostic = DenseRouteDiagnostics(
+                mode=dense_diagnostic.mode,
+                attempted=dense_diagnostic.attempted,
+                returned_count=dense_diagnostic.returned_count,
+                exclusive_count=len(dense_exclusive),
+                latency_ms=dense_diagnostic.latency_ms,
+                error=dense_diagnostic.error,
+            )
         for spec, hits in route_results:
             seen_route: set[str] = set()
             for rank, hit in enumerate(hits, 1):
@@ -335,12 +431,28 @@ class HybridRetriever:
                 Candidate(asin, tuple(evidence[asin]), scores[asin])
                 for asin in ordered_asins[:request.candidate_limit]
             )
-        return CandidatePool(
+        pool = CandidatePool(
             candidates=candidates,
             requested_limit=request.candidate_limit,
             route=request.route_decision.route,
             retrieval_latency_ms=(time.perf_counter() - started) * 1000.0,
         )
+        contributed = sum(
+            any(item.route_name == DENSE_SEMANTIC_ROUTE for item in candidate.evidence)
+            for candidate in pool.candidates
+        )
+        if dense_diagnostic.attempted:
+            dense_diagnostic = DenseRouteDiagnostics(
+                mode=dense_diagnostic.mode,
+                attempted=True,
+                returned_count=dense_diagnostic.returned_count,
+                exclusive_count=dense_diagnostic.exclusive_count,
+                contributed_count=contributed,
+                latency_ms=dense_diagnostic.latency_ms,
+                error=dense_diagnostic.error,
+            )
+        self._dense_diagnostics[(request.session_id, request.turn)] = dense_diagnostic
+        return pool
 
     def _popularity_candidates(self, limit: int) -> tuple[Candidate, ...]:
         candidates: list[Candidate] = []
@@ -366,6 +478,10 @@ __all__ = [
     "BUYING_ROUTE_WEIGHTS",
     "CATEGORY_ANCHOR_ROUTE",
     "CURRENT_TURN_ROUTE",
+    "DENSE_SEMANTIC_ROUTE",
+    "DenseMode",
+    "DenseRouteDiagnostics",
+    "DenseSearchBackend",
     "HybridRetriever",
     "POPULARITY_ROUTE",
     "RetrievalRouteError",
