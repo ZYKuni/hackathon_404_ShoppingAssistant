@@ -6,6 +6,7 @@ import unittest
 from pathlib import Path
 
 from analysis.run_agent_experiments import (
+    DEFAULT_CONFIG,
     aggregate_cross_validation,
     annotate_diagnostic_trace,
     append_registry,
@@ -16,6 +17,23 @@ from analysis.run_agent_experiments import (
 
 
 class ExperimentRunnerTest(unittest.TestCase):
+    def test_frozen_configs_select_distinct_agent_paths(self) -> None:
+        config_dir = Path(__file__).resolve().parents[1] / "analysis" / "configs"
+        legacy = json.loads(
+            (config_dir / "legacy_bm25_rrf.json").read_text(encoding="utf-8")
+        )
+        integrated = json.loads(
+            (config_dir / "integrated_guarded_rerank.json").read_text(encoding="utf-8")
+        )
+
+        self.assertFalse(legacy["agent"]["kwargs"]["use_local_pipeline"])
+        self.assertTrue(integrated["agent"]["kwargs"]["use_local_pipeline"])
+        self.assertEqual(legacy["system_variant"], "frozen_legacy_reference")
+        self.assertEqual(integrated["system_variant"], "formal_integrated_offline")
+        self.assertEqual(integrated["agent"]["kwargs"]["dense_mode"], "off")
+        self.assertEqual(integrated["agent"]["kwargs"]["question_policy_mode"], "safe")
+        self.assertEqual(DEFAULT_CONFIG, config_dir / "integrated_guarded_rerank.json")
+
     def test_percentile_interpolates_and_handles_empty_values(self) -> None:
         self.assertIsNone(percentile([], 0.95))
         self.assertEqual(percentile([1.0, 2.0, 3.0, 4.0], 0.50), 2.5)

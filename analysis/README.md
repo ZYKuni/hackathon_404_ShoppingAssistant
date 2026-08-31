@@ -15,11 +15,21 @@ Only the Python standard library is required.
 
 ## Reproducible agent experiments
 
-Run the registered baseline from the repository root:
+Reproduce the frozen legacy reference from the repository root:
 
 ```powershell
-python analysis/run_agent_experiments.py --config analysis/configs/baseline.json
+python analysis/run_agent_experiments.py --config analysis/configs/legacy_bm25_rrf.json
 ```
+
+Run the formal integrated Agent explicitly (this is also the runner default):
+
+```powershell
+python analysis/run_agent_experiments.py --config analysis/configs/integrated_guarded_rerank.json
+```
+
+The legacy config pins `use_local_pipeline=false`. The integrated config pins
+`use_local_pipeline=true`, dense retrieval `off`, and Question Policy `safe`, so
+future constructor-default changes cannot silently relabel either experiment.
 
 The runner leaves `evaluator/local_evaluator.py` unchanged and writes one immutable directory under `analysis/runs/` containing:
 
@@ -35,15 +45,15 @@ Every successful registered run appends one JSON object to `analysis/experiment_
 
 ```powershell
 python analysis/run_agent_experiments.py `
-  --config analysis/configs/baseline.json `
-  --experiment-id baseline_4363569
+  --config analysis/configs/legacy_bm25_rrf.json `
+  --experiment-id legacy_reproduction
 ```
 
 Compare a later configuration with the frozen baseline:
 
 ```powershell
 python analysis/run_agent_experiments.py `
-  --config analysis/configs/candidate.json `
+  --config analysis/configs/integrated_guarded_rerank.json `
   --baseline analysis/runs/<baseline-experiment-id>/result.json
 ```
 
@@ -57,7 +67,7 @@ Each fold contains 40 sessions: 16 Buying, 16 Browsing, 6 Intent Override, and 2
 
 ```powershell
 python analysis/run_agent_experiments.py `
-  --config analysis/configs/baseline.json `
+  --config analysis/configs/integrated_guarded_rerank.json `
   --folds-file analysis/folds.json `
   --fold 0
 ```
@@ -66,10 +76,10 @@ Run all five held-out folds from one frozen Git state and write a mean/standard-
 
 ```powershell
 python analysis/run_agent_experiments.py `
-  --config analysis/configs/baseline.json `
+  --config analysis/configs/integrated_guarded_rerank.json `
   --folds-file analysis/folds.json `
   --all-folds `
-  --experiment-id baseline_cv
+  --experiment-id integrated_guarded_rerank_cv
 ```
 
 The experiment environment records SHA-256 hashes for the config, catalog, dataset, and fold assignment so later runs can prove that they used the same artifacts.

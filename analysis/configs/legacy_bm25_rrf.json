@@ -1,0 +1,39 @@
+{
+  "name": "legacy_bm25_rrf",
+  "description": "Frozen legacy SQLite FTS5 BM25 baseline with three-route weighted RRF and the validated fixed question order.",
+  "seed": 404,
+  "measure_python_allocations": false,
+  "agent": {
+    "module": "starter.agent",
+    "class": "Agent",
+    "kwargs": {
+      "catalog_path": "{catalog}",
+      "use_local_pipeline": false,
+      "dense_mode": "off",
+      "question_policy_mode": "safe",
+      "enable_profile_question_hints": false
+    }
+  },
+  "system_variant": "frozen_legacy_reference",
+  "route_strategy": "legacy_three_route_bm25_rrf",
+  "retrieval_routes": [
+    "active_context",
+    "current_turn",
+    "category_anchor"
+  ],
+  "ranker_version": "legacy_weighted_rrf",
+  "question_policy": "fixed_attribute_order_safe",
+  "profile_enabled": false,
+  "dense_mode": "off",
+  "external_services": [],
+  "frozen_evidence": {
+    "commit": "52d6b8749fd2a072574a7e32249ca852ae82799d",
+    "result": "analysis/baseline_current.json",
+    "run": "analysis/runs/baseline_52d6b87_py314"
+  },
+  "known_risks": [
+    "The historical metrics belong to the frozen evidence commit; rerunning this configuration on later code is a reproducibility check, not a replacement for that record.",
+    "The fixed question order is not candidate-uncertainty aware.",
+    "The public 200-session result must not be treated as an unbiased hidden-set estimate."
+  ]
+}

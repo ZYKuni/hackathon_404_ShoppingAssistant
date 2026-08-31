@@ -27,7 +27,7 @@ from evaluator.local_evaluator import catalog_index, evaluate, load_jsonl
 from starter.diagnostics import validate_diagnostic_trace
 
 
-DEFAULT_CONFIG = ROOT / "analysis" / "configs" / "baseline.json"
+DEFAULT_CONFIG = ROOT / "analysis" / "configs" / "integrated_guarded_rerank.json"
 DEFAULT_REGISTRY = ROOT / "analysis" / "experiment_registry.jsonl"
 
 
