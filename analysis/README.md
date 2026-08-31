@@ -27,6 +27,7 @@ The runner leaves `evaluator/local_evaluator.py` unchanged and writes one immuta
 - aggregate and per-scenario metrics;
 - per-session outcomes;
 - a complete `result.json` that can be passed directly to a later run with `--baseline`;
+- `diagnostic_traces.jsonl` with messages, state, retrieval routes, candidate pools, fallback, and public target ranks when the Agent implements the optional diagnostic contract;
 - initialization time, total evaluation time, P50/P95 response latency, and measured memory;
 - gained and lost sessions when `--baseline` points to an evaluator JSON result.
 
@@ -76,6 +77,8 @@ The experiment environment records SHA-256 hashes for the config, catalog, datas
 An experiment directory is never overwritten. Use a new experiment ID for a new run. A dirty working tree is recorded rather than hidden; official before/after evidence should use committed code.
 
 On Windows, process working set and process-lifetime peak working set include native allocations such as SQLite. Python `tracemalloc` is disabled by default because it changes the latency being measured; enable `measure_python_allocations` in a config only for a separate memory-diagnostic run.
+
+The optional Agent-side contract is documented in `docs/diagnostic_trace_contract.md`. Diagnostics are collected after scoring and never add fields to the official `respond(...)` payload. Public target IDs and target ranks are joined by the experiment runner; they are not passed to the Agent.
 
 The full run takes roughly two minutes on the current 50,000-product catalog because it builds an in-memory FTS5 index and runs the public-session BM25 field ablations. The report includes:
 

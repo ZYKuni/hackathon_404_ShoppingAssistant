@@ -24,6 +24,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from evaluator.local_evaluator import catalog_index, evaluate, load_jsonl
+from starter.diagnostics import validate_diagnostic_trace
 
 
 DEFAULT_CONFIG = ROOT / "analysis" / "configs" / "baseline.json"
@@ -48,10 +49,16 @@ def _round_ms(seconds: float | None) -> float | None:
 @dataclass
 class InstrumentedAgent:
     inner: Any
+    sample_contexts: list[dict[str, Any]] = field(default_factory=list)
     respond_events: list[dict[str, Any]] = field(default_factory=list)
     reset_seconds: list[float] = field(default_factory=list)
+    session_contexts: dict[str, dict[str, Any]] = field(default_factory=dict)
+    reset_index: int = 0
 
     def reset(self, session_id: str, user_profile: dict) -> None:
+        if self.reset_index < len(self.sample_contexts):
+            self.session_contexts[session_id] = self.sample_contexts[self.reset_index]
+        self.reset_index += 1
         started = time.perf_counter()
         try:
             self.inner.reset(session_id, user_profile)
@@ -67,12 +74,71 @@ class InstrumentedAgent:
             failed = True
             raise
         finally:
+            context = self.session_contexts.get(session_id, {})
             self.respond_events.append({
                 "session_id": session_id,
+                "sample_id": context.get("sample_id"),
+                "scenario_type": context.get("scenario_type"),
                 "turn": turn,
                 "latency_ms": _round_ms(time.perf_counter() - started),
                 "failed": failed,
             })
+
+    def collect_diagnostic_traces(self) -> list[dict[str, Any]]:
+        provider = getattr(self.inner, "get_diagnostic_trace", None)
+        traces: list[dict[str, Any]] = []
+        for session_id, context in self.session_contexts.items():
+            if not callable(provider):
+                traces.append({
+                    "diagnostics_available": False,
+                    "runtime_session_id": session_id,
+                    "evaluation_context": context,
+                    "turns": [],
+                })
+                continue
+            try:
+                trace = provider(session_id)
+                validate_diagnostic_trace(trace)
+                annotated = annotate_diagnostic_trace(trace, context)
+                annotated["diagnostics_available"] = True
+            except Exception as error:
+                annotated = {
+                    "diagnostics_available": False,
+                    "runtime_session_id": session_id,
+                    "evaluation_context": context,
+                    "diagnostic_error": f"{type(error).__name__}: {error}",
+                    "turns": [],
+                }
+            traces.append(annotated)
+        return traces
+
+
+def _target_rank(items: list[Any], target: str) -> int | None:
+    for rank, item in enumerate(items, start=1):
+        parent_asin = item.get("parent_asin") if isinstance(item, dict) else item
+        if str(parent_asin) == target:
+            return rank
+    return None
+
+
+def annotate_diagnostic_trace(
+    trace: dict[str, Any], context: dict[str, Any]
+) -> dict[str, Any]:
+    annotated = json.loads(json.dumps(trace))
+    annotated["runtime_session_id"] = annotated.pop("session_id")
+    annotated["evaluation_context"] = dict(context)
+    target = str(context.get("target_parent_asin", ""))
+    for turn in annotated.get("turns", []):
+        ranking = turn["ranking"]
+        for route in ranking.get("routes", []):
+            route["target_rank"] = _target_rank(route.get("candidate_ids", []), target)
+        ranking["candidate_pool_target_rank"] = _target_rank(
+            ranking.get("candidate_pool", []), target
+        )
+        ranking["recommendation_target_rank"] = _target_rank(
+            ranking.get("recommendations", []), target
+        )
+    return annotated
 
 
 def _git_value(*args: str) -> str | None:
@@ -329,6 +395,14 @@ def run_experiment(
         if len(samples) != len(selected_ids):
             raise ValueError("dataset contains duplicate sample IDs selected by the fold")
     catalog_ids, categories, products = catalog_index(catalog_path)
+    sample_contexts = [
+        {
+            "sample_id": str(sample["sample_id"]),
+            "scenario_type": str(sample["scenario_type"]),
+            "target_parent_asin": str(sample["ground_truth"]["parent_asin"]),
+        }
+        for sample in samples
+    ]
 
     memory_before = _windows_memory()
     measure_python_allocations = bool(config.get("measure_python_allocations", False))
@@ -337,7 +411,7 @@ def run_experiment(
     init_started = time.perf_counter()
     inner_agent = load_agent(config, catalog_path)
     initialization_seconds = time.perf_counter() - init_started
-    agent = InstrumentedAgent(inner_agent)
+    agent = InstrumentedAgent(inner_agent, sample_contexts=sample_contexts)
 
     evaluation_started = time.perf_counter()
     try:
@@ -354,6 +428,7 @@ def run_experiment(
     memory_after = _windows_memory()
 
     sessions = result.pop("sessions")
+    diagnostic_traces = agent.collect_diagnostic_traces()
     runtime = summarize_runtime(
         agent,
         initialization_seconds,
@@ -391,6 +466,12 @@ def run_experiment(
         "metrics": result,
         "runtime": runtime,
         "comparison": comparison,
+        "diagnostics": {
+            "trace_count": len(diagnostic_traces),
+            "available_count": sum(
+                bool(trace.get("diagnostics_available")) for trace in diagnostic_traces
+            ),
+        },
         "environment": environment,
         "known_risks": config.get("known_risks", []),
     }
@@ -403,6 +484,7 @@ def run_experiment(
     _write_json(output_dir / "comparison.json", comparison)
     _write_jsonl(output_dir / "sessions.jsonl", sessions)
     _write_jsonl(output_dir / "runtime_events.jsonl", agent.respond_events)
+    _write_jsonl(output_dir / "diagnostic_traces.jsonl", diagnostic_traces)
     if register:
         append_registry(registry_path, entry)
     return output_dir, entry

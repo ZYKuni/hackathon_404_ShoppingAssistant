@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+import copy
 import heapq
 import json
 import re
 import sqlite3
+import time
 from pathlib import Path
 
 from starter.conversation_state import ConversationState
@@ -22,6 +24,10 @@ from starter.constraint_parser import parse_message
 from starter.conversation_state import ConversationState, apply_patch
 from starter.orchestrator import AgentOrchestrator, RuntimeMode
 from starter.pipeline_contracts import RankerProtocol, RetrieverProtocol
+from starter.diagnostics import (
+    DIAGNOSTIC_TRACE_SCHEMA_VERSION,
+    validate_diagnostic_trace,
+)
 
 
 TOKEN_RE = re.compile(r"[a-z0-9]+", re.IGNORECASE)
@@ -123,6 +129,8 @@ class Agent:
             )
         self.connection = sqlite3.connect(":memory:")
         self._sessions: dict[str, SessionState] = {}
+        self._diagnostic_traces: dict[str, dict] = {}
+        self._active_route_capture: list[list[str]] | None = None
         self._fallback_ids: list[str] = []
         self._pipeline_fallbacks: dict[str, tuple[str, ...]] = {}
         if (retriever is None) != (ranker is None):
@@ -214,6 +222,11 @@ class Agent:
             conversation_state=ConversationState(),
         )
         self._pipeline_fallbacks.pop(session_id, None)
+        self._diagnostic_traces[session_id] = {
+            "schema_version": DIAGNOSTIC_TRACE_SCHEMA_VERSION,
+            "session_id": session_id,
+            "turns": [],
+        }
 
     def pipeline_fallbacks(self, session_id: str) -> tuple[str, ...]:
         """Return machine-readable fallback events from the session's last turn."""
@@ -244,7 +257,10 @@ class Agent:
             "ORDER BY bm25(products, 0.0, 6.0, 4.0, 2.5, 2.5, 1.5, 1.0) LIMIT ?",
             (expression, limit),
         ).fetchall()
-        return [str(row[0]) for row in rows]
+        identifiers = [str(row[0]) for row in rows]
+        if self._active_route_capture is not None:
+            self._active_route_capture.append(list(identifiers))
+        return identifiers
 
     def _rank(self, state: SessionState, user_message: str, top_k: int) -> list[dict]:
         """Fuse current-turn, cumulative-session, and category-anchor retrieval."""
@@ -297,41 +313,76 @@ class Agent:
         turn: int,
         top_k: int,
     ) -> dict:
-        return self.orchestrator.respond(session_id, user_message, turn, top_k)
-        if session_id not in self._sessions:
-            raise RuntimeError("reset must be called before respond")
-        if not 1 <= turn <= 10:
-            raise ValueError("turn must be between 1 and 10")
-        top_k = max(1, min(int(top_k), 10))
+        started = time.perf_counter()
+        captured_routes: list[list[str]] = []
+        self._active_route_capture = captured_routes
+        try:
+            response = self.orchestrator.respond(session_id, user_message, turn, top_k)
+        finally:
+            self._active_route_capture = None
 
+        route_specs = (
+            ("active_context", 1.40),
+            ("current_turn", 0.85),
+            ("category_anchor", 0.25),
+        )
+        routes = [
+            {"name": name, "weight": weight, "candidate_ids": candidate_ids}
+            for (name, weight), candidate_ids in zip(route_specs, captured_routes)
+        ]
+        scores: dict[str, float] = {}
+        for route in routes:
+            weight = float(route["weight"])
+            for rank, parent_asin in enumerate(route["candidate_ids"], start=1):
+                scores[parent_asin] = scores.get(parent_asin, 0.0) + weight / (60.0 + rank)
+        candidate_pool = sorted(scores, key=lambda asin: (-scores[asin], asin))
+        recommendations = response.get("recommendations", [])
+        recommendation_ids = [
+            str(item.get("parent_asin", ""))
+            for item in recommendations
+            if isinstance(item, dict) and item.get("parent_asin")
+        ]
+        fallback_ids = [asin for asin in recommendation_ids if asin not in scores]
         state = self._sessions[session_id]
-        override_detected = turn > 1 and bool(OVERRIDE_RE.search(user_message))
-        self._update_state(state, user_message, turn)
-        if self._orchestrator is None:
-            recommendations = self._rank(state, user_message, top_k)
-        else:
-            result = self._orchestrator.execute(
-                session_id=session_id,
-                turn=turn,
-                top_k=top_k,
-                current_message=user_message,
-                raw_context=" ".join(state.active_messages).strip(),
-                base_request=state.base_request,
-                state=state.conversation_state,
-                profile=state.user_profile,
-                override_detected=override_detected,
-                legacy_fallback=lambda: self._rank(state, user_message, top_k),
-            )
-            recommendations = [
-                {"parent_asin": asin, "score": score}
-                for asin, score in result.recommendations
-            ]
-            self._pipeline_fallbacks[session_id] = result.fallbacks
-        message, ask_attribute = self._next_question(state, user_message, turn)
-        return {
-            "message": message,
-            "ask_attribute": ask_attribute,
-            "recommendations": recommendations,
-            # No LLM is used in this baseline, so token use and external cost are zero.
-            "usage": {"prompt_tokens": 0, "completion_tokens": 0},
-        }
+        events = tuple(self.orchestrator.diagnostics(session_id).events)
+        self._pipeline_fallbacks[session_id] = events
+        self._diagnostic_traces[session_id]["turns"].append({
+            "turn": turn,
+            "user_message": user_message,
+            "state": {
+                "base_request": state.base_request,
+                "active_messages": list(state.active_messages),
+                "asked_attributes": sorted(state.conversation_state.asked_attributes),
+                "unavailable_attributes": sorted(state.conversation_state.no_preference),
+                "conversation_state": state.conversation_state.to_dict(),
+            },
+            "ranking": {
+                "routes": routes,
+                "candidate_pool": candidate_pool,
+                "recommendations": copy.deepcopy(recommendations),
+            },
+            "response": {
+                "message": response.get("message", ""),
+                "ask_attribute": response.get("ask_attribute"),
+                "recommendations": recommendation_ids,
+            },
+            "fallback": {
+                "used": bool(events or fallback_ids),
+                "reason": ",".join(events) if events else (
+                    "popularity_fallback" if fallback_ids else None
+                ),
+                "added_ids": fallback_ids,
+            },
+            "timing_ms": {
+                "pipeline": round((time.perf_counter() - started) * 1000.0, 3),
+            },
+        })
+        return response
+
+    def get_diagnostic_trace(self, session_id: str) -> dict:
+        """Return a detached development trace without affecting official output."""
+        if session_id not in self._diagnostic_traces:
+            raise KeyError(f"unknown diagnostic session: {session_id}")
+        trace = copy.deepcopy(self._diagnostic_traces[session_id])
+        validate_diagnostic_trace(trace)
+        return trace

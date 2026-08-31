@@ -2,6 +2,8 @@
 
 This report is populated after the experiment runner captures candidate-stage and dialogue-state traces.
 
+Use `diagnostic_traces.jsonl` from a registered experiment as the evidence source. The Agent trace records only information available at inference time; the runner adds the public target and its rank in each retrieval route, the merged candidate pool, and final recommendations.
+
 ## Failure taxonomy
 
 - Recall failure

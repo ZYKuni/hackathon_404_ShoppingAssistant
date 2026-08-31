@@ -7,6 +7,7 @@ from pathlib import Path
 
 from analysis.run_agent_experiments import (
     aggregate_cross_validation,
+    annotate_diagnostic_trace,
     append_registry,
     compare_sessions,
     load_fold_sample_ids,
@@ -79,6 +80,33 @@ class ExperimentRunnerTest(unittest.TestCase):
         summary = aggregate_cross_validation(entries)
         self.assertEqual(summary["overall"]["hit_rate_at_10"]["mean"], 0.6)
         self.assertAlmostEqual(summary["overall"]["hit_rate_at_10"]["std"], 0.141421)
+
+    def test_diagnostic_annotation_adds_target_ranks(self) -> None:
+        trace = {
+            "schema_version": "1.0.0",
+            "session_id": "runtime",
+            "turns": [{
+                "turn": 1,
+                "user_message": "shoe",
+                "state": {},
+                "ranking": {
+                    "routes": [{"name": "bm25", "candidate_ids": ["A", "TARGET"]}],
+                    "candidate_pool": ["A", "TARGET"],
+                    "recommendations": [{"parent_asin": "TARGET"}],
+                },
+                "response": {},
+            }],
+        }
+        annotated = annotate_diagnostic_trace(trace, {
+            "sample_id": "public_1",
+            "scenario_type": "buying",
+            "target_parent_asin": "TARGET",
+        })
+        ranking = annotated["turns"][0]["ranking"]
+        self.assertEqual(ranking["routes"][0]["target_rank"], 2)
+        self.assertEqual(ranking["candidate_pool_target_rank"], 2)
+        self.assertEqual(ranking["recommendation_target_rank"], 1)
+        self.assertNotIn("evaluation_context", trace)
 
 
 if __name__ == "__main__":
