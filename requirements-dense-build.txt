@@ -1,0 +1,3 @@
+# Optional build/benchmark environment only. The default MVP has no third-party
+# runtime dependencies and does not import this package.
+sentence-transformers==6.0.0
