@@ -1,0 +1,92 @@
+{
+  "commit": "4e9be3cd5bf858a5c57ebdb066b9cdad85547652",
+  "dirty": true,
+  "experiment_ids": [
+    "integrated_guarded_safe_4e9be3c_cv_fold0",
+    "integrated_guarded_safe_4e9be3c_cv_fold1",
+    "integrated_guarded_safe_4e9be3c_cv_fold2",
+    "integrated_guarded_safe_4e9be3c_cv_fold3",
+    "integrated_guarded_safe_4e9be3c_cv_fold4"
+  ],
+  "fold_count": 5,
+  "overall": {
+    "efficiency": {
+      "mean": 0.6255,
+      "std": 0.048811
+    },
+    "hit_rate_at_10": {
+      "mean": 0.855,
+      "std": 0.097468
+    },
+    "mrr": {
+      "mean": 0.495174,
+      "std": 0.097534
+    },
+    "mttc": {
+      "mean": 4.745,
+      "std": 0.488109
+    },
+    "recommended_technical_score": {
+      "mean": 0.701152,
+      "std": 0.085414
+    }
+  },
+  "scenario_metrics": {
+    "boundary": {
+      "hit_rate_at_10": {
+        "mean": 0.8,
+        "std": 0.273861
+      },
+      "mrr": {
+        "mean": 0.633333,
+        "std": 0.315128
+      },
+      "mttc": {
+        "mean": 6.0,
+        "std": 1.695582
+      }
+    },
+    "browsing": {
+      "hit_rate_at_10": {
+        "mean": 0.8625,
+        "std": 0.102698
+      },
+      "mrr": {
+        "mean": 0.488224,
+        "std": 0.119175
+      },
+      "mttc": {
+        "mean": 4.025,
+        "std": 0.755966
+      }
+    },
+    "buying": {
+      "hit_rate_at_10": {
+        "mean": 0.8875,
+        "std": 0.092702
+      },
+      "mrr": {
+        "mean": 0.506349,
+        "std": 0.12632
+      },
+      "mttc": {
+        "mean": 4.925,
+        "std": 0.676618
+      }
+    },
+    "intent_override": {
+      "hit_rate_at_10": {
+        "mean": 0.766667,
+        "std": 0.091287
+      },
+      "mrr": {
+        "mean": 0.437857,
+        "std": 0.143762
+      },
+      "mttc": {
+        "mean": 5.766667,
+        "std": 0.693221
+      }
+    }
+  }
+}

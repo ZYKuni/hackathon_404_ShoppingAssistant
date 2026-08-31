@@ -1,0 +1,19 @@
+{
+  "branch": "feature/lyt",
+  "catalog_path": "data/catalog.jsonl",
+  "catalog_sha256": "b74446b8074ca4f9f83a6041673377ba24af93d853c907bfe92e9a405c40c7b0",
+  "commit": "523ef5ec17ecd2124f888e0d0b591f2b3eff5815",
+  "config_path": "analysis/configs/baseline.json",
+  "config_sha256": "bfafddb2592a5d2cdd3c60ab8cdfc10fddfb89dc31c8f8ebe7018141daa59bd4",
+  "dataset_path": "data/public_set.jsonl",
+  "dataset_sha256": "571359a8a69014c43fc30d39c996c4a28e875dccc249dffc707358757beb16c0",
+  "dirty": false,
+  "dirty_files": [],
+  "fold": 1,
+  "folds_path": "analysis/folds.json",
+  "folds_sha256": "ec073ea13e5291c69638291c4283ea32a86364051a2d7835862b7afbcb57c36a",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "python": "3.14.6 | packaged by Anaconda, Inc. | (main, Jul  9 2026, 14:29:05) [MSC v.1942 64 bit (AMD64)]",
+  "seed": 404,
+  "sqlite_version": "3.53.2"
+}

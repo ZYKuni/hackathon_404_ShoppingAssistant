@@ -13,6 +13,103 @@ The command reads `data/catalog.jsonl` and `data/public_set.jsonl`, then writes:
 
 Only the Python standard library is required.
 
+## Reproducible agent experiments
+
+Reproduce the frozen legacy reference from the repository root:
+
+```powershell
+python analysis/run_agent_experiments.py --config analysis/configs/legacy_bm25_rrf.json
+```
+
+Run the formal integrated Agent explicitly (this is also the runner default):
+
+```powershell
+python analysis/run_agent_experiments.py --config analysis/configs/integrated_guarded_rerank.json
+```
+
+The legacy config pins `use_local_pipeline=false`. The integrated config pins
+`use_local_pipeline=true`, dense retrieval `off`, and Question Policy `safe`, so
+future constructor-default changes cannot silently relabel either experiment.
+
+The runner leaves `evaluator/local_evaluator.py` unchanged and writes one immutable directory under `analysis/runs/` containing:
+
+- the exact config and environment, including commit, branch, dirty state, Python, platform, dataset, and seed;
+- aggregate and per-scenario metrics;
+- per-session outcomes;
+- a complete `result.json` that can be passed directly to a later run with `--baseline`;
+- `diagnostic_traces.jsonl` with messages, state, retrieval routes, candidate pools, fallback, and public target ranks when the Agent implements the optional diagnostic contract;
+- initialization time, total evaluation time, P50/P95 response latency, and measured memory;
+- gained and lost sessions when `--baseline` points to an evaluator JSON result.
+
+Every successful registered run appends one JSON object to `analysis/experiment_registry.jsonl`. Give important runs an explicit stable ID:
+
+```powershell
+python analysis/run_agent_experiments.py `
+  --config analysis/configs/legacy_bm25_rrf.json `
+  --experiment-id legacy_reproduction
+```
+
+Compare a later configuration with the frozen baseline:
+
+```powershell
+python analysis/run_agent_experiments.py `
+  --config analysis/configs/integrated_guarded_rerank.json `
+  --baseline analysis/runs/<baseline-experiment-id>/result.json
+```
+
+Create the fixed seed-404 stratified five-fold assignment:
+
+```powershell
+python analysis/create_stratified_folds.py
+```
+
+Each fold contains 40 sessions: 16 Buying, 16 Browsing, 6 Intent Override, and 2 Boundary. Scenario and difficulty are both used during deterministic assignment. Run one held-out fold with:
+
+```powershell
+python analysis/run_agent_experiments.py `
+  --config analysis/configs/integrated_guarded_rerank.json `
+  --folds-file analysis/folds.json `
+  --fold 0
+```
+
+Run all five held-out folds from one frozen Git state and write a mean/standard-deviation summary:
+
+```powershell
+python analysis/run_agent_experiments.py `
+  --config analysis/configs/integrated_guarded_rerank.json `
+  --folds-file analysis/folds.json `
+  --all-folds `
+  --experiment-id integrated_guarded_rerank_cv
+```
+
+The experiment environment records SHA-256 hashes for the config, catalog, dataset, and fold assignment so later runs can prove that they used the same artifacts.
+
+An experiment directory is never overwritten. Use a new experiment ID for a new run. A dirty working tree is recorded rather than hidden; official before/after evidence should use committed code.
+
+On Windows, process working set and process-lifetime peak working set include native allocations such as SQLite. Python `tracemalloc` is disabled by default because it changes the latency being measured; enable `measure_python_allocations` in a config only for a separate memory-diagnostic run.
+
+The optional Agent-side contract is documented in `docs/diagnostic_trace_contract.md`. Diagnostics are collected after scoring and never add fields to the official `respond(...)` payload. Public target IDs and target ranks are joined by the experiment runner; they are not passed to the Agent.
+
+### Frozen integrated SAFE evidence
+
+The submitted offline configuration is frozen in
+`analysis/configs/integrated_guarded_rerank.json`. Its primary evidence chain is:
+
+- `analysis/runs/integrated_guarded_safe_4e9be3c_cleanclone/`: clean-clone
+  200-session run at commit `4e9be3c`, recorded with `dirty=false`;
+- `analysis/integrated_clean_clone_report.md`: environment, hash, test, metric,
+  latency, memory, diagnostic-coverage, and regression checks;
+- `analysis/runs/integrated_guarded_safe_4e9be3c_cv_summary.json`: fixed seed-404
+  five-fold mean and sample standard deviation;
+- `analysis/integrated_agent_failure_report.md`: trace-backed analysis of all 29
+  misses from the clean-clone run;
+- `submission/REPORT.md`: consolidated method, results, runtime, cost, fallback,
+  limitations, and release disclosures.
+
+The clean-clone evaluator result exactly matches the earlier integrated full run at
+the result, session, comparison, and aggregate-metric file hashes. It gains three
+public sessions over the frozen legacy baseline and loses none.
+
 The full run takes roughly two minutes on the current 50,000-product catalog because it builds an in-memory FTS5 index and runs the public-session BM25 field ablations. The report includes:
 
 - catalog-versus-target field coverage, including percentage-point and ratio differences;

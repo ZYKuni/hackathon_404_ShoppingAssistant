@@ -1,0 +1,92 @@
+{
+  "commit": "523ef5ec17ecd2124f888e0d0b591f2b3eff5815",
+  "dirty": false,
+  "experiment_ids": [
+    "baseline_cv_523ef5e_py314_fold0",
+    "baseline_cv_523ef5e_py314_fold1",
+    "baseline_cv_523ef5e_py314_fold2",
+    "baseline_cv_523ef5e_py314_fold3",
+    "baseline_cv_523ef5e_py314_fold4"
+  ],
+  "fold_count": 5,
+  "overall": {
+    "efficiency": {
+      "mean": 0.6115,
+      "std": 0.036082
+    },
+    "hit_rate_at_10": {
+      "mean": 0.84,
+      "std": 0.082158
+    },
+    "mrr": {
+      "mean": 0.476401,
+      "std": 0.084888
+    },
+    "mttc": {
+      "mean": 4.885,
+      "std": 0.360815
+    },
+    "recommended_technical_score": {
+      "mean": 0.68522,
+      "std": 0.071956
+    }
+  },
+  "scenario_metrics": {
+    "boundary": {
+      "hit_rate_at_10": {
+        "mean": 0.8,
+        "std": 0.273861
+      },
+      "mrr": {
+        "mean": 0.616667,
+        "std": 0.309569
+      },
+      "mttc": {
+        "mean": 6.0,
+        "std": 1.695582
+      }
+    },
+    "browsing": {
+      "hit_rate_at_10": {
+        "mean": 0.8625,
+        "std": 0.102698
+      },
+      "mrr": {
+        "mean": 0.465059,
+        "std": 0.117417
+      },
+      "mttc": {
+        "mean": 4.025,
+        "std": 0.755966
+      }
+    },
+    "buying": {
+      "hit_rate_at_10": {
+        "mean": 0.8875,
+        "std": 0.092702
+      },
+      "mrr": {
+        "mean": 0.491533,
+        "std": 0.11317
+      },
+      "mttc": {
+        "mean": 4.925,
+        "std": 0.676618
+      }
+    },
+    "intent_override": {
+      "hit_rate_at_10": {
+        "mean": 0.666667,
+        "std": 0.117851
+      },
+      "mrr": {
+        "mean": 0.419537,
+        "std": 0.115673
+      },
+      "mttc": {
+        "mean": 6.7,
+        "std": 0.853099
+      }
+    }
+  }
+}

@@ -6,6 +6,7 @@ import unittest
 from pathlib import Path
 
 from starter.agent import Agent
+from starter.diagnostics import validate_diagnostic_trace
 
 
 PRODUCTS = [
@@ -147,6 +148,25 @@ class AgentTest(unittest.TestCase):
         state = self.agent._sessions["session"]
         self.assertIn(message, state.active_messages)
         self.assertIn("running shoes", self.agent._structured_query(state.conversation_state))
+
+    def test_diagnostic_trace_is_valid_and_detached(self) -> None:
+        self.agent.reset("session", {})
+        response = self.agent.respond("session", "I need a blue running shoe", 1, 10)
+        self.assertEqual(
+            set(response), {"message", "ask_attribute", "recommendations", "usage"}
+        )
+        trace = self.agent.get_diagnostic_trace("session")
+        validate_diagnostic_trace(trace)
+        turn = trace["turns"][0]
+        self.assertEqual([route["name"] for route in turn["ranking"]["routes"]], [
+            "active_context", "current_turn", "category_anchor"
+        ])
+        self.assertEqual(
+            turn["response"]["recommendations"][0],
+            response["recommendations"][0]["parent_asin"],
+        )
+        trace["turns"].clear()
+        self.assertEqual(len(self.agent.get_diagnostic_trace("session")["turns"]), 1)
 
 
 if __name__ == "__main__":

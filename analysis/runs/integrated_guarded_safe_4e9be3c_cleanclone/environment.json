@@ -1,0 +1,19 @@
+{
+  "branch": "lyt0830",
+  "catalog_path": "data/catalog.jsonl",
+  "catalog_sha256": "b74446b8074ca4f9f83a6041673377ba24af93d853c907bfe92e9a405c40c7b0",
+  "commit": "4e9be3cd5bf858a5c57ebdb066b9cdad85547652",
+  "config_path": "analysis/configs/integrated_guarded_rerank.json",
+  "config_sha256": "8b248749927ed0a27a2af5e944d7a65965d4293db07c95f65ae6c9a48ea7e3f1",
+  "dataset_path": "data/public_set.jsonl",
+  "dataset_sha256": "571359a8a69014c43fc30d39c996c4a28e875dccc249dffc707358757beb16c0",
+  "dirty": false,
+  "dirty_files": [],
+  "fold": null,
+  "folds_path": null,
+  "folds_sha256": null,
+  "platform": "Windows-11-10.0.26200-SP0",
+  "python": "3.14.6 | packaged by Anaconda, Inc. | (main, Jul  9 2026, 14:29:05) [MSC v.1942 64 bit (AMD64)]",
+  "seed": 404,
+  "sqlite_version": "3.53.2"
+}
