@@ -90,6 +90,26 @@ On Windows, process working set and process-lifetime peak working set include na
 
 The optional Agent-side contract is documented in `docs/diagnostic_trace_contract.md`. Diagnostics are collected after scoring and never add fields to the official `respond(...)` payload. Public target IDs and target ranks are joined by the experiment runner; they are not passed to the Agent.
 
+### Frozen integrated SAFE evidence
+
+The submitted offline configuration is frozen in
+`analysis/configs/integrated_guarded_rerank.json`. Its primary evidence chain is:
+
+- `analysis/runs/integrated_guarded_safe_4e9be3c_cleanclone/`: clean-clone
+  200-session run at commit `4e9be3c`, recorded with `dirty=false`;
+- `analysis/integrated_clean_clone_report.md`: environment, hash, test, metric,
+  latency, memory, diagnostic-coverage, and regression checks;
+- `analysis/runs/integrated_guarded_safe_4e9be3c_cv_summary.json`: fixed seed-404
+  five-fold mean and sample standard deviation;
+- `analysis/integrated_agent_failure_report.md`: trace-backed analysis of all 29
+  misses from the clean-clone run;
+- `submission/REPORT.md`: consolidated method, results, runtime, cost, fallback,
+  limitations, and release disclosures.
+
+The clean-clone evaluator result exactly matches the earlier integrated full run at
+the result, session, comparison, and aggregate-metric file hashes. It gains three
+public sessions over the frozen legacy baseline and loses none.
+
 The full run takes roughly two minutes on the current 50,000-product catalog because it builds an in-memory FTS5 index and runs the public-session BM25 field ablations. The report includes:
 
 - catalog-versus-target field coverage, including percentage-point and ratio differences;

@@ -1,0 +1,21 @@
+{
+  "evaluation_ms": 64187.199,
+  "failed_respond_calls": 0,
+  "initialization_ms": 53326.271,
+  "memory_measurement_note": "Windows working-set values include native memory and the process lifetime peak. tracemalloc is disabled by default because it distorts latency.",
+  "process_memory_after": {
+    "peak_working_set_bytes": 555827200,
+    "working_set_bytes": 445177856
+  },
+  "process_memory_before": {
+    "peak_working_set_bytes": 540995584,
+    "working_set_bytes": 325185536
+  },
+  "python_tracemalloc_peak_bytes": null,
+  "respond_calls": 205,
+  "respond_latency_ms": {
+    "max": 1842.286,
+    "p50": 181.612,
+    "p95": 862.296
+  }
+}
