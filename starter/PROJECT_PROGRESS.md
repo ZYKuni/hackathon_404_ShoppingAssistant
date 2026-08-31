@@ -1,15 +1,15 @@
 # Shopping Copilot current progress
 
 > Updated: 2026-08-31
-> Branch: `codex/dense-retrieval-shadow`
+> Branch: `feature/shierly-question-policy-main`
 
 ## Current status
 
 The required offline MVP pipeline is integrated behind the organizer's default
 construction path, `Agent(catalog_path)`. The previously duplicated merge
 fragments in Agent, router, orchestrator, state adapter, and their tests were
-removed. The implementation now compiles, passes 117 tests, and completes the
-unchanged 200-session public evaluator.
+removed. The implementation now compiles, completes the unchanged 200-session
+public evaluator, and includes a non-regressing Question Policy rollout guard.
 
 | Metric | Current formal Agent |
 | --- | ---: |
@@ -31,6 +31,8 @@ unchanged 200-session public evaluator.
 8. Local structured ranker with constraint, profile, route, and popularity features.
 9. Official guarded Top-10 rerank, deterministic fallback, and overload prompt.
 10. Setup README, short submission report, checklist, and runnable multi-turn demo.
+11. Candidate-aware Question Policy over the formal RouteDecision and normalized
+    Top-200 pool, with safe/shadow/dynamic rollout modes and 20 golden QA cases.
 
 ## Important implementation decision
 
@@ -68,8 +70,11 @@ Hit@10 from 0.855 to 0.795 and is now regression-tested.
   0.701983, but remains non-default until its approximately 84 MB assets and
   x86 release environment pass final packaging gates. See
   `analysis/DENSE_RETRIEVAL_REPORT.md`.
-- Replace fixed question priority only if a candidate-distribution/value-of-
-  information policy beats the public and adversarial regression suites.
+- The candidate-distribution/value-of-information Question Policy is integrated
+  in shadow mode with exact decision diagnostics. Safe and shadow exactly match
+  the current 0.701152 public score. Dynamic reaches 0.702058 by asking fewer
+  questions, but lowers Hit@10 and MRR, so `safe` remains the default until the
+  dynamic policy beats the public and adversarial regression suites throughout.
 - Cache a versioned normalized-catalog artifact if the rules permit small local
   assets; observed cold initialization is approximately 28–40 seconds.
 

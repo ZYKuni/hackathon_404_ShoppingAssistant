@@ -12,8 +12,15 @@ from starter.constraint_parser import parse_message
 from starter.conversation_state import ConversationState, apply_patch
 from starter.attribute_lexicons import normalize_phrase
 from starter.dense_retrieval import DenseMode, DenseRouteDiagnostics, DenseSearchBackend
-from starter.orchestrator import AgentOrchestrator, RuntimeMode
+from starter.orchestrator import AgentOrchestrator, OrchestrationResult, RuntimeMode
 from starter.pipeline_contracts import RankerProtocol, RetrieverProtocol
+from starter.question_policy import (
+    QuestionDecision,
+    QuestionPolicy,
+    QuestionPolicyDiagnostics,
+    QuestionPolicyMode,
+    candidate_facets_from_products,
+)
 
 
 TOKEN_RE = re.compile(r"[a-z0-9]+", re.IGNORECASE)
@@ -115,6 +122,21 @@ def _category_terms(text: str) -> set[str]:
     return {match.group(1).lower() for match in CATEGORY_RE.finditer(text)}
 
 
+def _constraint_signature(state: ConversationState) -> tuple[object, ...]:
+    def freeze(values: dict[str, object]) -> tuple[tuple[str, object], ...]:
+        return tuple(
+            (field, tuple(value) if isinstance(value, list) else value)
+            for field, value in sorted(values.items())
+        )
+
+    return (
+        state.category,
+        freeze(state.hard_constraints),
+        freeze(state.soft_preferences),
+        freeze(state.excluded),
+    )
+
+
 @dataclass
 class SessionState:
     user_profile: dict
@@ -124,6 +146,10 @@ class SessionState:
     active_messages: list[str] = field(default_factory=list)
     conversation_state: ConversationState = field(default_factory=ConversationState)
     last_asked_attribute: str | None = None
+    rounds_without_new_constraints: int = 0
+    other_used: bool = False
+    last_override_detected: bool = False
+    last_question_policy: QuestionPolicyDiagnostics | None = None
 
 
 class Agent:
@@ -144,6 +170,8 @@ class Agent:
         use_local_pipeline: bool = True,
         dense_mode: DenseMode | str = DenseMode.OFF,
         dense_backend: DenseSearchBackend | None = None,
+        question_policy_mode: QuestionPolicyMode | str = QuestionPolicyMode.SAFE,
+        enable_profile_question_hints: bool = True,
     ) -> None:
         self.catalog_path = Path(catalog_path)
         if not self.catalog_path.is_file():
@@ -155,6 +183,11 @@ class Agent:
         self._fallback_ids: list[str] = []
         self._pipeline_fallbacks: dict[str, tuple[str, ...]] = {}
         self._dense_load_error: str | None = None
+        self._question_catalog = None
+        self._question_policy_mode = QuestionPolicyMode(question_policy_mode)
+        self._question_policy = QuestionPolicy(
+            enable_profile_hints=enable_profile_question_hints
+        )
         if not isinstance(use_local_pipeline, bool):
             raise TypeError("use_local_pipeline must be bool")
         self._dense_mode = DenseMode(dense_mode)
@@ -175,6 +208,7 @@ class Agent:
             from starter.retrieval import HybridRetriever
 
             catalog = CatalogNormalizer.from_jsonl(self.catalog_path)
+            self._question_catalog = catalog
             retriever = HybridRetriever(
                 backend=self._search_backend,
                 dense_backend=dense_backend,
@@ -264,6 +298,14 @@ class Agent:
         """Return machine-readable fallback events from the session's last turn."""
         return self._pipeline_fallbacks.get(session_id, ())
 
+    def question_policy_diagnostics(
+        self, session_id: str
+    ) -> QuestionPolicyDiagnostics | None:
+        """Return the latest safe/shadow/dynamic clarification decision."""
+
+        state = self._sessions.get(session_id)
+        return state.last_question_policy if state is not None else None
+
     def dense_diagnostics(self, session_id: str, turn: int) -> DenseRouteDiagnostics:
         """Return aggregate dense-route diagnostics without retaining query text."""
         if self._orchestrator is None:
@@ -346,6 +388,7 @@ class Agent:
         )
 
     def _update_state(self, state: SessionState, user_message: str, turn: int) -> None:
+        before_signature = _constraint_signature(state.conversation_state)
         if turn == 1 or not state.base_request:
             state.base_request = _base_request(user_message)
 
@@ -354,6 +397,8 @@ class Agent:
         previous_messages = list(state.active_messages)
         if full_override:
             self._reset_constraints_for_full_override(state)
+            state.rounds_without_new_constraints = 0
+            state.other_used = False
 
         patch = parse_message(user_message, state.conversation_state, turn)
         state.conversation_state = apply_patch(state.conversation_state, patch)
@@ -368,6 +413,8 @@ class Agent:
                 state.conversation_state.no_preference.append(last_asked)
             # The previous question has already been recorded, so the response adds
             # no positive retrieval evidence and should not pollute the query.
+            state.rounds_without_new_constraints += 1
+            state.last_override_detected = turn > 1 and bool(OVERRIDE_RE.search(user_message))
             return
 
         if OVERRIDE_RE.search(user_message) and turn > 1:
@@ -398,8 +445,17 @@ class Agent:
             state.conversation_state.asked_attributes.clear()
             state.conversation_state.no_preference.clear()
             state.last_asked_attribute = None
+            state.other_used = False
         else:
             state.active_messages.append(user_message)
+
+        after_signature = _constraint_signature(state.conversation_state)
+        state.rounds_without_new_constraints = (
+            0
+            if turn == 1 or after_signature != before_signature
+            else state.rounds_without_new_constraints + 1
+        )
+        state.last_override_detected = turn > 1 and bool(OVERRIDE_RE.search(user_message))
 
     def _search(self, text: str, limit: int = 120) -> list[str]:
         return [
@@ -433,7 +489,26 @@ class Agent:
             ranked.extend(asin for asin in self._fallback_ids if asin not in scores)
         return [{"parent_asin": asin, "score": scores.get(asin, 0.0)} for asin in ranked[:top_k]]
 
-    def _next_question(
+    @staticmethod
+    def _apply_question_decision(
+        state: SessionState,
+        decision: QuestionDecision,
+        *,
+        over_general: bool,
+    ) -> tuple[str, str | None]:
+        ask_attribute = decision.ask_attribute
+        if ask_attribute is not None:
+            if ask_attribute not in state.conversation_state.asked_attributes:
+                state.conversation_state.asked_attributes.append(ask_attribute)
+            if ask_attribute == "other":
+                state.other_used = True
+        state.last_asked_attribute = ask_attribute
+        message = decision.message
+        if over_general and ask_attribute is not None:
+            message = f"I found a broad set of possible matches. {message}"
+        return message, ask_attribute
+
+    def _baseline_question(
         self,
         state: SessionState,
         user_message: str,
@@ -463,6 +538,89 @@ class Agent:
         state.last_asked_attribute = None
         return "Here are the best matches based on your current preferences.", None
 
+    def _candidate_facets(
+        self, candidate_ids: tuple[str, ...]
+    ) -> dict[str, tuple[str | None, ...]]:
+        if self._question_catalog is None:
+            return {}
+        products = tuple(
+            product
+            for parent_asin in candidate_ids
+            if (product := self._question_catalog.get(parent_asin)) is not None
+        )
+        return candidate_facets_from_products(products)
+
+    def _next_question(
+        self,
+        state: SessionState,
+        user_message: str,
+        turn: int,
+        *,
+        over_general: bool = False,
+        orchestration_result: OrchestrationResult | None = None,
+    ) -> tuple[str, str | None]:
+        if (
+            self._question_policy_mode is QuestionPolicyMode.SAFE
+            or orchestration_result is None
+            or self._question_catalog is None
+        ):
+            message, applied = self._baseline_question(
+                state, user_message, turn, over_general=over_general
+            )
+            state.last_question_policy = QuestionPolicyDiagnostics(
+                mode=self._question_policy_mode,
+                route=(
+                    orchestration_result.request.route_decision.route
+                    if orchestration_result is not None
+                    else None
+                ),
+                candidate_count=(
+                    orchestration_result.candidate_count
+                    if orchestration_result is not None
+                    else 0
+                ),
+                selected_attribute=applied,
+                applied_attribute=applied,
+                reason="Validated fixed-priority question order.",
+            )
+            return message, applied
+
+        request = orchestration_result.request
+        decision = self._question_policy.choose(
+            request.state,
+            request.profile,
+            request.route_decision,
+            self._candidate_facets(orchestration_result.candidate_ids),
+            rounds_without_new_constraints=state.rounds_without_new_constraints,
+            other_used=state.other_used,
+            category_evidence=bool(
+                request.state.category
+                or re.search(
+                    r"\b(?:looking for|shopping for|need|want)\b",
+                    state.base_request,
+                    re.I,
+                )
+            ),
+        )
+        if self._question_policy_mode is QuestionPolicyMode.SHADOW:
+            message, applied = self._baseline_question(
+                state, user_message, turn, over_general=over_general
+            )
+        else:
+            message, applied = self._apply_question_decision(
+                state, decision, over_general=over_general
+            )
+        state.last_question_policy = QuestionPolicyDiagnostics(
+            mode=self._question_policy_mode,
+            route=request.route_decision.route,
+            candidate_count=orchestration_result.candidate_count,
+            selected_attribute=decision.ask_attribute,
+            applied_attribute=applied,
+            reason=decision.reason,
+            scores=decision.scores,
+        )
+        return message, applied
+
     def respond(
         self,
         session_id: str,
@@ -480,10 +638,11 @@ class Agent:
         override_detected = turn > 1 and bool(OVERRIDE_RE.search(user_message))
         self._update_state(state, user_message, turn)
         over_general = False
+        orchestration_result: OrchestrationResult | None = None
         if self._orchestrator is None:
             recommendations = self._rank(state, user_message, top_k)
         else:
-            result = self._orchestrator.execute(
+            orchestration_result = self._orchestrator.execute(
                 session_id=session_id,
                 turn=turn,
                 top_k=top_k,
@@ -497,12 +656,16 @@ class Agent:
             )
             recommendations = [
                 {"parent_asin": asin, "score": score}
-                for asin, score in result.recommendations
+                for asin, score in orchestration_result.recommendations
             ]
-            self._pipeline_fallbacks[session_id] = result.fallbacks
-            over_general = result.over_general
+            self._pipeline_fallbacks[session_id] = orchestration_result.fallbacks
+            over_general = orchestration_result.over_general
         message, ask_attribute = self._next_question(
-            state, user_message, turn, over_general=over_general
+            state,
+            user_message,
+            turn,
+            over_general=over_general,
+            orchestration_result=orchestration_result,
         )
         return {
             "message": message,
