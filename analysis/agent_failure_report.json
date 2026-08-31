@@ -1,0 +1,4781 @@
+{
+  "failures": [
+    {
+      "best_candidate_pool_rank": 96,
+      "best_recommendation_rank": null,
+      "best_route_rank": 77,
+      "confidence": "high",
+      "ever_in_candidate_pool": true,
+      "ever_in_recommendations": false,
+      "ever_in_route": true,
+      "final_state": {
+        "active_messages": [
+          "I'm looking for Accessories Belts",
+          "Actually, ignore my earlier preference. What I need is: leather.",
+          "For that, what matters is: Imported; Buckle closure."
+        ],
+        "asked_attributes": [
+          "brand",
+          "budget",
+          "color",
+          "feature",
+          "size",
+          "style",
+          "use_case"
+        ],
+        "base_request": "I'm looking for Accessories Belts",
+        "unavailable_attributes": [
+          "budget",
+          "color",
+          "feature",
+          "size",
+          "style",
+          "use_case"
+        ]
+      },
+      "next_action": "Inspect route weights and target-versus-cutoff scores; add attribute-aware reranking.",
+      "override_turn": 3,
+      "primary_failure": "Rerank failure",
+      "reason": "The target entered a route or merged pool but never reached the final Top-10.",
+      "recommended_after_override": false,
+      "recommended_before_override": false,
+      "sample_id": "public_0002",
+      "scenario_type": "intent_override",
+      "secondary_labels": [
+        "Override context"
+      ],
+      "target_after_override": true,
+      "target_before_override": true,
+      "target_parent_asin": "B071X54486",
+      "turn_count": 10,
+      "turn_evidence": [
+        {
+          "ask_attribute": "material",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 1,
+          "user_message": "I'm looking for Accessories Belts. Buckle closure"
+        },
+        {
+          "ask_attribute": "feature",
+          "candidate_pool_target_rank": 105,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 78
+          },
+          "turn": 2,
+          "user_message": "For that, what matters is: leather; 100% Leather."
+        },
+        {
+          "ask_attribute": "feature",
+          "candidate_pool_target_rank": 120,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 93
+          },
+          "turn": 3,
+          "user_message": "Actually, ignore my earlier preference. What I need is: leather."
+        },
+        {
+          "ask_attribute": "color",
+          "candidate_pool_target_rank": 96,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 77
+          },
+          "turn": 4,
+          "user_message": "For that, what matters is: Imported; Buckle closure."
+        },
+        {
+          "ask_attribute": "style",
+          "candidate_pool_target_rank": 104,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 77
+          },
+          "turn": 5,
+          "user_message": "I don't have an additional preference for color."
+        },
+        {
+          "ask_attribute": "size",
+          "candidate_pool_target_rank": 104,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 77
+          },
+          "turn": 6,
+          "user_message": "I don't have an additional preference for style."
+        },
+        {
+          "ask_attribute": "use_case",
+          "candidate_pool_target_rank": 104,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 77
+          },
+          "turn": 7,
+          "user_message": "I don't have an additional preference for size."
+        },
+        {
+          "ask_attribute": "budget",
+          "candidate_pool_target_rank": 104,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 77
+          },
+          "turn": 8,
+          "user_message": "I don't have an additional preference for use_case."
+        },
+        {
+          "ask_attribute": "brand",
+          "candidate_pool_target_rank": 104,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 77
+          },
+          "turn": 9,
+          "user_message": "I don't have an additional preference for budget."
+        },
+        {
+          "ask_attribute": null,
+          "candidate_pool_target_rank": 104,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 77
+          },
+          "turn": 10,
+          "user_message": "I don't have an additional preference for brand."
+        }
+      ]
+    },
+    {
+      "best_candidate_pool_rank": 12,
+      "best_recommendation_rank": null,
+      "best_route_rank": 6,
+      "confidence": "high",
+      "ever_in_candidate_pool": true,
+      "ever_in_recommendations": false,
+      "ever_in_route": true,
+      "final_state": {
+        "active_messages": [
+          "I'm looking for Shoes Mules & Clogs, but I'm still exploring.",
+          "For that, what matters is: fabric.",
+          "For that, what matters is: Made in the USA or Imported; Ethylene Vinyl Acetate sole.",
+          "For that, what matters is: Shaft measures approximately 8#inches from arch."
+        ],
+        "asked_attributes": [
+          "brand",
+          "budget",
+          "color",
+          "feature",
+          "material",
+          "other",
+          "size",
+          "style",
+          "use_case"
+        ],
+        "base_request": "I'm looking for Shoes Mules & Clogs",
+        "unavailable_attributes": [
+          "brand",
+          "budget",
+          "color",
+          "feature",
+          "material",
+          "size",
+          "style",
+          "use_case"
+        ]
+      },
+      "next_action": "Inspect route weights and target-versus-cutoff scores; add attribute-aware reranking.",
+      "override_turn": null,
+      "primary_failure": "Rerank failure",
+      "reason": "The target entered a route or merged pool but never reached the final Top-10.",
+      "recommended_after_override": false,
+      "recommended_before_override": false,
+      "sample_id": "public_0015",
+      "scenario_type": "browsing",
+      "secondary_labels": [],
+      "target_after_override": false,
+      "target_before_override": false,
+      "target_parent_asin": "B08513YB2T",
+      "turn_count": 10,
+      "turn_evidence": [
+        {
+          "ask_attribute": "material",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 1,
+          "user_message": "I'm looking for Shoes Mules & Clogs, but I'm still exploring."
+        },
+        {
+          "ask_attribute": "feature",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 2,
+          "user_message": "For that, what matters is: fabric."
+        },
+        {
+          "ask_attribute": "color",
+          "candidate_pool_target_rank": 65,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 19
+          },
+          "turn": 3,
+          "user_message": "For that, what matters is: Made in the USA or Imported; Ethylene Vinyl Acetate sole."
+        },
+        {
+          "ask_attribute": "style",
+          "candidate_pool_target_rank": 19,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 19
+          },
+          "turn": 4,
+          "user_message": "I don't have an additional preference for color."
+        },
+        {
+          "ask_attribute": "size",
+          "candidate_pool_target_rank": 19,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 19
+          },
+          "turn": 5,
+          "user_message": "I don't have an additional preference for style."
+        },
+        {
+          "ask_attribute": "use_case",
+          "candidate_pool_target_rank": 19,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 19
+          },
+          "turn": 6,
+          "user_message": "I don't have an additional preference for size."
+        },
+        {
+          "ask_attribute": "budget",
+          "candidate_pool_target_rank": 19,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 19
+          },
+          "turn": 7,
+          "user_message": "I don't have an additional preference for use_case."
+        },
+        {
+          "ask_attribute": "brand",
+          "candidate_pool_target_rank": 19,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 19
+          },
+          "turn": 8,
+          "user_message": "I don't have an additional preference for budget."
+        },
+        {
+          "ask_attribute": "other",
+          "candidate_pool_target_rank": 19,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 19
+          },
+          "turn": 9,
+          "user_message": "I don't have an additional preference for brand."
+        },
+        {
+          "ask_attribute": null,
+          "candidate_pool_target_rank": 12,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 6
+          },
+          "turn": 10,
+          "user_message": "For that, what matters is: Shaft measures approximately 8#inches from arch."
+        }
+      ]
+    },
+    {
+      "best_candidate_pool_rank": 29,
+      "best_recommendation_rank": null,
+      "best_route_rank": 20,
+      "confidence": "high",
+      "ever_in_candidate_pool": true,
+      "ever_in_recommendations": false,
+      "ever_in_route": true,
+      "final_state": {
+        "active_messages": [
+          "I'm looking for Boots Mid-Calf, but I'm still exploring.",
+          "For that, what matters is: leather.",
+          "For that, what matters is: Imported; Rubber sole.",
+          "For that, what matters is: Shaft measures approximately ankle-high from arch."
+        ],
+        "asked_attributes": [
+          "brand",
+          "budget",
+          "color",
+          "feature",
+          "material",
+          "other",
+          "size",
+          "style",
+          "use_case"
+        ],
+        "base_request": "I'm looking for Boots Mid-Calf",
+        "unavailable_attributes": [
+          "brand",
+          "budget",
+          "color",
+          "feature",
+          "material",
+          "size",
+          "style",
+          "use_case"
+        ]
+      },
+      "next_action": "Inspect route weights and target-versus-cutoff scores; add attribute-aware reranking.",
+      "override_turn": null,
+      "primary_failure": "Rerank failure",
+      "reason": "The target entered a route or merged pool but never reached the final Top-10.",
+      "recommended_after_override": false,
+      "recommended_before_override": false,
+      "sample_id": "public_0016",
+      "scenario_type": "browsing",
+      "secondary_labels": [],
+      "target_after_override": false,
+      "target_before_override": false,
+      "target_parent_asin": "B07PH3X7QK",
+      "turn_count": 10,
+      "turn_evidence": [
+        {
+          "ask_attribute": "material",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 1,
+          "user_message": "I'm looking for Boots Mid-Calf, but I'm still exploring."
+        },
+        {
+          "ask_attribute": "feature",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 2,
+          "user_message": "For that, what matters is: leather."
+        },
+        {
+          "ask_attribute": "color",
+          "candidate_pool_target_rank": 139,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 93
+          },
+          "turn": 3,
+          "user_message": "For that, what matters is: Imported; Rubber sole."
+        },
+        {
+          "ask_attribute": "style",
+          "candidate_pool_target_rank": 139,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 93
+          },
+          "turn": 4,
+          "user_message": "I don't have an additional preference for color."
+        },
+        {
+          "ask_attribute": "size",
+          "candidate_pool_target_rank": 139,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 93
+          },
+          "turn": 5,
+          "user_message": "I don't have an additional preference for style."
+        },
+        {
+          "ask_attribute": "use_case",
+          "candidate_pool_target_rank": 139,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 93
+          },
+          "turn": 6,
+          "user_message": "I don't have an additional preference for size."
+        },
+        {
+          "ask_attribute": "budget",
+          "candidate_pool_target_rank": 139,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 93
+          },
+          "turn": 7,
+          "user_message": "I don't have an additional preference for use_case."
+        },
+        {
+          "ask_attribute": "brand",
+          "candidate_pool_target_rank": 139,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 93
+          },
+          "turn": 8,
+          "user_message": "I don't have an additional preference for budget."
+        },
+        {
+          "ask_attribute": "other",
+          "candidate_pool_target_rank": 139,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 93
+          },
+          "turn": 9,
+          "user_message": "I don't have an additional preference for brand."
+        },
+        {
+          "ask_attribute": null,
+          "candidate_pool_target_rank": 29,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 20
+          },
+          "turn": 10,
+          "user_message": "For that, what matters is: Shaft measures approximately ankle-high from arch."
+        }
+      ]
+    },
+    {
+      "best_candidate_pool_rank": 117,
+      "best_recommendation_rank": null,
+      "best_route_rank": 117,
+      "confidence": "high",
+      "ever_in_candidate_pool": true,
+      "ever_in_recommendations": false,
+      "ever_in_route": true,
+      "final_state": {
+        "active_messages": [
+          "I'm looking for Novelty Women. A key requirement is: cotton.",
+          "For that, what matters is: Imported.",
+          "For that, what matters is: color: grey.",
+          "For that, what matters is: Solid colors: 100% Cotton; Heather Grey: 90% Cotton, 10% Polyester; All Other Heathers: 50% Cotton, 50% Polyester."
+        ],
+        "asked_attributes": [
+          "brand",
+          "budget",
+          "color",
+          "feature",
+          "other",
+          "size",
+          "style",
+          "use_case"
+        ],
+        "base_request": "I'm looking for Novelty Women",
+        "unavailable_attributes": [
+          "brand",
+          "budget",
+          "color",
+          "feature",
+          "size",
+          "style",
+          "use_case"
+        ]
+      },
+      "next_action": "Inspect route weights and target-versus-cutoff scores; add attribute-aware reranking.",
+      "override_turn": null,
+      "primary_failure": "Rerank failure",
+      "reason": "The target entered a route or merged pool but never reached the final Top-10.",
+      "recommended_after_override": false,
+      "recommended_before_override": false,
+      "sample_id": "public_0020",
+      "scenario_type": "buying",
+      "secondary_labels": [],
+      "target_after_override": false,
+      "target_before_override": false,
+      "target_parent_asin": "B08P4SSFX4",
+      "turn_count": 10,
+      "turn_evidence": [
+        {
+          "ask_attribute": "feature",
+          "candidate_pool_target_rank": 117,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 117,
+            "current_turn": 117
+          },
+          "turn": 1,
+          "user_message": "I'm looking for Novelty Women. A key requirement is: cotton."
+        },
+        {
+          "ask_attribute": "color",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 2,
+          "user_message": "For that, what matters is: Imported."
+        },
+        {
+          "ask_attribute": "style",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 3,
+          "user_message": "For that, what matters is: color: grey."
+        },
+        {
+          "ask_attribute": "size",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 4,
+          "user_message": "I don't have an additional preference for style."
+        },
+        {
+          "ask_attribute": "use_case",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 5,
+          "user_message": "I don't have an additional preference for size."
+        },
+        {
+          "ask_attribute": "budget",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 6,
+          "user_message": "I don't have an additional preference for use_case."
+        },
+        {
+          "ask_attribute": "brand",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 7,
+          "user_message": "I don't have an additional preference for budget."
+        },
+        {
+          "ask_attribute": "other",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 8,
+          "user_message": "I don't have an additional preference for brand."
+        },
+        {
+          "ask_attribute": null,
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 9,
+          "user_message": "For that, what matters is: Solid colors: 100% Cotton; Heather Grey: 90% Cotton, 10% Polyester; All Other Heathers: 50% Cotton, 50% Polyester."
+        },
+        {
+          "ask_attribute": null,
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 10,
+          "user_message": "Those options are not quite right yet. Ask me about one specific attribute."
+        }
+      ]
+    },
+    {
+      "best_candidate_pool_rank": 25,
+      "best_recommendation_rank": null,
+      "best_route_rank": 47,
+      "confidence": "high",
+      "ever_in_candidate_pool": true,
+      "ever_in_recommendations": false,
+      "ever_in_route": true,
+      "final_state": {
+        "active_messages": [
+          "I'm looking for Card Cases & Money Organizers Wallets. A key requirement is: leather.",
+          "For that, what matters is: color: black.",
+          "For that, what matters is: Leather; Polyester lining."
+        ],
+        "asked_attributes": [
+          "brand",
+          "budget",
+          "color",
+          "feature",
+          "other",
+          "size",
+          "style",
+          "use_case"
+        ],
+        "base_request": "I'm looking for Card Cases & Money Organizers Wallets",
+        "unavailable_attributes": [
+          "brand",
+          "budget",
+          "color",
+          "feature",
+          "size",
+          "style",
+          "use_case"
+        ]
+      },
+      "next_action": "Inspect route weights and target-versus-cutoff scores; add attribute-aware reranking.",
+      "override_turn": null,
+      "primary_failure": "Rerank failure",
+      "reason": "The target entered a route or merged pool but never reached the final Top-10.",
+      "recommended_after_override": false,
+      "recommended_before_override": false,
+      "sample_id": "public_0028",
+      "scenario_type": "buying",
+      "secondary_labels": [],
+      "target_after_override": false,
+      "target_before_override": false,
+      "target_parent_asin": "B0B9ZYDDZ1",
+      "turn_count": 10,
+      "turn_evidence": [
+        {
+          "ask_attribute": "feature",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 1,
+          "user_message": "I'm looking for Card Cases & Money Organizers Wallets. A key requirement is: leather."
+        },
+        {
+          "ask_attribute": "color",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 2,
+          "user_message": "I don't have an additional preference for feature."
+        },
+        {
+          "ask_attribute": "style",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 3,
+          "user_message": "For that, what matters is: color: black."
+        },
+        {
+          "ask_attribute": "size",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 4,
+          "user_message": "I don't have an additional preference for style."
+        },
+        {
+          "ask_attribute": "use_case",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 5,
+          "user_message": "I don't have an additional preference for size."
+        },
+        {
+          "ask_attribute": "budget",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 6,
+          "user_message": "I don't have an additional preference for use_case."
+        },
+        {
+          "ask_attribute": "brand",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 7,
+          "user_message": "I don't have an additional preference for budget."
+        },
+        {
+          "ask_attribute": "other",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 8,
+          "user_message": "I don't have an additional preference for brand."
+        },
+        {
+          "ask_attribute": null,
+          "candidate_pool_target_rank": 25,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 47,
+            "current_turn": 92
+          },
+          "turn": 9,
+          "user_message": "For that, what matters is: Leather; Polyester lining."
+        },
+        {
+          "ask_attribute": null,
+          "candidate_pool_target_rank": 57,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 47
+          },
+          "turn": 10,
+          "user_message": "Those options are not quite right yet. Ask me about one specific attribute."
+        }
+      ]
+    },
+    {
+      "best_candidate_pool_rank": 21,
+      "best_recommendation_rank": null,
+      "best_route_rank": 20,
+      "confidence": "high",
+      "ever_in_candidate_pool": true,
+      "ever_in_recommendations": false,
+      "ever_in_route": true,
+      "final_state": {
+        "active_messages": [
+          "I'm looking for Athletic Walking, but I'm still exploring.",
+          "For that, what matters is: 100% Textile; Imported.",
+          "For that, what matters is: fabric; Rubber sole."
+        ],
+        "asked_attributes": [
+          "brand",
+          "budget",
+          "color",
+          "feature",
+          "material",
+          "other",
+          "size",
+          "style"
+        ],
+        "base_request": "I'm looking for Athletic Walking",
+        "unavailable_attributes": [
+          "brand",
+          "budget",
+          "color",
+          "feature",
+          "material",
+          "size",
+          "style"
+        ]
+      },
+      "next_action": "Inspect route weights and target-versus-cutoff scores; add attribute-aware reranking.",
+      "override_turn": null,
+      "primary_failure": "Rerank failure",
+      "reason": "The target entered a route or merged pool but never reached the final Top-10.",
+      "recommended_after_override": false,
+      "recommended_before_override": false,
+      "sample_id": "public_0035",
+      "scenario_type": "boundary",
+      "secondary_labels": [
+        "Boundary context"
+      ],
+      "target_after_override": false,
+      "target_before_override": false,
+      "target_parent_asin": "B0BN6CCHB7",
+      "turn_count": 10,
+      "turn_evidence": [
+        {
+          "ask_attribute": "material",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 1,
+          "user_message": "I'm looking for Athletic Walking, but I'm still exploring."
+        },
+        {
+          "ask_attribute": "feature",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 2,
+          "user_message": "I don't have a preference for material; please use your judgment."
+        },
+        {
+          "ask_attribute": "color",
+          "candidate_pool_target_rank": 66,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 42
+          },
+          "turn": 3,
+          "user_message": "For that, what matters is: 100% Textile; Imported."
+        },
+        {
+          "ask_attribute": "style",
+          "candidate_pool_target_rank": 43,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 42
+          },
+          "turn": 4,
+          "user_message": "I don't have an additional preference for color."
+        },
+        {
+          "ask_attribute": "size",
+          "candidate_pool_target_rank": 43,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 42
+          },
+          "turn": 5,
+          "user_message": "I don't have an additional preference for style."
+        },
+        {
+          "ask_attribute": "budget",
+          "candidate_pool_target_rank": 44,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 42
+          },
+          "turn": 6,
+          "user_message": "I don't have an additional preference for size."
+        },
+        {
+          "ask_attribute": "brand",
+          "candidate_pool_target_rank": 43,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 42
+          },
+          "turn": 7,
+          "user_message": "I don't have an additional preference for budget."
+        },
+        {
+          "ask_attribute": "other",
+          "candidate_pool_target_rank": 43,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 42
+          },
+          "turn": 8,
+          "user_message": "I don't have an additional preference for brand."
+        },
+        {
+          "ask_attribute": null,
+          "candidate_pool_target_rank": 27,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 20
+          },
+          "turn": 9,
+          "user_message": "For that, what matters is: fabric; Rubber sole."
+        },
+        {
+          "ask_attribute": null,
+          "candidate_pool_target_rank": 21,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 20
+          },
+          "turn": 10,
+          "user_message": "Those options are not quite right yet. Ask me about one specific attribute."
+        }
+      ]
+    },
+    {
+      "best_candidate_pool_rank": 37,
+      "best_recommendation_rank": null,
+      "best_route_rank": 25,
+      "confidence": "high",
+      "ever_in_candidate_pool": true,
+      "ever_in_recommendations": false,
+      "ever_in_route": true,
+      "final_state": {
+        "active_messages": [
+          "I'm looking for Active Pants Sweatpants, but I'm still exploring.",
+          "For that, what matters is: cotton; 100% Cotton.",
+          "For that, what matters is: Imported.",
+          "For that, what matters is: color: black."
+        ],
+        "asked_attributes": [
+          "brand",
+          "budget",
+          "color",
+          "feature",
+          "material",
+          "other",
+          "size",
+          "style",
+          "use_case"
+        ],
+        "base_request": "I'm looking for Active Pants Sweatpants",
+        "unavailable_attributes": [
+          "brand",
+          "budget",
+          "color",
+          "feature",
+          "material",
+          "size",
+          "style",
+          "use_case"
+        ]
+      },
+      "next_action": "Inspect route weights and target-versus-cutoff scores; add attribute-aware reranking.",
+      "override_turn": null,
+      "primary_failure": "Rerank failure",
+      "reason": "The target entered a route or merged pool but never reached the final Top-10.",
+      "recommended_after_override": false,
+      "recommended_before_override": false,
+      "sample_id": "public_0040",
+      "scenario_type": "browsing",
+      "secondary_labels": [],
+      "target_after_override": false,
+      "target_before_override": false,
+      "target_parent_asin": "B08ZJWTCDR",
+      "turn_count": 10,
+      "turn_evidence": [
+        {
+          "ask_attribute": "material",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 1,
+          "user_message": "I'm looking for Active Pants Sweatpants, but I'm still exploring."
+        },
+        {
+          "ask_attribute": "feature",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 2,
+          "user_message": "For that, what matters is: cotton; 100% Cotton."
+        },
+        {
+          "ask_attribute": "color",
+          "candidate_pool_target_rank": 163,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 110
+          },
+          "turn": 3,
+          "user_message": "For that, what matters is: Imported."
+        },
+        {
+          "ask_attribute": "style",
+          "candidate_pool_target_rank": 37,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 25
+          },
+          "turn": 4,
+          "user_message": "For that, what matters is: color: black."
+        },
+        {
+          "ask_attribute": "size",
+          "candidate_pool_target_rank": 37,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 25
+          },
+          "turn": 5,
+          "user_message": "I don't have an additional preference for style."
+        },
+        {
+          "ask_attribute": "use_case",
+          "candidate_pool_target_rank": 37,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 25
+          },
+          "turn": 6,
+          "user_message": "I don't have an additional preference for size."
+        },
+        {
+          "ask_attribute": "budget",
+          "candidate_pool_target_rank": 37,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 25
+          },
+          "turn": 7,
+          "user_message": "I don't have an additional preference for use_case."
+        },
+        {
+          "ask_attribute": "brand",
+          "candidate_pool_target_rank": 37,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 25
+          },
+          "turn": 8,
+          "user_message": "I don't have an additional preference for budget."
+        },
+        {
+          "ask_attribute": "other",
+          "candidate_pool_target_rank": 37,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 25
+          },
+          "turn": 9,
+          "user_message": "I don't have an additional preference for brand."
+        },
+        {
+          "ask_attribute": null,
+          "candidate_pool_target_rank": 37,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 25
+          },
+          "turn": 10,
+          "user_message": "I don't have an additional preference for other."
+        }
+      ]
+    },
+    {
+      "best_candidate_pool_rank": 5,
+      "best_recommendation_rank": 5,
+      "best_route_rank": 7,
+      "confidence": "high",
+      "ever_in_candidate_pool": true,
+      "ever_in_recommendations": true,
+      "ever_in_route": true,
+      "final_state": {
+        "active_messages": [
+          "I'm looking for Tees & Blouses Tunics",
+          "Actually, ignore my earlier preference. What I need is: polyester.",
+          "For that, what matters is: Button closure; Hand Wash Only."
+        ],
+        "asked_attributes": [
+          "brand",
+          "budget",
+          "color",
+          "feature",
+          "size",
+          "style",
+          "use_case"
+        ],
+        "base_request": "I'm looking for Tees & Blouses Tunics",
+        "unavailable_attributes": [
+          "budget",
+          "color",
+          "feature",
+          "size",
+          "style",
+          "use_case"
+        ]
+      },
+      "next_action": "Rebuild active constraints at the override turn and add an override-specific regression test.",
+      "override_turn": 3,
+      "primary_failure": "Override failure",
+      "reason": "The target was viable before the explicit override but was never recommended afterwards, when the evaluator begins counting hits.",
+      "recommended_after_override": false,
+      "recommended_before_override": true,
+      "sample_id": "public_0052",
+      "scenario_type": "intent_override",
+      "secondary_labels": [],
+      "target_after_override": true,
+      "target_before_override": true,
+      "target_parent_asin": "B09G2ZNZY4",
+      "turn_count": 10,
+      "turn_evidence": [
+        {
+          "ask_attribute": "material",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 1,
+          "user_message": "I'm looking for Tees & Blouses Tunics. Hand Wash Only"
+        },
+        {
+          "ask_attribute": "feature",
+          "candidate_pool_target_rank": 5,
+          "recommendation_target_rank": 5,
+          "route_target_ranks": {
+            "active_context": 7,
+            "current_turn": 91
+          },
+          "turn": 2,
+          "user_message": "For that, what matters is: polyester; 60% polyester."
+        },
+        {
+          "ask_attribute": "feature",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 3,
+          "user_message": "Actually, ignore my earlier preference. What I need is: polyester."
+        },
+        {
+          "ask_attribute": "color",
+          "candidate_pool_target_rank": 39,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 36
+          },
+          "turn": 4,
+          "user_message": "For that, what matters is: Button closure; Hand Wash Only."
+        },
+        {
+          "ask_attribute": "style",
+          "candidate_pool_target_rank": 38,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 36
+          },
+          "turn": 5,
+          "user_message": "I don't have an additional preference for color."
+        },
+        {
+          "ask_attribute": "size",
+          "candidate_pool_target_rank": 40,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 36
+          },
+          "turn": 6,
+          "user_message": "I don't have an additional preference for style."
+        },
+        {
+          "ask_attribute": "use_case",
+          "candidate_pool_target_rank": 38,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 36
+          },
+          "turn": 7,
+          "user_message": "I don't have an additional preference for size."
+        },
+        {
+          "ask_attribute": "budget",
+          "candidate_pool_target_rank": 37,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 36
+          },
+          "turn": 8,
+          "user_message": "I don't have an additional preference for use_case."
+        },
+        {
+          "ask_attribute": "brand",
+          "candidate_pool_target_rank": 37,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 36
+          },
+          "turn": 9,
+          "user_message": "I don't have an additional preference for budget."
+        },
+        {
+          "ask_attribute": null,
+          "candidate_pool_target_rank": 37,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 36
+          },
+          "turn": 10,
+          "user_message": "I don't have an additional preference for brand."
+        }
+      ]
+    },
+    {
+      "best_candidate_pool_rank": 18,
+      "best_recommendation_rank": null,
+      "best_route_rank": 17,
+      "confidence": "high",
+      "ever_in_candidate_pool": true,
+      "ever_in_recommendations": false,
+      "ever_in_route": true,
+      "final_state": {
+        "active_messages": [
+          "I'm looking for Rain & Anoraks Raincoats. A key requirement is: polyester.",
+          "For that, what matters is: Imported; Zipper closure.",
+          "For that, what matters is: 100% Polyester."
+        ],
+        "asked_attributes": [
+          "brand",
+          "budget",
+          "color",
+          "feature",
+          "other",
+          "size",
+          "style",
+          "use_case"
+        ],
+        "base_request": "I'm looking for Rain & Anoraks Raincoats",
+        "unavailable_attributes": [
+          "brand",
+          "budget",
+          "color",
+          "feature",
+          "size",
+          "style",
+          "use_case"
+        ]
+      },
+      "next_action": "Inspect route weights and target-versus-cutoff scores; add attribute-aware reranking.",
+      "override_turn": null,
+      "primary_failure": "Rerank failure",
+      "reason": "The target entered a route or merged pool but never reached the final Top-10.",
+      "recommended_after_override": false,
+      "recommended_before_override": false,
+      "sample_id": "public_0058",
+      "scenario_type": "buying",
+      "secondary_labels": [],
+      "target_after_override": false,
+      "target_before_override": false,
+      "target_parent_asin": "B08L83YQTZ",
+      "turn_count": 10,
+      "turn_evidence": [
+        {
+          "ask_attribute": "feature",
+          "candidate_pool_target_rank": 24,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 24,
+            "category_anchor": 29,
+            "current_turn": 24
+          },
+          "turn": 1,
+          "user_message": "I'm looking for Rain & Anoraks Raincoats. A key requirement is: polyester."
+        },
+        {
+          "ask_attribute": "color",
+          "candidate_pool_target_rank": 18,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 18,
+            "category_anchor": 29
+          },
+          "turn": 2,
+          "user_message": "For that, what matters is: Imported; Zipper closure."
+        },
+        {
+          "ask_attribute": "style",
+          "candidate_pool_target_rank": 18,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 18,
+            "category_anchor": 29
+          },
+          "turn": 3,
+          "user_message": "I don't have an additional preference for color."
+        },
+        {
+          "ask_attribute": "size",
+          "candidate_pool_target_rank": 18,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 18,
+            "category_anchor": 29
+          },
+          "turn": 4,
+          "user_message": "I don't have an additional preference for style."
+        },
+        {
+          "ask_attribute": "use_case",
+          "candidate_pool_target_rank": 18,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 18,
+            "category_anchor": 29
+          },
+          "turn": 5,
+          "user_message": "I don't have an additional preference for size."
+        },
+        {
+          "ask_attribute": "budget",
+          "candidate_pool_target_rank": 18,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 18,
+            "category_anchor": 29
+          },
+          "turn": 6,
+          "user_message": "I don't have an additional preference for use_case."
+        },
+        {
+          "ask_attribute": "brand",
+          "candidate_pool_target_rank": 18,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 18,
+            "category_anchor": 29
+          },
+          "turn": 7,
+          "user_message": "I don't have an additional preference for budget."
+        },
+        {
+          "ask_attribute": "other",
+          "candidate_pool_target_rank": 18,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 18,
+            "category_anchor": 29
+          },
+          "turn": 8,
+          "user_message": "I don't have an additional preference for brand."
+        },
+        {
+          "ask_attribute": null,
+          "candidate_pool_target_rank": 21,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 17,
+            "category_anchor": 29
+          },
+          "turn": 9,
+          "user_message": "For that, what matters is: 100% Polyester."
+        },
+        {
+          "ask_attribute": null,
+          "candidate_pool_target_rank": 19,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 17,
+            "category_anchor": 29
+          },
+          "turn": 10,
+          "user_message": "Those options are not quite right yet. Ask me about one specific attribute."
+        }
+      ]
+    },
+    {
+      "best_candidate_pool_rank": 3,
+      "best_recommendation_rank": 3,
+      "best_route_rank": 1,
+      "confidence": "high",
+      "ever_in_candidate_pool": true,
+      "ever_in_recommendations": true,
+      "ever_in_route": true,
+      "final_state": {
+        "active_messages": [
+          "I'm looking for Women Fashion Hoodies & Sweatshirts",
+          "Actually, ignore my earlier preference. What I need is: cotton."
+        ],
+        "asked_attributes": [
+          "budget",
+          "color",
+          "feature",
+          "size",
+          "style",
+          "use_case"
+        ],
+        "base_request": "I'm looking for Women Fashion Hoodies & Sweatshirts",
+        "unavailable_attributes": [
+          "color",
+          "feature",
+          "size",
+          "style",
+          "use_case"
+        ]
+      },
+      "next_action": "Rebuild active constraints at the override turn and add an override-specific regression test.",
+      "override_turn": 4,
+      "primary_failure": "Override failure",
+      "reason": "The target was viable before the explicit override but was never recommended afterwards, when the evaluator begins counting hits.",
+      "recommended_after_override": false,
+      "recommended_before_override": true,
+      "sample_id": "public_0071",
+      "scenario_type": "intent_override",
+      "secondary_labels": [],
+      "target_after_override": false,
+      "target_before_override": true,
+      "target_parent_asin": "B06XRFSDL4",
+      "turn_count": 10,
+      "turn_evidence": [
+        {
+          "ask_attribute": "material",
+          "candidate_pool_target_rank": 98,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 98,
+            "current_turn": 98
+          },
+          "turn": 1,
+          "user_message": "I'm looking for Women Fashion Hoodies & Sweatshirts. Pull On closure"
+        },
+        {
+          "ask_attribute": "feature",
+          "candidate_pool_target_rank": 3,
+          "recommendation_target_rank": 3,
+          "route_target_ranks": {
+            "active_context": 1
+          },
+          "turn": 2,
+          "user_message": "For that, what matters is: cotton; 90% Cotton, 10% Others."
+        },
+        {
+          "ask_attribute": "color",
+          "candidate_pool_target_rank": 4,
+          "recommendation_target_rank": 4,
+          "route_target_ranks": {
+            "active_context": 1
+          },
+          "turn": 3,
+          "user_message": "For that, what matters is: Imported; Pull On closure."
+        },
+        {
+          "ask_attribute": "feature",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 4,
+          "user_message": "Actually, ignore my earlier preference. What I need is: cotton."
+        },
+        {
+          "ask_attribute": "color",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 5,
+          "user_message": "I don't have an additional preference for feature."
+        },
+        {
+          "ask_attribute": "style",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 6,
+          "user_message": "I don't have an additional preference for color."
+        },
+        {
+          "ask_attribute": "size",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 7,
+          "user_message": "I don't have an additional preference for style."
+        },
+        {
+          "ask_attribute": "use_case",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 8,
+          "user_message": "I don't have an additional preference for size."
+        },
+        {
+          "ask_attribute": "budget",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 9,
+          "user_message": "I don't have an additional preference for use_case."
+        },
+        {
+          "ask_attribute": null,
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 10,
+          "user_message": "I don't have an additional preference for budget."
+        }
+      ]
+    },
+    {
+      "best_candidate_pool_rank": 16,
+      "best_recommendation_rank": null,
+      "best_route_rank": 16,
+      "confidence": "high",
+      "ever_in_candidate_pool": true,
+      "ever_in_recommendations": false,
+      "ever_in_route": true,
+      "final_state": {
+        "active_messages": [
+          "I'm looking for Women Hoodies, but I'm still exploring.",
+          "For that, what matters is: cotton; Solid colors: 80% Cotton, 20% Polyester; Heather Grey: 78% Cotton, 22% Poly; Dark Heather: 50% Cotton, 50% Polyester.",
+          "For that, what matters is: Imported.",
+          "For that, what matters is: color: grey."
+        ],
+        "asked_attributes": [
+          "brand",
+          "budget",
+          "feature",
+          "material",
+          "other",
+          "size",
+          "style",
+          "use_case"
+        ],
+        "base_request": "I'm looking for Women Hoodies",
+        "unavailable_attributes": [
+          "brand",
+          "budget",
+          "feature",
+          "material",
+          "size",
+          "style",
+          "use_case"
+        ]
+      },
+      "next_action": "Inspect route weights and target-versus-cutoff scores; add attribute-aware reranking.",
+      "override_turn": null,
+      "primary_failure": "Rerank failure",
+      "reason": "The target entered a route or merged pool but never reached the final Top-10.",
+      "recommended_after_override": false,
+      "recommended_before_override": false,
+      "sample_id": "public_0076",
+      "scenario_type": "browsing",
+      "secondary_labels": [],
+      "target_after_override": false,
+      "target_before_override": false,
+      "target_parent_asin": "B07XT6PLTB",
+      "turn_count": 10,
+      "turn_evidence": [
+        {
+          "ask_attribute": "material",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 1,
+          "user_message": "I'm looking for Women Hoodies, but I'm still exploring."
+        },
+        {
+          "ask_attribute": "feature",
+          "candidate_pool_target_rank": 17,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 16,
+            "current_turn": 17
+          },
+          "turn": 2,
+          "user_message": "For that, what matters is: cotton; Solid colors: 80% Cotton, 20% Polyester; Heather Grey: 78% Cotton, 22% Poly; Dark Heather: 50% Cotton, 50% Polyester."
+        },
+        {
+          "ask_attribute": "style",
+          "candidate_pool_target_rank": 16,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 16
+          },
+          "turn": 3,
+          "user_message": "For that, what matters is: Imported."
+        },
+        {
+          "ask_attribute": "size",
+          "candidate_pool_target_rank": 16,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 16
+          },
+          "turn": 4,
+          "user_message": "I don't have an additional preference for style."
+        },
+        {
+          "ask_attribute": "use_case",
+          "candidate_pool_target_rank": 16,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 16
+          },
+          "turn": 5,
+          "user_message": "I don't have an additional preference for size."
+        },
+        {
+          "ask_attribute": "budget",
+          "candidate_pool_target_rank": 16,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 16
+          },
+          "turn": 6,
+          "user_message": "I don't have an additional preference for use_case."
+        },
+        {
+          "ask_attribute": "brand",
+          "candidate_pool_target_rank": 16,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 16
+          },
+          "turn": 7,
+          "user_message": "I don't have an additional preference for budget."
+        },
+        {
+          "ask_attribute": "other",
+          "candidate_pool_target_rank": 16,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 16
+          },
+          "turn": 8,
+          "user_message": "I don't have an additional preference for brand."
+        },
+        {
+          "ask_attribute": null,
+          "candidate_pool_target_rank": 22,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 16
+          },
+          "turn": 9,
+          "user_message": "For that, what matters is: color: grey."
+        },
+        {
+          "ask_attribute": null,
+          "candidate_pool_target_rank": 16,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 16
+          },
+          "turn": 10,
+          "user_message": "Those options are not quite right yet. Ask me about one specific attribute."
+        }
+      ]
+    },
+    {
+      "best_candidate_pool_rank": 11,
+      "best_recommendation_rank": null,
+      "best_route_rank": 5,
+      "confidence": "high",
+      "ever_in_candidate_pool": true,
+      "ever_in_recommendations": false,
+      "ever_in_route": true,
+      "final_state": {
+        "active_messages": [
+          "I'm looking for Shirts Polos",
+          "Actually, ignore my earlier preference. What I need is: cotton."
+        ],
+        "asked_attributes": [
+          "budget",
+          "color",
+          "feature",
+          "size",
+          "style",
+          "use_case"
+        ],
+        "base_request": "I'm looking for Shirts Polos",
+        "unavailable_attributes": [
+          "color",
+          "feature",
+          "size",
+          "style",
+          "use_case"
+        ]
+      },
+      "next_action": "Inspect route weights and target-versus-cutoff scores; add attribute-aware reranking.",
+      "override_turn": 4,
+      "primary_failure": "Rerank failure",
+      "reason": "The target entered a route or merged pool but never reached the final Top-10.",
+      "recommended_after_override": false,
+      "recommended_before_override": false,
+      "sample_id": "public_0080",
+      "scenario_type": "intent_override",
+      "secondary_labels": [
+        "Override context"
+      ],
+      "target_after_override": true,
+      "target_before_override": true,
+      "target_parent_asin": "B0BPRQY4CF",
+      "turn_count": 10,
+      "turn_evidence": [
+        {
+          "ask_attribute": "material",
+          "candidate_pool_target_rank": 102,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 98,
+            "current_turn": 98
+          },
+          "turn": 1,
+          "user_message": "I'm looking for Shirts Polos. Button closure"
+        },
+        {
+          "ask_attribute": "feature",
+          "candidate_pool_target_rank": 31,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 6
+          },
+          "turn": 2,
+          "user_message": "For that, what matters is: cotton; 60% Cotton, 40% Polyester."
+        },
+        {
+          "ask_attribute": "color",
+          "candidate_pool_target_rank": 11,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 5
+          },
+          "turn": 3,
+          "user_message": "For that, what matters is: Imported; Button closure."
+        },
+        {
+          "ask_attribute": "feature",
+          "candidate_pool_target_rank": 85,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 66
+          },
+          "turn": 4,
+          "user_message": "Actually, ignore my earlier preference. What I need is: cotton."
+        },
+        {
+          "ask_attribute": "color",
+          "candidate_pool_target_rank": 89,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 66
+          },
+          "turn": 5,
+          "user_message": "I don't have an additional preference for feature."
+        },
+        {
+          "ask_attribute": "style",
+          "candidate_pool_target_rank": 89,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 66
+          },
+          "turn": 6,
+          "user_message": "I don't have an additional preference for color."
+        },
+        {
+          "ask_attribute": "size",
+          "candidate_pool_target_rank": 88,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 66
+          },
+          "turn": 7,
+          "user_message": "I don't have an additional preference for style."
+        },
+        {
+          "ask_attribute": "use_case",
+          "candidate_pool_target_rank": 89,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 66
+          },
+          "turn": 8,
+          "user_message": "I don't have an additional preference for size."
+        },
+        {
+          "ask_attribute": "budget",
+          "candidate_pool_target_rank": 89,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 66
+          },
+          "turn": 9,
+          "user_message": "I don't have an additional preference for use_case."
+        },
+        {
+          "ask_attribute": null,
+          "candidate_pool_target_rank": 89,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 66
+          },
+          "turn": 10,
+          "user_message": "I don't have an additional preference for budget."
+        }
+      ]
+    },
+    {
+      "best_candidate_pool_rank": 84,
+      "best_recommendation_rank": null,
+      "best_route_rank": 65,
+      "confidence": "high",
+      "ever_in_candidate_pool": true,
+      "ever_in_recommendations": false,
+      "ever_in_route": true,
+      "final_state": {
+        "active_messages": [
+          "I'm looking for Tees & Blouses Blouses & Button-Down Shirts. A key requirement is: polyester.",
+          "For that, what matters is: Imported; Button closure.",
+          "For that, what matters is: 100% Polyester."
+        ],
+        "asked_attributes": [
+          "brand",
+          "budget",
+          "color",
+          "feature",
+          "other",
+          "size",
+          "style",
+          "use_case"
+        ],
+        "base_request": "I'm looking for Tees & Blouses Blouses & Button-Down Shirts",
+        "unavailable_attributes": [
+          "brand",
+          "budget",
+          "color",
+          "feature",
+          "size",
+          "style",
+          "use_case"
+        ]
+      },
+      "next_action": "Inspect route weights and target-versus-cutoff scores; add attribute-aware reranking.",
+      "override_turn": null,
+      "primary_failure": "Rerank failure",
+      "reason": "The target entered a route or merged pool but never reached the final Top-10.",
+      "recommended_after_override": false,
+      "recommended_before_override": false,
+      "sample_id": "public_0083",
+      "scenario_type": "buying",
+      "secondary_labels": [],
+      "target_after_override": false,
+      "target_before_override": false,
+      "target_parent_asin": "B0BPMCJ1RD",
+      "turn_count": 10,
+      "turn_evidence": [
+        {
+          "ask_attribute": "feature",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 1,
+          "user_message": "I'm looking for Tees & Blouses Blouses & Button-Down Shirts. A key requirement is: polyester."
+        },
+        {
+          "ask_attribute": "color",
+          "candidate_pool_target_rank": 104,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 81
+          },
+          "turn": 2,
+          "user_message": "For that, what matters is: Imported; Button closure."
+        },
+        {
+          "ask_attribute": "style",
+          "candidate_pool_target_rank": 107,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 81
+          },
+          "turn": 3,
+          "user_message": "I don't have an additional preference for color."
+        },
+        {
+          "ask_attribute": "size",
+          "candidate_pool_target_rank": 107,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 81
+          },
+          "turn": 4,
+          "user_message": "I don't have an additional preference for style."
+        },
+        {
+          "ask_attribute": "use_case",
+          "candidate_pool_target_rank": 108,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 81
+          },
+          "turn": 5,
+          "user_message": "I don't have an additional preference for size."
+        },
+        {
+          "ask_attribute": "budget",
+          "candidate_pool_target_rank": 107,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 81
+          },
+          "turn": 6,
+          "user_message": "I don't have an additional preference for use_case."
+        },
+        {
+          "ask_attribute": "brand",
+          "candidate_pool_target_rank": 107,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 81
+          },
+          "turn": 7,
+          "user_message": "I don't have an additional preference for budget."
+        },
+        {
+          "ask_attribute": "other",
+          "candidate_pool_target_rank": 107,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 81
+          },
+          "turn": 8,
+          "user_message": "I don't have an additional preference for brand."
+        },
+        {
+          "ask_attribute": null,
+          "candidate_pool_target_rank": 84,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 65
+          },
+          "turn": 9,
+          "user_message": "For that, what matters is: 100% Polyester."
+        },
+        {
+          "ask_attribute": null,
+          "candidate_pool_target_rank": 84,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 65
+          },
+          "turn": 10,
+          "user_message": "Those options are not quite right yet. Ask me about one specific attribute."
+        }
+      ]
+    },
+    {
+      "best_candidate_pool_rank": 1,
+      "best_recommendation_rank": 1,
+      "best_route_rank": 1,
+      "confidence": "high",
+      "ever_in_candidate_pool": true,
+      "ever_in_recommendations": true,
+      "ever_in_route": true,
+      "final_state": {
+        "active_messages": [
+          "I'm looking for Accessories Belts",
+          "Actually, ignore my earlier preference. What I need is: nylon."
+        ],
+        "asked_attributes": [
+          "budget",
+          "color",
+          "feature",
+          "size",
+          "style",
+          "use_case"
+        ],
+        "base_request": "I'm looking for Accessories Belts",
+        "unavailable_attributes": [
+          "color",
+          "feature",
+          "size",
+          "style",
+          "use_case"
+        ]
+      },
+      "next_action": "Rebuild active constraints at the override turn and add an override-specific regression test.",
+      "override_turn": 4,
+      "primary_failure": "Override failure",
+      "reason": "The target was viable before the explicit override but was never recommended afterwards, when the evaluator begins counting hits.",
+      "recommended_after_override": false,
+      "recommended_before_override": true,
+      "sample_id": "public_0084",
+      "scenario_type": "intent_override",
+      "secondary_labels": [],
+      "target_after_override": true,
+      "target_before_override": true,
+      "target_parent_asin": "B08WKZNFG2",
+      "turn_count": 10,
+      "turn_evidence": [
+        {
+          "ask_attribute": "material",
+          "candidate_pool_target_rank": 50,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 49,
+            "current_turn": 49
+          },
+          "turn": 1,
+          "user_message": "I'm looking for Accessories Belts. Hand Wash Only"
+        },
+        {
+          "ask_attribute": "feature",
+          "candidate_pool_target_rank": 1,
+          "recommendation_target_rank": 1,
+          "route_target_ranks": {
+            "active_context": 1,
+            "current_turn": 1
+          },
+          "turn": 2,
+          "user_message": "For that, what matters is: nylon; 33% Elastic, 34% Nylon, 33% Polyester."
+        },
+        {
+          "ask_attribute": "color",
+          "candidate_pool_target_rank": 6,
+          "recommendation_target_rank": 6,
+          "route_target_ranks": {
+            "active_context": 1,
+            "current_turn": 46
+          },
+          "turn": 3,
+          "user_message": "For that, what matters is: Hook and Loop closure; Hand Wash Only."
+        },
+        {
+          "ask_attribute": "feature",
+          "candidate_pool_target_rank": 33,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 19
+          },
+          "turn": 4,
+          "user_message": "Actually, ignore my earlier preference. What I need is: nylon."
+        },
+        {
+          "ask_attribute": "color",
+          "candidate_pool_target_rank": 19,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 19
+          },
+          "turn": 5,
+          "user_message": "I don't have an additional preference for feature."
+        },
+        {
+          "ask_attribute": "style",
+          "candidate_pool_target_rank": 20,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 19
+          },
+          "turn": 6,
+          "user_message": "I don't have an additional preference for color."
+        },
+        {
+          "ask_attribute": "size",
+          "candidate_pool_target_rank": 19,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 19
+          },
+          "turn": 7,
+          "user_message": "I don't have an additional preference for style."
+        },
+        {
+          "ask_attribute": "use_case",
+          "candidate_pool_target_rank": 20,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 19
+          },
+          "turn": 8,
+          "user_message": "I don't have an additional preference for size."
+        },
+        {
+          "ask_attribute": "budget",
+          "candidate_pool_target_rank": 20,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 19
+          },
+          "turn": 9,
+          "user_message": "I don't have an additional preference for use_case."
+        },
+        {
+          "ask_attribute": null,
+          "candidate_pool_target_rank": 21,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 19
+          },
+          "turn": 10,
+          "user_message": "I don't have an additional preference for budget."
+        }
+      ]
+    },
+    {
+      "best_candidate_pool_rank": 83,
+      "best_recommendation_rank": null,
+      "best_route_rank": 58,
+      "confidence": "high",
+      "ever_in_candidate_pool": true,
+      "ever_in_recommendations": false,
+      "ever_in_route": true,
+      "final_state": {
+        "active_messages": [
+          "I'm looking for Shirts Casual Button-Down Shirts, but I'm still exploring.",
+          "For that, what matters is: cotton; 100% Cotton.",
+          "For that, what matters is: Imported; Button closure."
+        ],
+        "asked_attributes": [
+          "brand",
+          "budget",
+          "color",
+          "feature",
+          "material",
+          "other",
+          "size",
+          "use_case"
+        ],
+        "base_request": "I'm looking for Shirts Casual Button-Down Shirts",
+        "unavailable_attributes": [
+          "brand",
+          "budget",
+          "color",
+          "feature",
+          "material",
+          "other",
+          "size",
+          "use_case"
+        ]
+      },
+      "next_action": "Inspect route weights and target-versus-cutoff scores; add attribute-aware reranking.",
+      "override_turn": null,
+      "primary_failure": "Rerank failure",
+      "reason": "The target entered a route or merged pool but never reached the final Top-10.",
+      "recommended_after_override": false,
+      "recommended_before_override": false,
+      "sample_id": "public_0087",
+      "scenario_type": "browsing",
+      "secondary_labels": [],
+      "target_after_override": false,
+      "target_before_override": false,
+      "target_parent_asin": "B0BT158RRR",
+      "turn_count": 10,
+      "turn_evidence": [
+        {
+          "ask_attribute": "material",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 1,
+          "user_message": "I'm looking for Shirts Casual Button-Down Shirts, but I'm still exploring."
+        },
+        {
+          "ask_attribute": "feature",
+          "candidate_pool_target_rank": 146,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 106
+          },
+          "turn": 2,
+          "user_message": "For that, what matters is: cotton; 100% Cotton."
+        },
+        {
+          "ask_attribute": "color",
+          "candidate_pool_target_rank": 89,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 58
+          },
+          "turn": 3,
+          "user_message": "For that, what matters is: Imported; Button closure."
+        },
+        {
+          "ask_attribute": "size",
+          "candidate_pool_target_rank": 83,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 58
+          },
+          "turn": 4,
+          "user_message": "I don't have an additional preference for color."
+        },
+        {
+          "ask_attribute": "use_case",
+          "candidate_pool_target_rank": 83,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 58
+          },
+          "turn": 5,
+          "user_message": "I don't have an additional preference for size."
+        },
+        {
+          "ask_attribute": "budget",
+          "candidate_pool_target_rank": 83,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 58
+          },
+          "turn": 6,
+          "user_message": "I don't have an additional preference for use_case."
+        },
+        {
+          "ask_attribute": "brand",
+          "candidate_pool_target_rank": 83,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 58
+          },
+          "turn": 7,
+          "user_message": "I don't have an additional preference for budget."
+        },
+        {
+          "ask_attribute": "other",
+          "candidate_pool_target_rank": 84,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 58
+          },
+          "turn": 8,
+          "user_message": "I don't have an additional preference for brand."
+        },
+        {
+          "ask_attribute": null,
+          "candidate_pool_target_rank": 84,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 58
+          },
+          "turn": 9,
+          "user_message": "I don't have an additional preference for other."
+        },
+        {
+          "ask_attribute": null,
+          "candidate_pool_target_rank": 83,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 58
+          },
+          "turn": 10,
+          "user_message": "Those options are not quite right yet. Ask me about one specific attribute."
+        }
+      ]
+    },
+    {
+      "best_candidate_pool_rank": 19,
+      "best_recommendation_rank": null,
+      "best_route_rank": 18,
+      "confidence": "high",
+      "ever_in_candidate_pool": true,
+      "ever_in_recommendations": false,
+      "ever_in_route": true,
+      "final_state": {
+        "active_messages": [
+          "I'm looking for Sleep & Lounge Sets, but I'm still exploring.",
+          "For that, what matters is: polyester; 95% Polyester, 5% Spandex.",
+          "For that, what matters is: Imported; Button closure."
+        ],
+        "asked_attributes": [
+          "brand",
+          "budget",
+          "color",
+          "feature",
+          "material",
+          "other",
+          "size",
+          "style",
+          "use_case"
+        ],
+        "base_request": "I'm looking for Sleep & Lounge Sets",
+        "unavailable_attributes": [
+          "brand",
+          "budget",
+          "color",
+          "feature",
+          "material",
+          "size",
+          "style",
+          "use_case"
+        ]
+      },
+      "next_action": "Inspect route weights and target-versus-cutoff scores; add attribute-aware reranking.",
+      "override_turn": null,
+      "primary_failure": "Rerank failure",
+      "reason": "The target entered a route or merged pool but never reached the final Top-10.",
+      "recommended_after_override": false,
+      "recommended_before_override": false,
+      "sample_id": "public_0092",
+      "scenario_type": "browsing",
+      "secondary_labels": [],
+      "target_after_override": false,
+      "target_before_override": false,
+      "target_parent_asin": "B07FKNZC43",
+      "turn_count": 10,
+      "turn_evidence": [
+        {
+          "ask_attribute": "material",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 1,
+          "user_message": "I'm looking for Sleep & Lounge Sets, but I'm still exploring."
+        },
+        {
+          "ask_attribute": "feature",
+          "candidate_pool_target_rank": 64,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 51
+          },
+          "turn": 2,
+          "user_message": "For that, what matters is: polyester; 95% Polyester, 5% Spandex."
+        },
+        {
+          "ask_attribute": "color",
+          "candidate_pool_target_rank": 19,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 18
+          },
+          "turn": 3,
+          "user_message": "For that, what matters is: Imported; Button closure."
+        },
+        {
+          "ask_attribute": "style",
+          "candidate_pool_target_rank": 19,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 18
+          },
+          "turn": 4,
+          "user_message": "I don't have an additional preference for color."
+        },
+        {
+          "ask_attribute": "size",
+          "candidate_pool_target_rank": 19,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 18
+          },
+          "turn": 5,
+          "user_message": "I don't have an additional preference for style."
+        },
+        {
+          "ask_attribute": "use_case",
+          "candidate_pool_target_rank": 19,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 18
+          },
+          "turn": 6,
+          "user_message": "I don't have an additional preference for size."
+        },
+        {
+          "ask_attribute": "budget",
+          "candidate_pool_target_rank": 19,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 18
+          },
+          "turn": 7,
+          "user_message": "I don't have an additional preference for use_case."
+        },
+        {
+          "ask_attribute": "brand",
+          "candidate_pool_target_rank": 19,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 18
+          },
+          "turn": 8,
+          "user_message": "I don't have an additional preference for budget."
+        },
+        {
+          "ask_attribute": "other",
+          "candidate_pool_target_rank": 19,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 18
+          },
+          "turn": 9,
+          "user_message": "I don't have an additional preference for brand."
+        },
+        {
+          "ask_attribute": null,
+          "candidate_pool_target_rank": 19,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 18
+          },
+          "turn": 10,
+          "user_message": "I don't have an additional preference for other."
+        }
+      ]
+    },
+    {
+      "best_candidate_pool_rank": 9,
+      "best_recommendation_rank": 9,
+      "best_route_rank": 19,
+      "confidence": "high",
+      "ever_in_candidate_pool": true,
+      "ever_in_recommendations": true,
+      "ever_in_route": true,
+      "final_state": {
+        "active_messages": [
+          "I'm looking for Tees & Blouses T-Shirts",
+          "Actually, ignore my earlier preference. What I need is: polyester.",
+          "For that, what matters is: Imported; Pull On closure."
+        ],
+        "asked_attributes": [
+          "brand",
+          "budget",
+          "color",
+          "feature",
+          "size",
+          "style",
+          "use_case"
+        ],
+        "base_request": "I'm looking for Tees & Blouses T-Shirts",
+        "unavailable_attributes": [
+          "budget",
+          "color",
+          "feature",
+          "size",
+          "style",
+          "use_case"
+        ]
+      },
+      "next_action": "Rebuild active constraints at the override turn and add an override-specific regression test.",
+      "override_turn": 3,
+      "primary_failure": "Override failure",
+      "reason": "The target was viable before the explicit override but was never recommended afterwards, when the evaluator begins counting hits.",
+      "recommended_after_override": false,
+      "recommended_before_override": true,
+      "sample_id": "public_0096",
+      "scenario_type": "intent_override",
+      "secondary_labels": [],
+      "target_after_override": false,
+      "target_before_override": true,
+      "target_parent_asin": "B074K2QX3M",
+      "turn_count": 10,
+      "turn_evidence": [
+        {
+          "ask_attribute": "material",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 1,
+          "user_message": "I'm looking for Tees & Blouses T-Shirts. Pull On closure"
+        },
+        {
+          "ask_attribute": "feature",
+          "candidate_pool_target_rank": 9,
+          "recommendation_target_rank": 9,
+          "route_target_ranks": {
+            "active_context": 19,
+            "current_turn": 113
+          },
+          "turn": 2,
+          "user_message": "For that, what matters is: polyester; 95% Polyester, 5% Spandex."
+        },
+        {
+          "ask_attribute": "feature",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 3,
+          "user_message": "Actually, ignore my earlier preference. What I need is: polyester."
+        },
+        {
+          "ask_attribute": "color",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 4,
+          "user_message": "For that, what matters is: Imported; Pull On closure."
+        },
+        {
+          "ask_attribute": "style",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 5,
+          "user_message": "I don't have an additional preference for color."
+        },
+        {
+          "ask_attribute": "size",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 6,
+          "user_message": "I don't have an additional preference for style."
+        },
+        {
+          "ask_attribute": "use_case",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 7,
+          "user_message": "I don't have an additional preference for size."
+        },
+        {
+          "ask_attribute": "budget",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 8,
+          "user_message": "I don't have an additional preference for use_case."
+        },
+        {
+          "ask_attribute": "brand",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 9,
+          "user_message": "I don't have an additional preference for budget."
+        },
+        {
+          "ask_attribute": null,
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 10,
+          "user_message": "I don't have an additional preference for brand."
+        }
+      ]
+    },
+    {
+      "best_candidate_pool_rank": 16,
+      "best_recommendation_rank": null,
+      "best_route_rank": 14,
+      "confidence": "high",
+      "ever_in_candidate_pool": true,
+      "ever_in_recommendations": false,
+      "ever_in_route": true,
+      "final_state": {
+        "active_messages": [
+          "I'm looking for Card Cases & Money Organizers Wallets, but I'm still exploring.",
+          "For that, what matters is: leather; Leather lining.",
+          "For that, what matters is: Snap closure.",
+          "For that, what matters is: color: red."
+        ],
+        "asked_attributes": [
+          "brand",
+          "budget",
+          "color",
+          "feature",
+          "material",
+          "other",
+          "size",
+          "style",
+          "use_case"
+        ],
+        "base_request": "I'm looking for Card Cases & Money Organizers Wallets",
+        "unavailable_attributes": [
+          "brand",
+          "budget",
+          "color",
+          "feature",
+          "material",
+          "size",
+          "style",
+          "use_case"
+        ]
+      },
+      "next_action": "Inspect route weights and target-versus-cutoff scores; add attribute-aware reranking.",
+      "override_turn": null,
+      "primary_failure": "Rerank failure",
+      "reason": "The target entered a route or merged pool but never reached the final Top-10.",
+      "recommended_after_override": false,
+      "recommended_before_override": false,
+      "sample_id": "public_0120",
+      "scenario_type": "browsing",
+      "secondary_labels": [],
+      "target_after_override": false,
+      "target_before_override": false,
+      "target_parent_asin": "B08GPGX2QG",
+      "turn_count": 10,
+      "turn_evidence": [
+        {
+          "ask_attribute": "material",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 1,
+          "user_message": "I'm looking for Card Cases & Money Organizers Wallets, but I'm still exploring."
+        },
+        {
+          "ask_attribute": "feature",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 2,
+          "user_message": "For that, what matters is: leather; Leather lining."
+        },
+        {
+          "ask_attribute": "color",
+          "candidate_pool_target_rank": 59,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 45
+          },
+          "turn": 3,
+          "user_message": "For that, what matters is: Snap closure."
+        },
+        {
+          "ask_attribute": "style",
+          "candidate_pool_target_rank": 20,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 14
+          },
+          "turn": 4,
+          "user_message": "For that, what matters is: color: red."
+        },
+        {
+          "ask_attribute": "size",
+          "candidate_pool_target_rank": 17,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 14
+          },
+          "turn": 5,
+          "user_message": "I don't have an additional preference for style."
+        },
+        {
+          "ask_attribute": "use_case",
+          "candidate_pool_target_rank": 16,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 14
+          },
+          "turn": 6,
+          "user_message": "I don't have an additional preference for size."
+        },
+        {
+          "ask_attribute": "budget",
+          "candidate_pool_target_rank": 19,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 14
+          },
+          "turn": 7,
+          "user_message": "I don't have an additional preference for use_case."
+        },
+        {
+          "ask_attribute": "brand",
+          "candidate_pool_target_rank": 16,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 14
+          },
+          "turn": 8,
+          "user_message": "I don't have an additional preference for budget."
+        },
+        {
+          "ask_attribute": "other",
+          "candidate_pool_target_rank": 17,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 14
+          },
+          "turn": 9,
+          "user_message": "I don't have an additional preference for brand."
+        },
+        {
+          "ask_attribute": null,
+          "candidate_pool_target_rank": 16,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 14
+          },
+          "turn": 10,
+          "user_message": "I don't have an additional preference for other."
+        }
+      ]
+    },
+    {
+      "best_candidate_pool_rank": 49,
+      "best_recommendation_rank": null,
+      "best_route_rank": 45,
+      "confidence": "high",
+      "ever_in_candidate_pool": true,
+      "ever_in_recommendations": false,
+      "ever_in_route": true,
+      "final_state": {
+        "active_messages": [
+          "I'm looking for Tees & Blouses Blouses & Button-Down Shirts, but I'm still exploring.",
+          "For that, what matters is: polyester; 95% Polyester, 5% Spandex.",
+          "For that, what matters is: Imported; Pull On closure."
+        ],
+        "asked_attributes": [
+          "brand",
+          "budget",
+          "color",
+          "feature",
+          "material",
+          "other",
+          "size",
+          "style",
+          "use_case"
+        ],
+        "base_request": "I'm looking for Tees & Blouses Blouses & Button-Down Shirts",
+        "unavailable_attributes": [
+          "brand",
+          "budget",
+          "color",
+          "feature",
+          "material",
+          "size",
+          "style",
+          "use_case"
+        ]
+      },
+      "next_action": "Inspect route weights and target-versus-cutoff scores; add attribute-aware reranking.",
+      "override_turn": null,
+      "primary_failure": "Rerank failure",
+      "reason": "The target entered a route or merged pool but never reached the final Top-10.",
+      "recommended_after_override": false,
+      "recommended_before_override": false,
+      "sample_id": "public_0126",
+      "scenario_type": "browsing",
+      "secondary_labels": [],
+      "target_after_override": false,
+      "target_before_override": false,
+      "target_parent_asin": "B09M84R91V",
+      "turn_count": 10,
+      "turn_evidence": [
+        {
+          "ask_attribute": "material",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 1,
+          "user_message": "I'm looking for Tees & Blouses Blouses & Button-Down Shirts, but I'm still exploring."
+        },
+        {
+          "ask_attribute": "feature",
+          "candidate_pool_target_rank": 84,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 66
+          },
+          "turn": 2,
+          "user_message": "For that, what matters is: polyester; 95% Polyester, 5% Spandex."
+        },
+        {
+          "ask_attribute": "color",
+          "candidate_pool_target_rank": 49,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 45
+          },
+          "turn": 3,
+          "user_message": "For that, what matters is: Imported; Pull On closure."
+        },
+        {
+          "ask_attribute": "style",
+          "candidate_pool_target_rank": 50,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 45
+          },
+          "turn": 4,
+          "user_message": "I don't have an additional preference for color."
+        },
+        {
+          "ask_attribute": "size",
+          "candidate_pool_target_rank": 50,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 45
+          },
+          "turn": 5,
+          "user_message": "I don't have an additional preference for style."
+        },
+        {
+          "ask_attribute": "use_case",
+          "candidate_pool_target_rank": 50,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 45
+          },
+          "turn": 6,
+          "user_message": "I don't have an additional preference for size."
+        },
+        {
+          "ask_attribute": "budget",
+          "candidate_pool_target_rank": 49,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 45
+          },
+          "turn": 7,
+          "user_message": "I don't have an additional preference for use_case."
+        },
+        {
+          "ask_attribute": "brand",
+          "candidate_pool_target_rank": 49,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 45
+          },
+          "turn": 8,
+          "user_message": "I don't have an additional preference for budget."
+        },
+        {
+          "ask_attribute": "other",
+          "candidate_pool_target_rank": 49,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 45
+          },
+          "turn": 9,
+          "user_message": "I don't have an additional preference for brand."
+        },
+        {
+          "ask_attribute": null,
+          "candidate_pool_target_rank": 50,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 45
+          },
+          "turn": 10,
+          "user_message": "I don't have an additional preference for other."
+        }
+      ]
+    },
+    {
+      "best_candidate_pool_rank": 13,
+      "best_recommendation_rank": null,
+      "best_route_rank": 11,
+      "confidence": "high",
+      "ever_in_candidate_pool": true,
+      "ever_in_recommendations": false,
+      "ever_in_route": true,
+      "final_state": {
+        "active_messages": [
+          "I'm looking for Gloves & Mittens Cold Weather Gloves, but I'm still exploring.",
+          "For that, what matters is: polyester; 100% Polyester.",
+          "For that, what matters is: Imported.",
+          "For that, what matters is: color: black."
+        ],
+        "asked_attributes": [
+          "brand",
+          "budget",
+          "color",
+          "feature",
+          "material",
+          "other",
+          "size",
+          "style",
+          "use_case"
+        ],
+        "base_request": "I'm looking for Gloves & Mittens Cold Weather Gloves",
+        "unavailable_attributes": [
+          "brand",
+          "budget",
+          "color",
+          "feature",
+          "material",
+          "size",
+          "style",
+          "use_case"
+        ]
+      },
+      "next_action": "Inspect route weights and target-versus-cutoff scores; add attribute-aware reranking.",
+      "override_turn": null,
+      "primary_failure": "Rerank failure",
+      "reason": "The target entered a route or merged pool but never reached the final Top-10.",
+      "recommended_after_override": false,
+      "recommended_before_override": false,
+      "sample_id": "public_0127",
+      "scenario_type": "browsing",
+      "secondary_labels": [],
+      "target_after_override": false,
+      "target_before_override": false,
+      "target_parent_asin": "B0B8DX189T",
+      "turn_count": 10,
+      "turn_evidence": [
+        {
+          "ask_attribute": "material",
+          "candidate_pool_target_rank": 89,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 89,
+            "category_anchor": 86,
+            "current_turn": 89
+          },
+          "turn": 1,
+          "user_message": "I'm looking for Gloves & Mittens Cold Weather Gloves, but I'm still exploring."
+        },
+        {
+          "ask_attribute": "feature",
+          "candidate_pool_target_rank": 54,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 47,
+            "category_anchor": 86
+          },
+          "turn": 2,
+          "user_message": "For that, what matters is: polyester; 100% Polyester."
+        },
+        {
+          "ask_attribute": "color",
+          "candidate_pool_target_rank": 43,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 37,
+            "category_anchor": 86
+          },
+          "turn": 3,
+          "user_message": "For that, what matters is: Imported."
+        },
+        {
+          "ask_attribute": "style",
+          "candidate_pool_target_rank": 13,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 11,
+            "category_anchor": 86
+          },
+          "turn": 4,
+          "user_message": "For that, what matters is: color: black."
+        },
+        {
+          "ask_attribute": "size",
+          "candidate_pool_target_rank": 13,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 11,
+            "category_anchor": 86
+          },
+          "turn": 5,
+          "user_message": "I don't have an additional preference for style."
+        },
+        {
+          "ask_attribute": "use_case",
+          "candidate_pool_target_rank": 13,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 11,
+            "category_anchor": 86
+          },
+          "turn": 6,
+          "user_message": "I don't have an additional preference for size."
+        },
+        {
+          "ask_attribute": "budget",
+          "candidate_pool_target_rank": 13,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 11,
+            "category_anchor": 86
+          },
+          "turn": 7,
+          "user_message": "I don't have an additional preference for use_case."
+        },
+        {
+          "ask_attribute": "brand",
+          "candidate_pool_target_rank": 13,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 11,
+            "category_anchor": 86
+          },
+          "turn": 8,
+          "user_message": "I don't have an additional preference for budget."
+        },
+        {
+          "ask_attribute": "other",
+          "candidate_pool_target_rank": 13,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 11,
+            "category_anchor": 86
+          },
+          "turn": 9,
+          "user_message": "I don't have an additional preference for brand."
+        },
+        {
+          "ask_attribute": null,
+          "candidate_pool_target_rank": 13,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 11,
+            "category_anchor": 86
+          },
+          "turn": 10,
+          "user_message": "I don't have an additional preference for other."
+        }
+      ]
+    },
+    {
+      "best_candidate_pool_rank": 17,
+      "best_recommendation_rank": null,
+      "best_route_rank": 17,
+      "confidence": "high",
+      "ever_in_candidate_pool": true,
+      "ever_in_recommendations": false,
+      "ever_in_route": true,
+      "final_state": {
+        "active_messages": [
+          "I'm looking for Women Fashion Hoodies & Sweatshirts, but I'm still exploring.",
+          "For that, what matters is: cotton; 60% Cotton, 40% Polyester.",
+          "For that, what matters is: Zipper closure; Machine Wash."
+        ],
+        "asked_attributes": [
+          "brand",
+          "budget",
+          "color",
+          "feature",
+          "material",
+          "other",
+          "size",
+          "style",
+          "use_case"
+        ],
+        "base_request": "I'm looking for Women Fashion Hoodies & Sweatshirts",
+        "unavailable_attributes": [
+          "brand",
+          "budget",
+          "color",
+          "feature",
+          "material",
+          "size",
+          "style",
+          "use_case"
+        ]
+      },
+      "next_action": "Inspect route weights and target-versus-cutoff scores; add attribute-aware reranking.",
+      "override_turn": null,
+      "primary_failure": "Rerank failure",
+      "reason": "The target entered a route or merged pool but never reached the final Top-10.",
+      "recommended_after_override": false,
+      "recommended_before_override": false,
+      "sample_id": "public_0137",
+      "scenario_type": "browsing",
+      "secondary_labels": [],
+      "target_after_override": false,
+      "target_before_override": false,
+      "target_parent_asin": "B01N67CJGX",
+      "turn_count": 10,
+      "turn_evidence": [
+        {
+          "ask_attribute": "material",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 1,
+          "user_message": "I'm looking for Women Fashion Hoodies & Sweatshirts, but I'm still exploring."
+        },
+        {
+          "ask_attribute": "feature",
+          "candidate_pool_target_rank": 31,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 26
+          },
+          "turn": 2,
+          "user_message": "For that, what matters is: cotton; 60% Cotton, 40% Polyester."
+        },
+        {
+          "ask_attribute": "color",
+          "candidate_pool_target_rank": 21,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 17
+          },
+          "turn": 3,
+          "user_message": "For that, what matters is: Zipper closure; Machine Wash."
+        },
+        {
+          "ask_attribute": "style",
+          "candidate_pool_target_rank": 17,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 17
+          },
+          "turn": 4,
+          "user_message": "I don't have an additional preference for color."
+        },
+        {
+          "ask_attribute": "size",
+          "candidate_pool_target_rank": 18,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 17
+          },
+          "turn": 5,
+          "user_message": "I don't have an additional preference for style."
+        },
+        {
+          "ask_attribute": "use_case",
+          "candidate_pool_target_rank": 18,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 17
+          },
+          "turn": 6,
+          "user_message": "I don't have an additional preference for size."
+        },
+        {
+          "ask_attribute": "budget",
+          "candidate_pool_target_rank": 17,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 17
+          },
+          "turn": 7,
+          "user_message": "I don't have an additional preference for use_case."
+        },
+        {
+          "ask_attribute": "brand",
+          "candidate_pool_target_rank": 18,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 17
+          },
+          "turn": 8,
+          "user_message": "I don't have an additional preference for budget."
+        },
+        {
+          "ask_attribute": "other",
+          "candidate_pool_target_rank": 18,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 17
+          },
+          "turn": 9,
+          "user_message": "I don't have an additional preference for brand."
+        },
+        {
+          "ask_attribute": null,
+          "candidate_pool_target_rank": 19,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 17
+          },
+          "turn": 10,
+          "user_message": "I don't have an additional preference for other."
+        }
+      ]
+    },
+    {
+      "best_candidate_pool_rank": 91,
+      "best_recommendation_rank": null,
+      "best_route_rank": 75,
+      "confidence": "high",
+      "ever_in_candidate_pool": true,
+      "ever_in_recommendations": false,
+      "ever_in_route": true,
+      "final_state": {
+        "active_messages": [
+          "I'm looking for Jackets & Vests Down Jackets & Parkas",
+          "Actually, ignore my earlier preference. What I need is: polyester."
+        ],
+        "asked_attributes": [
+          "budget",
+          "color",
+          "feature",
+          "size",
+          "style",
+          "use_case"
+        ],
+        "base_request": "I'm looking for Jackets & Vests Down Jackets & Parkas",
+        "unavailable_attributes": [
+          "color",
+          "feature",
+          "size",
+          "style",
+          "use_case"
+        ]
+      },
+      "next_action": "Inspect route weights and target-versus-cutoff scores; add attribute-aware reranking.",
+      "override_turn": 4,
+      "primary_failure": "Rerank failure",
+      "reason": "The target entered a route or merged pool but never reached the final Top-10.",
+      "recommended_after_override": false,
+      "recommended_before_override": false,
+      "sample_id": "public_0144",
+      "scenario_type": "intent_override",
+      "secondary_labels": [
+        "Override context"
+      ],
+      "target_after_override": true,
+      "target_before_override": true,
+      "target_parent_asin": "B08LMMDYV7",
+      "turn_count": 10,
+      "turn_evidence": [
+        {
+          "ask_attribute": "material",
+          "candidate_pool_target_rank": 91,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 89,
+            "category_anchor": 104,
+            "current_turn": 89
+          },
+          "turn": 1,
+          "user_message": "I'm looking for Jackets & Vests Down Jackets & Parkas. Zipper closure"
+        },
+        {
+          "ask_attribute": "feature",
+          "candidate_pool_target_rank": 98,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 77,
+            "category_anchor": 104
+          },
+          "turn": 2,
+          "user_message": "For that, what matters is: polyester; 100% Polyester."
+        },
+        {
+          "ask_attribute": "color",
+          "candidate_pool_target_rank": 94,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 75,
+            "category_anchor": 104
+          },
+          "turn": 3,
+          "user_message": "For that, what matters is: Imported; Zipper closure."
+        },
+        {
+          "ask_attribute": "feature",
+          "candidate_pool_target_rank": 117,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 96,
+            "category_anchor": 104
+          },
+          "turn": 4,
+          "user_message": "Actually, ignore my earlier preference. What I need is: polyester."
+        },
+        {
+          "ask_attribute": "color",
+          "candidate_pool_target_rank": 116,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 96,
+            "category_anchor": 104
+          },
+          "turn": 5,
+          "user_message": "I don't have an additional preference for feature."
+        },
+        {
+          "ask_attribute": "style",
+          "candidate_pool_target_rank": 116,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 96,
+            "category_anchor": 104
+          },
+          "turn": 6,
+          "user_message": "I don't have an additional preference for color."
+        },
+        {
+          "ask_attribute": "size",
+          "candidate_pool_target_rank": 116,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 96,
+            "category_anchor": 104
+          },
+          "turn": 7,
+          "user_message": "I don't have an additional preference for style."
+        },
+        {
+          "ask_attribute": "use_case",
+          "candidate_pool_target_rank": 116,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 96,
+            "category_anchor": 104
+          },
+          "turn": 8,
+          "user_message": "I don't have an additional preference for size."
+        },
+        {
+          "ask_attribute": "budget",
+          "candidate_pool_target_rank": 116,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 96,
+            "category_anchor": 104
+          },
+          "turn": 9,
+          "user_message": "I don't have an additional preference for use_case."
+        },
+        {
+          "ask_attribute": null,
+          "candidate_pool_target_rank": 116,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 96,
+            "category_anchor": 104
+          },
+          "turn": 10,
+          "user_message": "I don't have an additional preference for budget."
+        }
+      ]
+    },
+    {
+      "best_candidate_pool_rank": 20,
+      "best_recommendation_rank": null,
+      "best_route_rank": 14,
+      "confidence": "high",
+      "ever_in_candidate_pool": true,
+      "ever_in_recommendations": false,
+      "ever_in_route": true,
+      "final_state": {
+        "active_messages": [
+          "I'm looking for Active Athletic Socks. A key requirement is: cotton.",
+          "For that, what matters is: Imported.",
+          "For that, what matters is: color: black.",
+          "For that, what matters is: Cotton."
+        ],
+        "asked_attributes": [
+          "brand",
+          "budget",
+          "color",
+          "feature",
+          "other",
+          "size",
+          "style",
+          "use_case"
+        ],
+        "base_request": "I'm looking for Active Athletic Socks",
+        "unavailable_attributes": [
+          "brand",
+          "budget",
+          "color",
+          "feature",
+          "size",
+          "style",
+          "use_case"
+        ]
+      },
+      "next_action": "Inspect route weights and target-versus-cutoff scores; add attribute-aware reranking.",
+      "override_turn": null,
+      "primary_failure": "Rerank failure",
+      "reason": "The target entered a route or merged pool but never reached the final Top-10.",
+      "recommended_after_override": false,
+      "recommended_before_override": false,
+      "sample_id": "public_0145",
+      "scenario_type": "buying",
+      "secondary_labels": [],
+      "target_after_override": false,
+      "target_before_override": false,
+      "target_parent_asin": "B00IJZZWGA",
+      "turn_count": 10,
+      "turn_evidence": [
+        {
+          "ask_attribute": "feature",
+          "candidate_pool_target_rank": 113,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 92,
+            "current_turn": 92
+          },
+          "turn": 1,
+          "user_message": "I'm looking for Active Athletic Socks. A key requirement is: cotton."
+        },
+        {
+          "ask_attribute": "color",
+          "candidate_pool_target_rank": 116,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 76
+          },
+          "turn": 2,
+          "user_message": "For that, what matters is: Imported."
+        },
+        {
+          "ask_attribute": "style",
+          "candidate_pool_target_rank": 20,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 14
+          },
+          "turn": 3,
+          "user_message": "For that, what matters is: color: black."
+        },
+        {
+          "ask_attribute": "size",
+          "candidate_pool_target_rank": 20,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 14
+          },
+          "turn": 4,
+          "user_message": "I don't have an additional preference for style."
+        },
+        {
+          "ask_attribute": "use_case",
+          "candidate_pool_target_rank": 20,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 14
+          },
+          "turn": 5,
+          "user_message": "I don't have an additional preference for size."
+        },
+        {
+          "ask_attribute": "budget",
+          "candidate_pool_target_rank": 20,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 14
+          },
+          "turn": 6,
+          "user_message": "I don't have an additional preference for use_case."
+        },
+        {
+          "ask_attribute": "brand",
+          "candidate_pool_target_rank": 20,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 14
+          },
+          "turn": 7,
+          "user_message": "I don't have an additional preference for budget."
+        },
+        {
+          "ask_attribute": "other",
+          "candidate_pool_target_rank": 20,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 14
+          },
+          "turn": 8,
+          "user_message": "I don't have an additional preference for brand."
+        },
+        {
+          "ask_attribute": null,
+          "candidate_pool_target_rank": 21,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 14
+          },
+          "turn": 9,
+          "user_message": "For that, what matters is: Cotton."
+        },
+        {
+          "ask_attribute": null,
+          "candidate_pool_target_rank": 20,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 14
+          },
+          "turn": 10,
+          "user_message": "Those options are not quite right yet. Ask me about one specific attribute."
+        }
+      ]
+    },
+    {
+      "best_candidate_pool_rank": 15,
+      "best_recommendation_rank": null,
+      "best_route_rank": 11,
+      "confidence": "high",
+      "ever_in_candidate_pool": true,
+      "ever_in_recommendations": false,
+      "ever_in_route": true,
+      "final_state": {
+        "active_messages": [
+          "I'm looking for Sleep & Lounge Sleep Bottoms. A key requirement is: cotton.",
+          "For that, what matters is: Imported; Drawstring closure.",
+          "For that, what matters is: 60% Cotton, 40% Polyester."
+        ],
+        "asked_attributes": [
+          "brand",
+          "budget",
+          "color",
+          "feature",
+          "other",
+          "size",
+          "style",
+          "use_case"
+        ],
+        "base_request": "I'm looking for Sleep & Lounge Sleep Bottoms",
+        "unavailable_attributes": [
+          "brand",
+          "budget",
+          "color",
+          "feature",
+          "size",
+          "style",
+          "use_case"
+        ]
+      },
+      "next_action": "Inspect route weights and target-versus-cutoff scores; add attribute-aware reranking.",
+      "override_turn": null,
+      "primary_failure": "Rerank failure",
+      "reason": "The target entered a route or merged pool but never reached the final Top-10.",
+      "recommended_after_override": false,
+      "recommended_before_override": false,
+      "sample_id": "public_0159",
+      "scenario_type": "buying",
+      "secondary_labels": [],
+      "target_after_override": false,
+      "target_before_override": false,
+      "target_parent_asin": "B00UHLFR32",
+      "turn_count": 10,
+      "turn_evidence": [
+        {
+          "ask_attribute": "feature",
+          "candidate_pool_target_rank": 102,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 87,
+            "current_turn": 87
+          },
+          "turn": 1,
+          "user_message": "I'm looking for Sleep & Lounge Sleep Bottoms. A key requirement is: cotton."
+        },
+        {
+          "ask_attribute": "color",
+          "candidate_pool_target_rank": 60,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 43
+          },
+          "turn": 2,
+          "user_message": "For that, what matters is: Imported; Drawstring closure."
+        },
+        {
+          "ask_attribute": "style",
+          "candidate_pool_target_rank": 58,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 43
+          },
+          "turn": 3,
+          "user_message": "I don't have an additional preference for color."
+        },
+        {
+          "ask_attribute": "size",
+          "candidate_pool_target_rank": 58,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 43
+          },
+          "turn": 4,
+          "user_message": "I don't have an additional preference for style."
+        },
+        {
+          "ask_attribute": "use_case",
+          "candidate_pool_target_rank": 58,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 43
+          },
+          "turn": 5,
+          "user_message": "I don't have an additional preference for size."
+        },
+        {
+          "ask_attribute": "budget",
+          "candidate_pool_target_rank": 58,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 43
+          },
+          "turn": 6,
+          "user_message": "I don't have an additional preference for use_case."
+        },
+        {
+          "ask_attribute": "brand",
+          "candidate_pool_target_rank": 58,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 43
+          },
+          "turn": 7,
+          "user_message": "I don't have an additional preference for budget."
+        },
+        {
+          "ask_attribute": "other",
+          "candidate_pool_target_rank": 58,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 43
+          },
+          "turn": 8,
+          "user_message": "I don't have an additional preference for brand."
+        },
+        {
+          "ask_attribute": null,
+          "candidate_pool_target_rank": 19,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 11
+          },
+          "turn": 9,
+          "user_message": "For that, what matters is: 60% Cotton, 40% Polyester."
+        },
+        {
+          "ask_attribute": null,
+          "candidate_pool_target_rank": 15,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 11
+          },
+          "turn": 10,
+          "user_message": "Those options are not quite right yet. Ask me about one specific attribute."
+        }
+      ]
+    },
+    {
+      "best_candidate_pool_rank": 16,
+      "best_recommendation_rank": null,
+      "best_route_rank": 16,
+      "confidence": "high",
+      "ever_in_candidate_pool": true,
+      "ever_in_recommendations": false,
+      "ever_in_route": true,
+      "final_state": {
+        "active_messages": [
+          "I'm looking for Tees & Blouses T-Shirts. A key requirement is: cotton.",
+          "For that, what matters is: Imported; Pull On closure.",
+          "For that, what matters is: cotton blend."
+        ],
+        "asked_attributes": [
+          "brand",
+          "budget",
+          "color",
+          "feature",
+          "other",
+          "size",
+          "style",
+          "use_case"
+        ],
+        "base_request": "I'm looking for Tees & Blouses T-Shirts",
+        "unavailable_attributes": [
+          "brand",
+          "budget",
+          "color",
+          "feature",
+          "size",
+          "style",
+          "use_case"
+        ]
+      },
+      "next_action": "Inspect route weights and target-versus-cutoff scores; add attribute-aware reranking.",
+      "override_turn": null,
+      "primary_failure": "Rerank failure",
+      "reason": "The target entered a route or merged pool but never reached the final Top-10.",
+      "recommended_after_override": false,
+      "recommended_before_override": false,
+      "sample_id": "public_0161",
+      "scenario_type": "buying",
+      "secondary_labels": [],
+      "target_after_override": false,
+      "target_before_override": false,
+      "target_parent_asin": "B0B6N6TJ6V",
+      "turn_count": 10,
+      "turn_evidence": [
+        {
+          "ask_attribute": "feature",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 1,
+          "user_message": "I'm looking for Tees & Blouses T-Shirts. A key requirement is: cotton."
+        },
+        {
+          "ask_attribute": "color",
+          "candidate_pool_target_rank": 122,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 91
+          },
+          "turn": 2,
+          "user_message": "For that, what matters is: Imported; Pull On closure."
+        },
+        {
+          "ask_attribute": "style",
+          "candidate_pool_target_rank": 123,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 91
+          },
+          "turn": 3,
+          "user_message": "I don't have an additional preference for color."
+        },
+        {
+          "ask_attribute": "size",
+          "candidate_pool_target_rank": 122,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 91
+          },
+          "turn": 4,
+          "user_message": "I don't have an additional preference for style."
+        },
+        {
+          "ask_attribute": "use_case",
+          "candidate_pool_target_rank": 123,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 91
+          },
+          "turn": 5,
+          "user_message": "I don't have an additional preference for size."
+        },
+        {
+          "ask_attribute": "budget",
+          "candidate_pool_target_rank": 123,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 91
+          },
+          "turn": 6,
+          "user_message": "I don't have an additional preference for use_case."
+        },
+        {
+          "ask_attribute": "brand",
+          "candidate_pool_target_rank": 123,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 91
+          },
+          "turn": 7,
+          "user_message": "I don't have an additional preference for budget."
+        },
+        {
+          "ask_attribute": "other",
+          "candidate_pool_target_rank": 123,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 91
+          },
+          "turn": 8,
+          "user_message": "I don't have an additional preference for brand."
+        },
+        {
+          "ask_attribute": null,
+          "candidate_pool_target_rank": 23,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 16
+          },
+          "turn": 9,
+          "user_message": "For that, what matters is: cotton blend."
+        },
+        {
+          "ask_attribute": null,
+          "candidate_pool_target_rank": 16,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 16
+          },
+          "turn": 10,
+          "user_message": "Those options are not quite right yet. Ask me about one specific attribute."
+        }
+      ]
+    },
+    {
+      "best_candidate_pool_rank": 13,
+      "best_recommendation_rank": null,
+      "best_route_rank": 9,
+      "confidence": "high",
+      "ever_in_candidate_pool": true,
+      "ever_in_recommendations": false,
+      "ever_in_route": true,
+      "final_state": {
+        "active_messages": [
+          "I'm looking for Shoes Fashion Sneakers, but I'm still exploring.",
+          "For that, what matters is: cotton; 100% Cotton.",
+          "For that, what matters is: Imported; Synthetic sole."
+        ],
+        "asked_attributes": [
+          "brand",
+          "budget",
+          "color",
+          "feature",
+          "material",
+          "other",
+          "size",
+          "style",
+          "use_case"
+        ],
+        "base_request": "I'm looking for Shoes Fashion Sneakers",
+        "unavailable_attributes": [
+          "brand",
+          "budget",
+          "color",
+          "feature",
+          "material",
+          "size",
+          "style",
+          "use_case"
+        ]
+      },
+      "next_action": "Inspect route weights and target-versus-cutoff scores; add attribute-aware reranking.",
+      "override_turn": null,
+      "primary_failure": "Rerank failure",
+      "reason": "The target entered a route or merged pool but never reached the final Top-10.",
+      "recommended_after_override": false,
+      "recommended_before_override": false,
+      "sample_id": "public_0172",
+      "scenario_type": "browsing",
+      "secondary_labels": [],
+      "target_after_override": false,
+      "target_before_override": false,
+      "target_parent_asin": "B0829PZGBB",
+      "turn_count": 10,
+      "turn_evidence": [
+        {
+          "ask_attribute": "material",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 1,
+          "user_message": "I'm looking for Shoes Fashion Sneakers, but I'm still exploring."
+        },
+        {
+          "ask_attribute": "feature",
+          "candidate_pool_target_rank": 29,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 27
+          },
+          "turn": 2,
+          "user_message": "For that, what matters is: cotton; 100% Cotton."
+        },
+        {
+          "ask_attribute": "color",
+          "candidate_pool_target_rank": 24,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 9
+          },
+          "turn": 3,
+          "user_message": "For that, what matters is: Imported; Synthetic sole."
+        },
+        {
+          "ask_attribute": "style",
+          "candidate_pool_target_rank": 13,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 9
+          },
+          "turn": 4,
+          "user_message": "I don't have an additional preference for color."
+        },
+        {
+          "ask_attribute": "size",
+          "candidate_pool_target_rank": 13,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 9
+          },
+          "turn": 5,
+          "user_message": "I don't have an additional preference for style."
+        },
+        {
+          "ask_attribute": "use_case",
+          "candidate_pool_target_rank": 13,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 9
+          },
+          "turn": 6,
+          "user_message": "I don't have an additional preference for size."
+        },
+        {
+          "ask_attribute": "budget",
+          "candidate_pool_target_rank": 13,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 9
+          },
+          "turn": 7,
+          "user_message": "I don't have an additional preference for use_case."
+        },
+        {
+          "ask_attribute": "brand",
+          "candidate_pool_target_rank": 13,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 9
+          },
+          "turn": 8,
+          "user_message": "I don't have an additional preference for budget."
+        },
+        {
+          "ask_attribute": "other",
+          "candidate_pool_target_rank": 13,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 9
+          },
+          "turn": 9,
+          "user_message": "I don't have an additional preference for brand."
+        },
+        {
+          "ask_attribute": null,
+          "candidate_pool_target_rank": 13,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 9
+          },
+          "turn": 10,
+          "user_message": "I don't have an additional preference for other."
+        }
+      ]
+    },
+    {
+      "best_candidate_pool_rank": 80,
+      "best_recommendation_rank": null,
+      "best_route_rank": 55,
+      "confidence": "high",
+      "ever_in_candidate_pool": true,
+      "ever_in_recommendations": false,
+      "ever_in_route": true,
+      "final_state": {
+        "active_messages": [
+          "I'm looking for Sleep & Lounge Robes. A key requirement is: polyester.",
+          "For that, what matters is: Imported; Tie closure.",
+          "For that, what matters is: 100% Polyester."
+        ],
+        "asked_attributes": [
+          "brand",
+          "budget",
+          "color",
+          "feature",
+          "other",
+          "size",
+          "style",
+          "use_case"
+        ],
+        "base_request": "I'm looking for Sleep & Lounge Robes",
+        "unavailable_attributes": [
+          "brand",
+          "budget",
+          "color",
+          "feature",
+          "size",
+          "style",
+          "use_case"
+        ]
+      },
+      "next_action": "Inspect route weights and target-versus-cutoff scores; add attribute-aware reranking.",
+      "override_turn": null,
+      "primary_failure": "Rerank failure",
+      "reason": "The target entered a route or merged pool but never reached the final Top-10.",
+      "recommended_after_override": false,
+      "recommended_before_override": false,
+      "sample_id": "public_0174",
+      "scenario_type": "buying",
+      "secondary_labels": [],
+      "target_after_override": false,
+      "target_before_override": false,
+      "target_parent_asin": "B0794VPVBH",
+      "turn_count": 10,
+      "turn_evidence": [
+        {
+          "ask_attribute": "feature",
+          "candidate_pool_target_rank": 116,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 103,
+            "current_turn": 103
+          },
+          "turn": 1,
+          "user_message": "I'm looking for Sleep & Lounge Robes. A key requirement is: polyester."
+        },
+        {
+          "ask_attribute": "color",
+          "candidate_pool_target_rank": 108,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 70
+          },
+          "turn": 2,
+          "user_message": "For that, what matters is: Imported; Tie closure."
+        },
+        {
+          "ask_attribute": "style",
+          "candidate_pool_target_rank": 110,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 70
+          },
+          "turn": 3,
+          "user_message": "I don't have an additional preference for color."
+        },
+        {
+          "ask_attribute": "size",
+          "candidate_pool_target_rank": 109,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 70
+          },
+          "turn": 4,
+          "user_message": "I don't have an additional preference for style."
+        },
+        {
+          "ask_attribute": "use_case",
+          "candidate_pool_target_rank": 109,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 70
+          },
+          "turn": 5,
+          "user_message": "I don't have an additional preference for size."
+        },
+        {
+          "ask_attribute": "budget",
+          "candidate_pool_target_rank": 109,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 70
+          },
+          "turn": 6,
+          "user_message": "I don't have an additional preference for use_case."
+        },
+        {
+          "ask_attribute": "brand",
+          "candidate_pool_target_rank": 109,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 70
+          },
+          "turn": 7,
+          "user_message": "I don't have an additional preference for budget."
+        },
+        {
+          "ask_attribute": "other",
+          "candidate_pool_target_rank": 109,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 70
+          },
+          "turn": 8,
+          "user_message": "I don't have an additional preference for brand."
+        },
+        {
+          "ask_attribute": null,
+          "candidate_pool_target_rank": 80,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 55
+          },
+          "turn": 9,
+          "user_message": "For that, what matters is: 100% Polyester."
+        },
+        {
+          "ask_attribute": null,
+          "candidate_pool_target_rank": 80,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 55
+          },
+          "turn": 10,
+          "user_message": "Those options are not quite right yet. Ask me about one specific attribute."
+        }
+      ]
+    },
+    {
+      "best_candidate_pool_rank": 2,
+      "best_recommendation_rank": 2,
+      "best_route_rank": 2,
+      "confidence": "high",
+      "ever_in_candidate_pool": true,
+      "ever_in_recommendations": true,
+      "ever_in_route": true,
+      "final_state": {
+        "active_messages": [
+          "I'm looking for Tops Tees & Blouses",
+          "Actually, ignore my earlier preference. What I need is: cotton."
+        ],
+        "asked_attributes": [
+          "budget",
+          "color",
+          "feature",
+          "size",
+          "style",
+          "use_case"
+        ],
+        "base_request": "I'm looking for Tops Tees & Blouses",
+        "unavailable_attributes": [
+          "color",
+          "feature",
+          "size",
+          "style",
+          "use_case"
+        ]
+      },
+      "next_action": "Rebuild active constraints at the override turn and add an override-specific regression test.",
+      "override_turn": 4,
+      "primary_failure": "Override failure",
+      "reason": "The target was viable before the explicit override but was never recommended afterwards, when the evaluator begins counting hits.",
+      "recommended_after_override": false,
+      "recommended_before_override": true,
+      "sample_id": "public_0177",
+      "scenario_type": "intent_override",
+      "secondary_labels": [],
+      "target_after_override": false,
+      "target_before_override": true,
+      "target_parent_asin": "B07HV9WW6Q",
+      "turn_count": 10,
+      "turn_evidence": [
+        {
+          "ask_attribute": "material",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 1,
+          "user_message": "I'm looking for Tops Tees & Blouses. Button closure"
+        },
+        {
+          "ask_attribute": "feature",
+          "candidate_pool_target_rank": 2,
+          "recommendation_target_rank": 2,
+          "route_target_ranks": {
+            "active_context": 2,
+            "current_turn": 31
+          },
+          "turn": 2,
+          "user_message": "For that, what matters is: cotton; Cotton, Rayon."
+        },
+        {
+          "ask_attribute": "color",
+          "candidate_pool_target_rank": 5,
+          "recommendation_target_rank": 5,
+          "route_target_ranks": {
+            "active_context": 2
+          },
+          "turn": 3,
+          "user_message": "For that, what matters is: Imported; Button closure."
+        },
+        {
+          "ask_attribute": "feature",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 4,
+          "user_message": "Actually, ignore my earlier preference. What I need is: cotton."
+        },
+        {
+          "ask_attribute": "color",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 5,
+          "user_message": "I don't have an additional preference for feature."
+        },
+        {
+          "ask_attribute": "style",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 6,
+          "user_message": "I don't have an additional preference for color."
+        },
+        {
+          "ask_attribute": "size",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 7,
+          "user_message": "I don't have an additional preference for style."
+        },
+        {
+          "ask_attribute": "use_case",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 8,
+          "user_message": "I don't have an additional preference for size."
+        },
+        {
+          "ask_attribute": "budget",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 9,
+          "user_message": "I don't have an additional preference for use_case."
+        },
+        {
+          "ask_attribute": null,
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 10,
+          "user_message": "I don't have an additional preference for budget."
+        }
+      ]
+    },
+    {
+      "best_candidate_pool_rank": 4,
+      "best_recommendation_rank": 4,
+      "best_route_rank": 5,
+      "confidence": "high",
+      "ever_in_candidate_pool": true,
+      "ever_in_recommendations": true,
+      "ever_in_route": true,
+      "final_state": {
+        "active_messages": [
+          "I'm looking for Jackets & Vests Vests",
+          "Actually, ignore my earlier preference. What I need is: polyester."
+        ],
+        "asked_attributes": [
+          "budget",
+          "color",
+          "feature",
+          "size",
+          "style",
+          "use_case"
+        ],
+        "base_request": "I'm looking for Jackets & Vests Vests",
+        "unavailable_attributes": [
+          "color",
+          "feature",
+          "size",
+          "style",
+          "use_case"
+        ]
+      },
+      "next_action": "Rebuild active constraints at the override turn and add an override-specific regression test.",
+      "override_turn": 4,
+      "primary_failure": "Override failure",
+      "reason": "The target was viable before the explicit override but was never recommended afterwards, when the evaluator begins counting hits.",
+      "recommended_after_override": false,
+      "recommended_before_override": true,
+      "sample_id": "public_0183",
+      "scenario_type": "intent_override",
+      "secondary_labels": [],
+      "target_after_override": true,
+      "target_before_override": true,
+      "target_parent_asin": "B07Z2KSZR3",
+      "turn_count": 10,
+      "turn_evidence": [
+        {
+          "ask_attribute": "material",
+          "candidate_pool_target_rank": 32,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 40,
+            "category_anchor": 17,
+            "current_turn": 40
+          },
+          "turn": 1,
+          "user_message": "I'm looking for Jackets & Vests Vests. Hand Wash Only"
+        },
+        {
+          "ask_attribute": "feature",
+          "candidate_pool_target_rank": 4,
+          "recommendation_target_rank": 4,
+          "route_target_ranks": {
+            "active_context": 7,
+            "category_anchor": 17
+          },
+          "turn": 2,
+          "user_message": "For that, what matters is: polyester; 100% Polyester."
+        },
+        {
+          "ask_attribute": "color",
+          "candidate_pool_target_rank": 8,
+          "recommendation_target_rank": 8,
+          "route_target_ranks": {
+            "active_context": 5,
+            "category_anchor": 17
+          },
+          "turn": 3,
+          "user_message": "For that, what matters is: Button closure; Hand Wash Only."
+        },
+        {
+          "ask_attribute": "feature",
+          "candidate_pool_target_rank": 24,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 31,
+            "category_anchor": 17
+          },
+          "turn": 4,
+          "user_message": "Actually, ignore my earlier preference. What I need is: polyester."
+        },
+        {
+          "ask_attribute": "color",
+          "candidate_pool_target_rank": 22,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 31,
+            "category_anchor": 17
+          },
+          "turn": 5,
+          "user_message": "I don't have an additional preference for feature."
+        },
+        {
+          "ask_attribute": "style",
+          "candidate_pool_target_rank": 22,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 31,
+            "category_anchor": 17
+          },
+          "turn": 6,
+          "user_message": "I don't have an additional preference for color."
+        },
+        {
+          "ask_attribute": "size",
+          "candidate_pool_target_rank": 22,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 31,
+            "category_anchor": 17
+          },
+          "turn": 7,
+          "user_message": "I don't have an additional preference for style."
+        },
+        {
+          "ask_attribute": "use_case",
+          "candidate_pool_target_rank": 22,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 31,
+            "category_anchor": 17
+          },
+          "turn": 8,
+          "user_message": "I don't have an additional preference for size."
+        },
+        {
+          "ask_attribute": "budget",
+          "candidate_pool_target_rank": 22,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 31,
+            "category_anchor": 17
+          },
+          "turn": 9,
+          "user_message": "I don't have an additional preference for use_case."
+        },
+        {
+          "ask_attribute": null,
+          "candidate_pool_target_rank": 22,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 31,
+            "category_anchor": 17
+          },
+          "turn": 10,
+          "user_message": "I don't have an additional preference for budget."
+        }
+      ]
+    },
+    {
+      "best_candidate_pool_rank": null,
+      "best_recommendation_rank": null,
+      "best_route_rank": null,
+      "confidence": "high",
+      "ever_in_candidate_pool": false,
+      "ever_in_recommendations": false,
+      "ever_in_route": false,
+      "final_state": {
+        "active_messages": [
+          "I'm looking for Shoes Loafers & Slip-Ons, but I'm still exploring.",
+          "For that, what matters is: leather; 100% Leather."
+        ],
+        "asked_attributes": [
+          "brand",
+          "budget",
+          "color",
+          "feature",
+          "material",
+          "other",
+          "size",
+          "style",
+          "use_case"
+        ],
+        "base_request": "I'm looking for Shoes Loafers & Slip-Ons",
+        "unavailable_attributes": [
+          "brand",
+          "budget",
+          "color",
+          "feature",
+          "material",
+          "size",
+          "style",
+          "use_case"
+        ]
+      },
+      "next_action": "Improve query normalization, category/attribute expansion, or add a complementary recall route.",
+      "override_turn": null,
+      "primary_failure": "Recall failure",
+      "reason": "The target never appeared in any retrieval route or merged candidate pool.",
+      "recommended_after_override": false,
+      "recommended_before_override": false,
+      "sample_id": "public_0187",
+      "scenario_type": "boundary",
+      "secondary_labels": [
+        "Boundary context"
+      ],
+      "target_after_override": false,
+      "target_before_override": false,
+      "target_parent_asin": "B000GQ1F3O",
+      "turn_count": 10,
+      "turn_evidence": [
+        {
+          "ask_attribute": "material",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 1,
+          "user_message": "I'm looking for Shoes Loafers & Slip-Ons, but I'm still exploring."
+        },
+        {
+          "ask_attribute": "feature",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 2,
+          "user_message": "I don't have a preference for material; please use your judgment."
+        },
+        {
+          "ask_attribute": "color",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 3,
+          "user_message": "I don't have an additional preference for feature."
+        },
+        {
+          "ask_attribute": "style",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 4,
+          "user_message": "I don't have an additional preference for color."
+        },
+        {
+          "ask_attribute": "size",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 5,
+          "user_message": "I don't have an additional preference for style."
+        },
+        {
+          "ask_attribute": "use_case",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 6,
+          "user_message": "I don't have an additional preference for size."
+        },
+        {
+          "ask_attribute": "budget",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 7,
+          "user_message": "I don't have an additional preference for use_case."
+        },
+        {
+          "ask_attribute": "brand",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 8,
+          "user_message": "I don't have an additional preference for budget."
+        },
+        {
+          "ask_attribute": "other",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 9,
+          "user_message": "I don't have an additional preference for brand."
+        },
+        {
+          "ask_attribute": null,
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 10,
+          "user_message": "For that, what matters is: leather; 100% Leather."
+        }
+      ]
+    },
+    {
+      "best_candidate_pool_rank": 27,
+      "best_recommendation_rank": null,
+      "best_route_rank": 27,
+      "confidence": "high",
+      "ever_in_candidate_pool": true,
+      "ever_in_recommendations": false,
+      "ever_in_route": true,
+      "final_state": {
+        "active_messages": [
+          "I'm looking for Tees & Blouses T-Shirts. A key requirement is: rayon.",
+          "For that, what matters is: Pull On closure; Hand Wash Only.",
+          "For that, what matters is: 95% Rayon, 5% Spandex."
+        ],
+        "asked_attributes": [
+          "brand",
+          "budget",
+          "color",
+          "feature",
+          "other",
+          "size",
+          "style",
+          "use_case"
+        ],
+        "base_request": "I'm looking for Tees & Blouses T-Shirts",
+        "unavailable_attributes": [
+          "brand",
+          "budget",
+          "color",
+          "feature",
+          "size",
+          "style",
+          "use_case"
+        ]
+      },
+      "next_action": "Inspect route weights and target-versus-cutoff scores; add attribute-aware reranking.",
+      "override_turn": null,
+      "primary_failure": "Rerank failure",
+      "reason": "The target entered a route or merged pool but never reached the final Top-10.",
+      "recommended_after_override": false,
+      "recommended_before_override": false,
+      "sample_id": "public_0194",
+      "scenario_type": "buying",
+      "secondary_labels": [],
+      "target_after_override": false,
+      "target_before_override": false,
+      "target_parent_asin": "B09WR1NZ48",
+      "turn_count": 10,
+      "turn_evidence": [
+        {
+          "ask_attribute": "feature",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 1,
+          "user_message": "I'm looking for Tees & Blouses T-Shirts. A key requirement is: rayon."
+        },
+        {
+          "ask_attribute": "color",
+          "candidate_pool_target_rank": 32,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 30
+          },
+          "turn": 2,
+          "user_message": "For that, what matters is: Pull On closure; Hand Wash Only."
+        },
+        {
+          "ask_attribute": "style",
+          "candidate_pool_target_rank": 31,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 30
+          },
+          "turn": 3,
+          "user_message": "I don't have an additional preference for color."
+        },
+        {
+          "ask_attribute": "size",
+          "candidate_pool_target_rank": 32,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 30
+          },
+          "turn": 4,
+          "user_message": "I don't have an additional preference for style."
+        },
+        {
+          "ask_attribute": "use_case",
+          "candidate_pool_target_rank": 30,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 30
+          },
+          "turn": 5,
+          "user_message": "I don't have an additional preference for size."
+        },
+        {
+          "ask_attribute": "budget",
+          "candidate_pool_target_rank": 30,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 30
+          },
+          "turn": 6,
+          "user_message": "I don't have an additional preference for use_case."
+        },
+        {
+          "ask_attribute": "brand",
+          "candidate_pool_target_rank": 30,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 30
+          },
+          "turn": 7,
+          "user_message": "I don't have an additional preference for budget."
+        },
+        {
+          "ask_attribute": "other",
+          "candidate_pool_target_rank": 30,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 30
+          },
+          "turn": 8,
+          "user_message": "I don't have an additional preference for brand."
+        },
+        {
+          "ask_attribute": null,
+          "candidate_pool_target_rank": 39,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 27
+          },
+          "turn": 9,
+          "user_message": "For that, what matters is: 95% Rayon, 5% Spandex."
+        },
+        {
+          "ask_attribute": null,
+          "candidate_pool_target_rank": 27,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 27
+          },
+          "turn": 10,
+          "user_message": "Those options are not quite right yet. Ask me about one specific attribute."
+        }
+      ]
+    },
+    {
+      "best_candidate_pool_rank": 129,
+      "best_recommendation_rank": null,
+      "best_route_rank": 79,
+      "confidence": "high",
+      "ever_in_candidate_pool": true,
+      "ever_in_recommendations": false,
+      "ever_in_route": true,
+      "final_state": {
+        "active_messages": [
+          "I'm looking for Handbags & Wallets Crossbody Bags",
+          "Actually, ignore my earlier preference. What I need is: leather.",
+          "For that, what matters is: color: black."
+        ],
+        "asked_attributes": [
+          "budget",
+          "color",
+          "feature",
+          "size",
+          "style",
+          "use_case"
+        ],
+        "base_request": "I'm looking for Handbags & Wallets Crossbody Bags",
+        "unavailable_attributes": [
+          "color",
+          "feature",
+          "size",
+          "style",
+          "use_case"
+        ]
+      },
+      "next_action": "Inspect route weights and target-versus-cutoff scores; add attribute-aware reranking.",
+      "override_turn": 4,
+      "primary_failure": "Rerank failure",
+      "reason": "The target entered a route or merged pool but never reached the final Top-10.",
+      "recommended_after_override": false,
+      "recommended_before_override": false,
+      "sample_id": "public_0198",
+      "scenario_type": "intent_override",
+      "secondary_labels": [
+        "Override context"
+      ],
+      "target_after_override": true,
+      "target_before_override": true,
+      "target_parent_asin": "B08K1ZJZ4N",
+      "turn_count": 10,
+      "turn_evidence": [
+        {
+          "ask_attribute": "material",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 1,
+          "user_message": "I'm looking for Handbags & Wallets Crossbody Bags. Imported"
+        },
+        {
+          "ask_attribute": "feature",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 2,
+          "user_message": "For that, what matters is: leather."
+        },
+        {
+          "ask_attribute": "color",
+          "candidate_pool_target_rank": 129,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 79
+          },
+          "turn": 3,
+          "user_message": "For that, what matters is: PU; Imported."
+        },
+        {
+          "ask_attribute": "feature",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 4,
+          "user_message": "Actually, ignore my earlier preference. What I need is: leather."
+        },
+        {
+          "ask_attribute": "color",
+          "candidate_pool_target_rank": null,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {},
+          "turn": 5,
+          "user_message": "I don't have an additional preference for feature."
+        },
+        {
+          "ask_attribute": "style",
+          "candidate_pool_target_rank": 135,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 93
+          },
+          "turn": 6,
+          "user_message": "For that, what matters is: color: black."
+        },
+        {
+          "ask_attribute": "size",
+          "candidate_pool_target_rank": 135,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 93
+          },
+          "turn": 7,
+          "user_message": "I don't have an additional preference for style."
+        },
+        {
+          "ask_attribute": "use_case",
+          "candidate_pool_target_rank": 135,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 93
+          },
+          "turn": 8,
+          "user_message": "I don't have an additional preference for size."
+        },
+        {
+          "ask_attribute": "budget",
+          "candidate_pool_target_rank": 135,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 93
+          },
+          "turn": 9,
+          "user_message": "I don't have an additional preference for use_case."
+        },
+        {
+          "ask_attribute": null,
+          "candidate_pool_target_rank": 135,
+          "recommendation_target_rank": null,
+          "route_target_ranks": {
+            "active_context": 93
+          },
+          "turn": 10,
+          "user_message": "I don't have an additional preference for budget."
+        }
+      ]
+    }
+  ],
+  "hit_rate_at_10": 0.84,
+  "matched_trace_count": 32,
+  "miss_count": 32,
+  "primary_failure_counts": {
+    "Override failure": 6,
+    "Recall failure": 1,
+    "Rerank failure": 25
+  },
+  "rerank_best_pool_rank_buckets": {
+    "11-20": 12,
+    "21-50": 6,
+    ">50": 7
+  },
+  "sample_count": 200,
+  "scenario_failure_counts": {
+    "boundary": {
+      "Recall failure": 1,
+      "Rerank failure": 1
+    },
+    "browsing": {
+      "Rerank failure": 11
+    },
+    "buying": {
+      "Rerank failure": 9
+    },
+    "intent_override": {
+      "Override failure": 6,
+      "Rerank failure": 4
+    }
+  },
+  "schema_version": "1.0.0",
+  "taxonomy_notes": {
+    "Boundary failure": "Recorded as context, not a competing primary stage label.",
+    "Dialogue failure": "Trace/evaluator disagree about whether target was recommended.",
+    "Filter failure": "Not separately measurable because this baseline has no filter stage.",
+    "Override failure": "Target is viable before an explicit override but never recommended in the evaluator-eligible post-override turns.",
+    "Recall failure": "Target never enters any retrieval route or merged pool.",
+    "Rerank failure": "Target is retrieved but never enters final Top-10.",
+    "Runtime/fallback failure": "Trace is absent or empty; ranking-stage attribution is impossible."
+  },
+  "trace_count": 200
+}

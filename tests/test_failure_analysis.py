@@ -57,6 +57,18 @@ class FailureAnalysisTests(unittest.TestCase):
         self.assertEqual(failure["primary_failure"], "Override failure")
         self.assertEqual(failure["override_turn"], 2)
 
+    def test_pre_override_recommendation_is_not_a_dialogue_failure(self):
+        session = {"sample_id": "s4", "scenario_type": "intent_override", "hit": False}
+        trace = make_trace("s4", [
+            make_turn(1, route_rank=4, pool_rank=3, recommendation_rank=3),
+            make_turn(2, route_rank=20, pool_rank=18,
+                      message="Actually, ignore my earlier preference"),
+        ], scenario="intent_override")
+        failure = classify_miss(session, trace)
+        self.assertEqual(failure["primary_failure"], "Override failure")
+        self.assertTrue(failure["recommended_before_override"])
+        self.assertFalse(failure["recommended_after_override"])
+
     def test_analyze_reconciles_all_misses_and_adds_boundary_context(self):
         result = {
             "hit_rate_at_10": 0.5,

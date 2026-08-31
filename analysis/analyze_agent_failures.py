@@ -100,6 +100,12 @@ def classify_miss(session: dict[str, Any], trace: dict[str, Any] | None) -> dict
         item["route_target_ranks"] or item["candidate_pool_target_rank"] is not None
         for item in after_override
     )
+    recommended_before_override = any(
+        item["recommendation_target_rank"] is not None for item in before_override
+    )
+    recommended_after_override = any(
+        item["recommendation_target_rank"] is not None for item in after_override
+    )
 
     diagnostics_available = bool(trace and trace.get("diagnostics_available"))
     if not diagnostics_available or not evidence:
@@ -107,10 +113,17 @@ def classify_miss(session: dict[str, Any], trace: dict[str, Any] | None) -> dict
         confidence = "high"
         reason = "Diagnostic trace is unavailable or empty, so the miss cannot be assigned to a ranking stage."
         next_action = "Repair trace/runtime coverage, reproduce this session, then reclassify it."
-    elif scenario == "intent_override" and override_turn is not None and target_before_override and not target_after_override:
+    elif (
+        scenario == "intent_override"
+        and override_turn is not None
+        and (
+            (recommended_before_override and not recommended_after_override)
+            or (target_before_override and not target_after_override)
+        )
+    ):
         primary = "Override failure"
         confidence = "high"
-        reason = "The target was retrievable before the explicit override but disappeared from every route and pool afterwards."
+        reason = "The target was viable before the explicit override but was never recommended afterwards, when the evaluator begins counting hits."
         next_action = "Rebuild active constraints at the override turn and add an override-specific regression test."
     elif route_rank is None and pool_rank is None:
         primary = "Recall failure"
@@ -153,6 +166,8 @@ def classify_miss(session: dict[str, Any], trace: dict[str, Any] | None) -> dict
         "override_turn": override_turn,
         "target_before_override": target_before_override,
         "target_after_override": target_after_override,
+        "recommended_before_override": recommended_before_override,
+        "recommended_after_override": recommended_after_override,
         "ever_in_route": route_rank is not None,
         "ever_in_candidate_pool": pool_rank is not None,
         "ever_in_recommendations": recommendation_rank is not None,
@@ -184,8 +199,21 @@ def analyze(result: dict[str, Any], traces: list[dict[str, Any]]) -> dict[str, A
     ]
     primary_counts = Counter(item["primary_failure"] for item in details)
     scenario_counts: dict[str, Counter[str]] = defaultdict(Counter)
+    rerank_pool_rank_buckets: Counter[str] = Counter()
     for item in details:
         scenario_counts[item["scenario_type"]][item["primary_failure"]] += 1
+        if item["primary_failure"] == "Rerank failure":
+            rank = item["best_candidate_pool_rank"]
+            if rank is None:
+                rerank_pool_rank_buckets["route-only/no merged-pool rank"] += 1
+            elif rank <= 10:
+                rerank_pool_rank_buckets["1-10"] += 1
+            elif rank <= 20:
+                rerank_pool_rank_buckets["11-20"] += 1
+            elif rank <= 50:
+                rerank_pool_rank_buckets["21-50"] += 1
+            else:
+                rerank_pool_rank_buckets[">50"] += 1
 
     expected_misses = len(sessions) - round(float(result["hit_rate_at_10"]) * len(sessions))
     if expected_misses != len(misses):
@@ -207,10 +235,11 @@ def analyze(result: dict[str, Any], traces: list[dict[str, Any]]) -> dict[str, A
             scenario: dict(sorted(counts.items()))
             for scenario, counts in sorted(scenario_counts.items())
         },
+        "rerank_best_pool_rank_buckets": dict(rerank_pool_rank_buckets),
         "taxonomy_notes": {
             "Recall failure": "Target never enters any retrieval route or merged pool.",
             "Rerank failure": "Target is retrieved but never enters final Top-10.",
-            "Override failure": "Target evidence exists before an explicit override and disappears at/after it.",
+            "Override failure": "Target is viable before an explicit override but never recommended in the evaluator-eligible post-override turns.",
             "Dialogue failure": "Trace/evaluator disagree about whether target was recommended.",
             "Runtime/fallback failure": "Trace is absent or empty; ranking-stage attribution is impossible.",
             "Filter failure": "Not separately measurable because this baseline has no filter stage.",
@@ -243,6 +272,13 @@ def markdown_report(report: dict[str, Any], result_path: Path, traces_path: Path
         lines.append(f"| {label} | {count} | {count / miss_count:.1%} |")
 
     lines.extend([
+        "",
+        "## Key findings",
+        "",
+        f"- Rerank failures account for {report['primary_failure_counts'].get('Rerank failure', 0)}/{miss_count} misses; "
+        f"{report['rerank_best_pool_rank_buckets'].get('11-20', 0)} are near-cutoff targets with a best merged-pool rank of 11-20.",
+        f"- Override failures account for {report['primary_failure_counts'].get('Override failure', 0)}/{miss_count} misses and should be isolated before broad rank-weight tuning.",
+        f"- Only {report['primary_failure_counts'].get('Recall failure', 0)}/{miss_count} misses never retrieve the target, so adding recall routes is not the first global priority.",
         "",
         "## Scenario × primary failure",
         "",
@@ -285,7 +321,7 @@ def markdown_report(report: dict[str, Any], result_path: Path, traces_path: Path
         f"- Trace source: `{traces_path.as_posix()}`",
         f"- Trace coverage for misses: {report['matched_trace_count']}/{miss_count}.",
         "- Verified labels are based on recorded target ranks, not semantic guesses from product text.",
-        "- Override attribution is conservative: it requires an explicit override phrase and a before/after loss of target evidence.",
+        "- Override attribution is conservative: it requires an explicit override phrase, pre-override target viability, and no post-override recommendation.",
         "- This public 200-session set is diagnostic evidence, not an unbiased hidden-test estimate.",
         "- The JSON companion contains per-turn evidence, final state, confidence, reason, and proposed next action for every miss.",
         "",
