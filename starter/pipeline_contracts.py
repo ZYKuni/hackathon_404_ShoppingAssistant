@@ -284,6 +284,7 @@ class RankingExplanation:
     violation_penalty: float = 0.0
     popularity: float = 0.0
     profile_alignment: float = 0.0
+    semantic_similarity: float = 0.0
 
     def __post_init__(self) -> None:
         for field_info in fields(self):

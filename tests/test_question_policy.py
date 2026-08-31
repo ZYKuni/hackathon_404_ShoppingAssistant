@@ -15,6 +15,7 @@ from starter.question_policy import (
     QuestionPolicy,
     QuestionPolicyMode,
     candidate_facets_from_products,
+    conditional_question_gate,
 )
 from starter.state_adapter import to_state_snapshot
 
@@ -37,6 +38,95 @@ def route_decision(route: str, *, override: bool = False) -> RouteDecision:
 
 
 class QuestionPolicyUnitTests(unittest.TestCase):
+    def test_conditional_gate_is_limited_to_clear_early_browsing_value(self) -> None:
+        decision = QuestionPolicy().choose(
+            to_state_snapshot(ConversationState(turn=1, category="shoes")),
+            ProfileSnapshot(),
+            route_decision("browsing"),
+            {
+                "use_case": ("running", "work", "travel", "hiking"),
+                "feature": ("lightweight", "lightweight", "lightweight", "durable"),
+            },
+        )
+        allowed = conditional_question_gate(
+            decision,
+            route_decision("browsing"),
+            candidate_count=200,
+            candidate_limit=200,
+            turn=1,
+            rounds_without_new_constraints=0,
+            no_preference_count=0,
+            minimum_value=0.0,
+            minimum_margin=0.0,
+        )
+        self.assertTrue(allowed.apply_dynamic)
+
+        buying = conditional_question_gate(
+            decision,
+            route_decision("buying"),
+            candidate_count=200,
+            candidate_limit=200,
+            turn=1,
+            rounds_without_new_constraints=0,
+            no_preference_count=0,
+            minimum_value=0.0,
+            minimum_margin=0.0,
+        )
+        self.assertFalse(buying.apply_dynamic)
+        self.assertIn("Buying", buying.reason)
+
+        override = conditional_question_gate(
+            decision,
+            route_decision("browsing", override=True),
+            candidate_count=200,
+            candidate_limit=200,
+            turn=2,
+            rounds_without_new_constraints=0,
+            no_preference_count=0,
+            minimum_value=0.0,
+            minimum_margin=0.0,
+        )
+        self.assertFalse(override.apply_dynamic)
+        self.assertIn("Override", override.reason)
+
+    def test_buying_history_can_block_other_or_all_dynamic_questions(self) -> None:
+        decision = QuestionPolicy().choose(
+            to_state_snapshot(ConversationState(turn=3, category="shoes")),
+            ProfileSnapshot(),
+            route_decision("browsing"),
+            {},
+            rounds_without_new_constraints=2,
+            other_used=False,
+        )
+        self.assertEqual(decision.ask_attribute, "other")
+        no_other = conditional_question_gate(
+            decision,
+            route_decision("browsing"),
+            candidate_count=200,
+            candidate_limit=200,
+            turn=3,
+            rounds_without_new_constraints=2,
+            no_preference_count=0,
+            has_seen_buying_intent=True,
+            allow_other_after_buying=False,
+        )
+        self.assertFalse(no_other.apply_dynamic)
+        self.assertIn("Buying-history", no_other.reason)
+
+        sticky = conditional_question_gate(
+            decision,
+            route_decision("browsing"),
+            candidate_count=200,
+            candidate_limit=200,
+            turn=3,
+            rounds_without_new_constraints=2,
+            no_preference_count=0,
+            has_seen_buying_intent=True,
+            sticky_buying_safe=True,
+        )
+        self.assertFalse(sticky.apply_dynamic)
+        self.assertIn("sticky SAFE", sticky.reason)
+
     def test_twenty_golden_cases_cover_all_required_scenarios(self) -> None:
         cases = load_cases()
         self.assertGreaterEqual(len(cases), 20)
@@ -197,6 +287,31 @@ class QuestionPolicyAgentTests(unittest.TestCase):
             self.assertIn(response["ask_attribute"], QUESTION_TEXT)
         finally:
             agent.connection.close()
+
+    def test_conditional_mode_keeps_buying_safe_and_records_gate(self) -> None:
+        conditional = Agent(
+            self.catalog_path,
+            question_policy_mode="conditional",
+            conditional_question_min_value=0.0,
+            conditional_question_min_margin=0.0,
+        )
+        safe = Agent(self.catalog_path, question_policy_mode="safe")
+        try:
+            for agent in (conditional, safe):
+                agent.reset("session", {})
+            message = "I need waterproof shoes under $150."
+            conditional_response = conditional.respond("session", message, 1, 2)
+            safe_response = safe.respond("session", message, 1, 2)
+            self.assertEqual(
+                conditional_response["ask_attribute"], safe_response["ask_attribute"]
+            )
+            diagnostics = conditional.question_policy_diagnostics("session")
+            self.assertIsNotNone(diagnostics)
+            self.assertFalse(diagnostics.dynamic_applied)
+            self.assertIn("Buying", diagnostics.gate_reason)
+        finally:
+            conditional.connection.close()
+            safe.connection.close()
 
     def test_other_is_used_once_and_turn_ten_stops(self) -> None:
         agent = Agent(self.catalog_path, question_policy_mode="dynamic")

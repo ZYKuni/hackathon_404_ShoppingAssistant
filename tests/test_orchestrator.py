@@ -73,6 +73,17 @@ def execute(orchestrator):
 
 
 class OrchestratorTests(unittest.TestCase):
+
+    def test_semantic_fusion_only_reorders_guarded_top_ten(self):
+        guarded = (("A", 1.0), ("B", 0.95))
+        ranked = (
+            RankedCandidate("A", 9.0, RankingExplanation(semantic_similarity=0.1)),
+            RankedCandidate("B", 1.0, RankingExplanation(semantic_similarity=0.9)),
+            RankedCandidate("OUTSIDE", 100.0, RankingExplanation(semantic_similarity=1.0)),
+        )
+        result = AgentOrchestrator._semantic_top10_rerank(guarded, ranked, 0.25)
+        self.assertEqual({asin for asin, _ in result}, {"A", "B"})
+        self.assertNotIn("OUTSIDE", [asin for asin, _ in result])
     def test_passes_complete_request_and_uses_ranker_order(self):
         retriever = FakeRetriever()
         result = execute(AgentOrchestrator(

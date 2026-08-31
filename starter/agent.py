@@ -13,12 +13,13 @@ from starter.conversation_state import ConversationState, apply_patch
 from starter.attribute_lexicons import normalize_phrase
 from starter.dense_retrieval import DenseMode, DenseRouteDiagnostics, DenseSearchBackend
 from starter.orchestrator import AgentOrchestrator, OrchestrationResult, RuntimeMode
-from starter.pipeline_contracts import RankerProtocol, RetrieverProtocol
+from starter.pipeline_contracts import IntentRoute, RankerProtocol, RetrieverProtocol
 from starter.question_policy import (
     QuestionDecision,
     QuestionPolicy,
     QuestionPolicyDiagnostics,
     QuestionPolicyMode,
+    conditional_question_gate,
     candidate_facets_from_products,
 )
 
@@ -148,6 +149,7 @@ class SessionState:
     last_asked_attribute: str | None = None
     rounds_without_new_constraints: int = 0
     other_used: bool = False
+    has_seen_buying_intent: bool = False
     last_override_detected: bool = False
     last_question_policy: QuestionPolicyDiagnostics | None = None
 
@@ -172,6 +174,12 @@ class Agent:
         dense_backend: DenseSearchBackend | None = None,
         question_policy_mode: QuestionPolicyMode | str = QuestionPolicyMode.SAFE,
         enable_profile_question_hints: bool = True,
+        conditional_question_min_value: float = 0.10,
+        conditional_question_min_margin: float = 0.02,
+        conditional_question_browsing_max_turn: int = 3,
+        conditional_question_allow_other_after_buying: bool = True,
+        conditional_question_sticky_buying_safe: bool = False,
+        semantic_rerank_weight: float = 0.0,
     ) -> None:
         self.catalog_path = Path(catalog_path)
         if not self.catalog_path.is_file():
@@ -188,6 +196,36 @@ class Agent:
         self._question_policy = QuestionPolicy(
             enable_profile_hints=enable_profile_question_hints
         )
+        for name, value in (
+            ("conditional_question_min_value", conditional_question_min_value),
+            ("conditional_question_min_margin", conditional_question_min_margin),
+        ):
+            if isinstance(value, bool) or not isinstance(value, (int, float)):
+                raise TypeError(f"{name} must be numeric")
+            if not 0.0 <= float(value) <= 1.0:
+                raise ValueError(f"{name} must be between 0 and 1")
+        if (
+            isinstance(conditional_question_browsing_max_turn, bool)
+            or not isinstance(conditional_question_browsing_max_turn, int)
+            or not 1 <= conditional_question_browsing_max_turn <= 9
+        ):
+            raise ValueError("conditional_question_browsing_max_turn must be between 1 and 9")
+        self._conditional_question_min_value = float(conditional_question_min_value)
+        self._conditional_question_min_margin = float(conditional_question_min_margin)
+        self._conditional_question_browsing_max_turn = conditional_question_browsing_max_turn
+        for name, value in (
+            ("conditional_question_allow_other_after_buying", conditional_question_allow_other_after_buying),
+            ("conditional_question_sticky_buying_safe", conditional_question_sticky_buying_safe),
+        ):
+            if not isinstance(value, bool):
+                raise TypeError(f"{name} must be bool")
+        self._conditional_question_allow_other_after_buying = conditional_question_allow_other_after_buying
+        self._conditional_question_sticky_buying_safe = conditional_question_sticky_buying_safe
+        if isinstance(semantic_rerank_weight, bool) or not isinstance(semantic_rerank_weight, (int, float)):
+            raise TypeError("semantic_rerank_weight must be numeric")
+        if not 0.0 <= float(semantic_rerank_weight) <= 0.25:
+            raise ValueError("semantic_rerank_weight must be between 0 and 0.25")
+        self._semantic_rerank_weight = float(semantic_rerank_weight)
         if not isinstance(use_local_pipeline, bool):
             raise TypeError("use_local_pipeline must be bool")
         self._dense_mode = DenseMode(dense_mode)
@@ -204,7 +242,7 @@ class Agent:
         self._build_index()
         if retriever is None and use_local_pipeline:
             from starter.catalog_normalizer import CatalogNormalizer
-            from starter.ranker import LocalConstraintRanker
+            from starter.ranker import LocalConstraintRanker, RankerWeights
             from starter.retrieval import HybridRetriever
 
             catalog = CatalogNormalizer.from_jsonl(self.catalog_path)
@@ -214,9 +252,14 @@ class Agent:
                 dense_backend=dense_backend,
                 dense_mode=self._dense_mode,
             )
-            ranker = LocalConstraintRanker(catalog=catalog)
+            ranker = LocalConstraintRanker(catalog=catalog, weights=RankerWeights())
         self._orchestrator = (
-            AgentOrchestrator(retriever, ranker, runtime_mode=runtime_mode)
+            AgentOrchestrator(
+                retriever,
+                ranker,
+                runtime_mode=runtime_mode,
+                semantic_top10_weight=self._semantic_rerank_weight,
+            )
             if retriever is not None and ranker is not None
             else None
         )
@@ -602,14 +645,53 @@ class Agent:
                 )
             ),
         )
+        dynamic_applied = False
+        gate_reason = ""
+        top_value = decision.scores[0].value if decision.scores else 0.0
+        value_margin = (
+            max(0.0, decision.scores[0].value - decision.scores[1].value)
+            if len(decision.scores) > 1
+            else top_value
+        )
         if self._question_policy_mode is QuestionPolicyMode.SHADOW:
             message, applied = self._baseline_question(
                 state, user_message, turn, over_general=over_general
             )
+            gate_reason = "SHADOW observes the dynamic decision but always applies SAFE."
+        elif self._question_policy_mode is QuestionPolicyMode.CONDITIONAL:
+            gate = conditional_question_gate(
+                decision,
+                request.route_decision,
+                candidate_count=orchestration_result.candidate_count,
+                candidate_limit=request.candidate_limit,
+                turn=turn,
+                rounds_without_new_constraints=state.rounds_without_new_constraints,
+                no_preference_count=len(request.state.no_preference),
+                minimum_value=self._conditional_question_min_value,
+                minimum_margin=self._conditional_question_min_margin,
+                browsing_max_turn=self._conditional_question_browsing_max_turn,
+                has_seen_buying_intent=state.has_seen_buying_intent,
+                allow_other_after_buying=self._conditional_question_allow_other_after_buying,
+                sticky_buying_safe=self._conditional_question_sticky_buying_safe,
+            )
+            gate_reason = gate.reason
+            top_value = gate.top_value
+            value_margin = gate.value_margin
+            if gate.apply_dynamic:
+                message, applied = self._apply_question_decision(
+                    state, decision, over_general=over_general
+                )
+                dynamic_applied = True
+            else:
+                message, applied = self._baseline_question(
+                    state, user_message, turn, over_general=over_general
+                )
         else:
             message, applied = self._apply_question_decision(
                 state, decision, over_general=over_general
             )
+            dynamic_applied = True
+            gate_reason = "DYNAMIC mode applies the candidate-aware decision unconditionally."
         state.last_question_policy = QuestionPolicyDiagnostics(
             mode=self._question_policy_mode,
             route=request.route_decision.route,
@@ -618,6 +700,11 @@ class Agent:
             applied_attribute=applied,
             reason=decision.reason,
             scores=decision.scores,
+            dynamic_applied=dynamic_applied,
+            gate_reason=gate_reason,
+            top_value=top_value,
+            value_margin=value_margin,
+            has_seen_buying_intent=state.has_seen_buying_intent,
         )
         return message, applied
 
@@ -660,6 +747,10 @@ class Agent:
             ]
             self._pipeline_fallbacks[session_id] = orchestration_result.fallbacks
             over_general = orchestration_result.over_general
+            state.has_seen_buying_intent = (
+                state.has_seen_buying_intent
+                or orchestration_result.request.route_decision.route is IntentRoute.BUYING
+            )
         message, ask_attribute = self._next_question(
             state,
             user_message,

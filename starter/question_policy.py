@@ -95,6 +95,7 @@ class QuestionPolicyMode(str, Enum):
     SAFE = "safe"
     SHADOW = "shadow"
     DYNAMIC = "dynamic"
+    CONDITIONAL = "conditional"
 
 
 @dataclass(frozen=True)
@@ -125,6 +126,75 @@ class QuestionPolicyDiagnostics:
     applied_attribute: str | None
     reason: str
     scores: tuple[AttributeScore, ...] = ()
+    dynamic_applied: bool = False
+    gate_reason: str = ""
+    top_value: float = 0.0
+    value_margin: float = 0.0
+    has_seen_buying_intent: bool = False
+
+
+@dataclass(frozen=True)
+class ConditionalQuestionGate:
+    apply_dynamic: bool
+    reason: str
+    top_value: float = 0.0
+    value_margin: float = 0.0
+
+
+def conditional_question_gate(
+    decision: QuestionDecision,
+    route_decision: RouteDecision,
+    *,
+    candidate_count: int,
+    candidate_limit: int,
+    turn: int,
+    rounds_without_new_constraints: int,
+    no_preference_count: int,
+    minimum_value: float = 0.10,
+    minimum_margin: float = 0.02,
+    browsing_max_turn: int = 3,
+    has_seen_buying_intent: bool = False,
+    allow_other_after_buying: bool = True,
+    sticky_buying_safe: bool = False,
+) -> ConditionalQuestionGate:
+    """Conservatively decide whether a dynamic question may replace SAFE."""
+
+    ranked_values = sorted((float(item.value) for item in decision.scores), reverse=True)
+    top_value = ranked_values[0] if ranked_values else 0.0
+    runner_up = ranked_values[1] if len(ranked_values) > 1 else 0.0
+    margin = max(0.0, top_value - runner_up)
+
+    def gate(apply: bool, reason: str) -> ConditionalQuestionGate:
+        return ConditionalQuestionGate(
+            apply_dynamic=apply,
+            reason=reason,
+            top_value=round(top_value, 6),
+            value_margin=round(margin, 6),
+        )
+
+    if has_seen_buying_intent and sticky_buying_safe:
+        return gate(False, "Session has seen Buying intent and sticky SAFE is enabled.")
+    if decision.ask_attribute == "other" and rounds_without_new_constraints >= 2:
+        if has_seen_buying_intent and not allow_other_after_buying:
+            return gate(False, "Buying-history session does not allow the other escape hatch.")
+        if route_decision.override_detected:
+            return gate(False, "Override turn must return to SAFE before escape-hatch use.")
+        return gate(True, "Repeated no-progress replies allow the one-time other escape hatch.")
+    if route_decision.override_detected:
+        return gate(False, "Override turn is high risk and must use SAFE.")
+    if route_decision.route is not IntentRoute.BROWSING:
+        return gate(False, "Buying requests retain the validated SAFE question order.")
+    if turn > browsing_max_turn:
+        return gate(False, "Dynamic questions are limited to early Browsing turns.")
+    if candidate_count != candidate_limit:
+        return gate(False, "Candidate pool is not saturated.")
+    if rounds_without_new_constraints > 0 or no_preference_count > 0:
+        return gate(False, "Boundary/no-progress evidence retains SAFE.")
+    if top_value < minimum_value:
+        return gate(False, "Best question value is below the conditional threshold.")
+    if margin < minimum_margin:
+        return gate(False, "Best question does not beat the runner-up by enough margin.")
+    return gate(True, "Saturated early Browsing pool has a high-value question with clear margin.")
 
 
 def _extracted_values(values: Sequence[ExtractedValue]) -> tuple[str, ...]:
@@ -327,8 +397,10 @@ __all__ = [
     "FALLBACK_ORDER",
     "QUESTION_TEXT",
     "QuestionDecision",
+    "ConditionalQuestionGate",
     "QuestionPolicy",
     "QuestionPolicyDiagnostics",
     "QuestionPolicyMode",
+    "conditional_question_gate",
     "candidate_facets_from_products",
 ]

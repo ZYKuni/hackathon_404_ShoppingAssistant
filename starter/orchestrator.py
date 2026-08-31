@@ -46,6 +46,7 @@ class AgentOrchestrator:
         runtime_mode: RuntimeMode = RuntimeMode.OFFICIAL,
         candidate_limit: int = 200,
         guarded_rerank_weight: float = 0.4,
+        semantic_top10_weight: float = 0.0,
     ) -> None:
         self.retriever = retriever
         self.ranker = ranker
@@ -63,6 +64,13 @@ class AgentOrchestrator:
         if not 0.0 <= float(guarded_rerank_weight) <= 1.0:
             raise ValueError("guarded_rerank_weight must be between 0 and 1")
         self.guarded_rerank_weight = float(guarded_rerank_weight)
+        if isinstance(semantic_top10_weight, bool) or not isinstance(
+            semantic_top10_weight, (int, float)
+        ):
+            raise TypeError("semantic_top10_weight must be numeric")
+        if not 0.0 <= float(semantic_top10_weight) <= 0.25:
+            raise ValueError("semantic_top10_weight must be between 0 and 0.25")
+        self.semantic_top10_weight = float(semantic_top10_weight)
 
     def execute(
         self,
@@ -138,6 +146,12 @@ class AgentOrchestrator:
             recommendations = self._guarded_rerank(
                 legacy, recommendations, self.guarded_rerank_weight
             )
+            if self.semantic_top10_weight > 0.0:
+                recommendations = self._semantic_top10_rerank(
+                    recommendations,
+                    ranking.candidates,
+                    self.semantic_top10_weight,
+                )
         return OrchestrationResult(
             recommendations,
             tuple(fallbacks),
@@ -164,6 +178,28 @@ class AgentOrchestrator:
             scored.append((asin, score))
         scored.sort(key=lambda item: (-item[1], item[0]))
         return tuple(scored)
+
+    @staticmethod
+    def _semantic_top10_rerank(
+        guarded: tuple[tuple[str, float], ...],
+        ranked_candidates: tuple,
+        semantic_weight: float,
+    ) -> tuple[tuple[str, float], ...]:
+        """Fuse semantic evidence only inside the already-guarded Top-10 set."""
+        semantic = {
+            item.parent_asin: item.explanation.semantic_similarity
+            for item in ranked_candidates
+        }
+        fused = [
+            (
+                asin,
+                (1.0 - semantic_weight) / position
+                + semantic_weight * semantic.get(asin, 0.0),
+            )
+            for position, (asin, _) in enumerate(guarded, 1)
+        ]
+        fused.sort(key=lambda item: (-item[1], item[0]))
+        return tuple(fused)
 
     @staticmethod
     def _legacy(values: list[dict], top_k: int) -> tuple[tuple[str, float], ...]:

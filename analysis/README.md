@@ -46,3 +46,12 @@ int8 ONNX exporter, and public-set benchmark are documented in
 `analysis/DENSE_RETRIEVAL_REPORT.md`. The default `Agent(catalog_path)` remains
 the dependency-free MVP until generated assets are packaged and the release
 environment gates pass.
+
+## Conditional × Dense matrix
+
+`analysis/joint_experiment.py` runs the unchanged public evaluator with a
+specific dense, clarification, and explicit semantic-rerank configuration. The
+frozen Conditional OFF result, Buying-history ablations, Dense ON experiments,
+and their exact reproducibility check are summarized in
+`analysis/CONDITIONAL_DENSE_EXPERIMENT_REPORT.md`. The script records only
+aggregate-safe routing, question, dense, fallback, and latency diagnostics.

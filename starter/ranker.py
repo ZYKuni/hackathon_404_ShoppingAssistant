@@ -229,6 +229,18 @@ class LocalConstraintRanker:
             len(profile_tokens & document_tokens) / len(profile_tokens)
             if profile_tokens else 0.0
         )
+        dense_scores = [
+            float(evidence.score)
+            for evidence in candidate.evidence
+            if evidence.route_name == "dense_semantic" and evidence.score is not None
+        ]
+        # Dense retrieval contributes normalized MiniLM cosine similarity.  It is
+        # explicit in the explanation and only reorders retrieved candidates;
+        # the official Top-10 guard remains enforced by the orchestrator.
+        semantic_similarity = (
+            min(1.0, max(0.0, (max(dense_scores) + 1.0) / 2.0))
+            if dense_scores else 0.0
+        )
         return RankingExplanation(
             rrf=candidate.rrf_score / max_rrf if max_rrf > 0 else 0.0,
             exact_phrase=exact_phrase,
@@ -242,6 +254,7 @@ class LocalConstraintRanker:
                 if max_popularity > 0 else 0.0
             ),
             profile_alignment=profile_alignment,
+            semantic_similarity=semantic_similarity,
         )
 
     @staticmethod

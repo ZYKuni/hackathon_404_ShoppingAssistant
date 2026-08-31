@@ -1,7 +1,7 @@
 # Shopping Copilot current progress
 
 > Updated: 2026-08-31
-> Branch: `feature/shierly-question-policy-main`
+> Branch baseline: `feature/ykzhao0831`
 
 ## Current status
 
@@ -11,12 +11,12 @@ fragments in Agent, router, orchestrator, state adapter, and their tests were
 removed. The implementation now compiles, completes the unchanged 200-session
 public evaluator, and includes a non-regressing Question Policy rollout guard.
 
-| Metric | Current formal Agent |
-| --- | ---: |
-| Hit Rate@10 | 0.855000 |
-| MRR | 0.495175 |
-| MTTC | 4.745 |
-| Technical Score | 0.701152 |
+| Metric | Stable default (OFF × SAFE) | Best experimental (OFF × Conditional) |
+| --- | ---: | ---: |
+| Hit Rate@10 | 0.855000 | **0.865000** |
+| MRR | 0.495175 | **0.503494** |
+| MTTC | 4.745000 | **4.115000** |
+| Technical Score | 0.701152 | **0.721248** |
 
 ## Completed MVP layers
 
@@ -33,6 +33,10 @@ public evaluator, and includes a non-regressing Question Policy rollout guard.
 10. Setup README, short submission report, checklist, and runnable multi-turn demo.
 11. Candidate-aware Question Policy over the formal RouteDecision and normalized
     Top-200 pool, with safe/shadow/dynamic rollout modes and 20 golden QA cases.
+12. Conditional rollout gate, frozen/reproduced 200-session experiment record,
+    and two session-local Buying-history safety ablations.
+13. Optional local MiniLM cosine exposed as an explainable semantic-ranking
+    feature with a zero-weight default and Official Top-10 guard preserved.
 
 ## Important implementation decision
 
@@ -61,6 +65,10 @@ Hit@10 from 0.855 to 0.795 and is now regression-tested.
 - Add category-aware size normalization.
 - Benchmark the archive under the organizer's actual CPU/memory timeout.
 - Run several deterministic reruns and record checksums for release artifacts.
+- Separate Dense ranking from Dense-driven clarification facets in one controlled
+  experiment; current joint Dense ON × Conditional increases dialog turns and
+  misses the all-metric gate. See
+  `analysis/CONDITIONAL_DENSE_EXPERIMENT_REPORT.md`.
 
 ### P2 — post-MVP experiments
 
@@ -70,11 +78,11 @@ Hit@10 from 0.855 to 0.795 and is now regression-tested.
   0.701983, but remains non-default until its approximately 84 MB assets and
   x86 release environment pass final packaging gates. See
   `analysis/DENSE_RETRIEVAL_REPORT.md`.
-- The candidate-distribution/value-of-information Question Policy is integrated
-  in shadow mode with exact decision diagnostics. Safe and shadow exactly match
-  the current 0.701152 public score. Dynamic reaches 0.702058 by asking fewer
-  questions, but lowers Hit@10 and MRR, so `safe` remains the default until the
-  dynamic policy beats the public and adversarial regression suites throughout.
+- The candidate-distribution/value-of-information Question Policy now includes
+  a Conditional mode. It reaches 0.721248 (Hit@10 0.865, MRR 0.503494, MTTC
+  4.115) with Dense OFF, but Buying MRR regresses from 0.506349 to 0.497148.
+  The two requested Buying-history protections both raise MTTC to 4.270, so
+  SAFE remains the default while the trade-off is investigated.
 - Cache a versioned normalized-catalog artifact if the rules permit small local
   assets; observed cold initialization is approximately 28–40 seconds.
 

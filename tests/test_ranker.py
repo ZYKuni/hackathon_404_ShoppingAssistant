@@ -141,6 +141,36 @@ class LocalConstraintRankerTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "must not exceed"):
             RankerWeights(profile_alignment=0.031)
 
+    def test_semantic_similarity_is_explicit_for_dense_candidates(self):
+        dense_pool = CandidatePool(
+            candidates=(
+                Candidate(
+                    "A_BLACK",
+                    (
+                        RouteEvidence("active_context_bm25", 1, -1.0),
+                        RouteEvidence("dense_semantic", 2, 0.20),
+                    ),
+                    0.4,
+                ),
+                Candidate(
+                    "D_BLACK",
+                    (
+                        RouteEvidence("active_context_bm25", 2, -2.0),
+                        RouteEvidence("dense_semantic", 1, 0.80),
+                    ),
+                    0.4,
+                ),
+            ),
+            requested_limit=10,
+            route=IntentRoute.BUYING,
+            retrieval_latency_ms=1.0,
+        )
+        ranker = LocalConstraintRanker(catalog=self.catalog)
+        result = ranker.rank(request(category=None), dense_pool)
+        by_id = {item.parent_asin: item for item in result.candidates}
+        self.assertAlmostEqual(by_id["A_BLACK"].explanation.semantic_similarity, 0.6)
+        self.assertAlmostEqual(by_id["D_BLACK"].explanation.semantic_similarity, 0.9)
+
     def test_missing_catalog_candidate_raises_ranking_error(self):
         with self.assertRaisesRegex(RankingError, "absent"):
             self.ranker.rank(request(), pool(("MISSING", 0.1)))
